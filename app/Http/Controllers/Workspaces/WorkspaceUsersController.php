@@ -23,9 +23,10 @@ class WorkspaceUsersController extends Controller
 
     public function index(Request $request): ViewContract
     {
+
         return view('users.index', [
-            'users' => $request->user()->currentWorkspace->users,
-            'invitations' => $request->user()->currentWorkspace->invitations,
+            'users' => User::paginate(25),
+            'invitations' => 0,//$request->user()->currentWorkspace->invitations,
         ]);
     }
 

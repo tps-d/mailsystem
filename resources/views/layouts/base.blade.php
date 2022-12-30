@@ -37,6 +37,8 @@
     function toggleElements() {
         $('.sidebar').toggleClass('d-none');
     }
+
+    $('.dropdown-toggle').dropdown();
 </script>
 
 @stack('js')
