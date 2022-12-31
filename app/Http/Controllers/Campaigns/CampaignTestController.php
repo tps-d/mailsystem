@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Campaigns;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CampaignTestRequest;
 use App\Services\Messages\DispatchTestMessage;

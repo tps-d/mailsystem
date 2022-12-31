@@ -7,14 +7,14 @@ namespace App\Services\Tags;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
-use App\Repositories\TagTenantRepository;
+use App\Repositories\TagRepository;
 
 class ApiTagSubscriberService
 {
-    /** @var TagTenantRepository */
+    /** @var TagRepository */
     private $tags;
 
-    public function __construct(TagTenantRepository $tags)
+    public function __construct(TagRepository $tags)
     {
         $this->tags = $tags;
     }

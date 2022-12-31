@@ -9,24 +9,24 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use App\Presenters\CampaignReportPresenter;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
-use App\Repositories\Messages\MessageTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
+use App\Repositories\MessageRepository;
 
 class CampaignReportsController extends Controller
 {
-    /** @var CampaignTenantRepositoryInterface */
+    /** @var CampaignRepository */
     protected $campaignRepo;
 
-    /** @var MessageTenantRepositoryInterface */
+    /** @var MessageRepository */
     protected $messageRepo;
 
     public function __construct(
-        CampaignTenantRepositoryInterface $campaignRepository,
-        MessageTenantRepositoryInterface $messageRepo
+        CampaignRepository $campaignRepository,
+        MessageRepository $messageRepo
     ) {
         $this->campaignRepo = $campaignRepository;
         $this->messageRepo = $messageRepo;

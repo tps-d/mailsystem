@@ -10,14 +10,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscriptionToggleRequest;
 use App\Models\Message;
 use App\Models\UnsubscribeEventType;
-use App\Repositories\Messages\MessageTenantRepositoryInterface;
+use App\Repositories\MessageRepository;
 
 class SubscriptionsController extends Controller
 {
-    /** @var MessageTenantRepositoryInterface */
+    /** @var MessageRepository */
     protected $messages;
 
-    public function __construct(MessageTenantRepositoryInterface $messages)
+    public function __construct(MessageRepository $messages)
     {
         $this->messages = $messages;
     }

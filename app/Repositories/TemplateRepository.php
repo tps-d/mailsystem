@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Template;
 
-class TemplateTenantRepository extends BaseTenantRepository
+class TemplateRepository extends BaseRepository
 {
     protected $modelName = Template::class;
 }

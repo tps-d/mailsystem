@@ -7,18 +7,18 @@ namespace App\Http\Controllers\Tags;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TagStoreRequest;
 use App\Http\Requests\TagUpdateRequest;
-use App\Repositories\TagTenantRepository;
+use App\Repositories\TagRepository;
 
 class TagsController extends Controller
 {
-    /** @var TagTenantRepository */
+    /** @var TagRepository */
     private $tagRepository;
 
-    public function __construct(TagTenantRepository $tagRepository)
+    public function __construct(TagRepository $tagRepository)
     {
         $this->tagRepository = $tagRepository;
     }

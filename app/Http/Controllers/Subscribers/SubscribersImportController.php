@@ -15,10 +15,10 @@ use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\Validation\ValidationException;
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscribersImportRequest;
-use App\Repositories\TagTenantRepository;
+use App\Repositories\TagRepository;
 use App\Services\Subscribers\ImportSubscriberService;
 
 class SubscribersImportController extends Controller
@@ -34,7 +34,7 @@ class SubscribersImportController extends Controller
     /**
      * @throws Exception
      */
-    public function show(TagTenantRepository $tagRepo): ViewContract
+    public function show(TagRepository $tagRepo): ViewContract
     {
         $tags = $tagRepo->pluck(0, 'name', 'id');
 

@@ -7,24 +7,24 @@ namespace App\Http\Controllers\Api;
 use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\TagStoreRequest;
 use App\Http\Requests\Api\TagUpdateRequest;
 use App\Http\Resources\Tag as TagResource;
-use App\Repositories\TagTenantRepository;
+use App\Repositories\TagRepository;
 use App\Services\Tags\ApiTagService;
 
 class TagsController extends Controller
 {
-    /** @var TagTenantRepository */
+    /** @var TagRepository */
     private $tags;
 
     /** @var ApiTagService */
     private $apiService;
 
     public function __construct(
-        TagTenantRepository $tags,
+        TagRepository $tags,
         ApiTagService $apiService
     ) {
         $this->tags = $tags;

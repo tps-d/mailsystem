@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Campaign;
 use App\Models\EmailService;
 use App\Models\Message;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 use App\Services\Content\MergeContentService;
 
 class DispatchTestMessage
@@ -23,11 +23,11 @@ class DispatchTestMessage
     /** @var MergeContentService */
     protected $mergeContent;
 
-    /** @var CampaignTenantRepositoryInterface */
+    /** @var CampaignRepository */
     protected $campaignTenant;
 
     public function __construct(
-        CampaignTenantRepositoryInterface $campaignTenant,
+        CampaignRepository $campaignTenant,
         MergeContentService $mergeContent,
         ResolveEmailService $resolveEmailService,
         RelayMessage $relayMessage

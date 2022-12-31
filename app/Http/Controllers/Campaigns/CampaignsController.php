@@ -7,32 +7,32 @@ namespace App\Http\Controllers\Campaigns;
 use Exception;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\RedirectResponse;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CampaignStoreRequest;
 use App\Models\EmailService;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
-use App\Repositories\EmailServiceTenantRepository;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
-use App\Repositories\TagTenantRepository;
-use App\Repositories\TemplateTenantRepository;
+use App\Repositories\CampaignRepository;
+use App\Repositories\EmailServiceRepository;
+use App\Repositories\SubscriberRepository;
+use App\Repositories\TagRepository;
+use App\Repositories\TemplateRepository;
 use App\Services\Campaigns\CampaignStatisticsService;
 
 class CampaignsController extends Controller
 {
-    /** @var CampaignTenantRepositoryInterface */
+    /** @var CampaignRepository */
     protected $campaigns;
 
-    /** @var TemplateTenantRepository */
+    /** @var TemplateRepository */
     protected $templates;
 
-    /** @var TagTenantRepository */
+    /** @var TagRepository */
     protected $tags;
 
-    /** @var EmailServiceTenantRepository */
+    /** @var EmailServiceRepository */
     protected $emailServices;
 
-    /** @var SubscriberTenantRepositoryInterface */
+    /** @var SubscriberRepository */
     protected $subscribers;
 
     /**
@@ -41,11 +41,11 @@ class CampaignsController extends Controller
     protected $campaignStatisticsService;
 
     public function __construct(
-        CampaignTenantRepositoryInterface $campaigns,
-        TemplateTenantRepository $templates,
-        TagTenantRepository $tags,
-        EmailServiceTenantRepository $emailServices,
-        SubscriberTenantRepositoryInterface $subscribers,
+        CampaignRepository $campaigns,
+        TemplateRepository $templates,
+        TagRepository $tags,
+        EmailServiceRepository $emailServices,
+        SubscriberRepository $subscribers,
         CampaignStatisticsService $campaignStatisticsService
     ) {
         $this->campaigns = $campaigns;

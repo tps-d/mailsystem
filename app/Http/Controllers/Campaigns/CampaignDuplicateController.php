@@ -6,17 +6,17 @@ namespace App\Http\Controllers\Campaigns;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Models\CampaignStatus;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 
 class CampaignDuplicateController extends Controller
 {
-    /** @var CampaignTenantRepositoryInterface */
+    /** @var CampaignRepository */
     protected $campaigns;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaigns)
+    public function __construct(CampaignRepository $campaigns)
     {
         $this->campaigns = $campaigns;
     }

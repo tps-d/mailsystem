@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Tag;
 
-class TagTenantRepository extends BaseTenantRepository
+class TagRepository extends BaseRepository
 {
     /**
      * @var string

@@ -7,24 +7,24 @@ namespace App\Http\Controllers\Api;
 use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SubscriberStoreRequest;
 use App\Http\Requests\Api\SubscriberUpdateRequest;
 use App\Http\Resources\Subscriber as SubscriberResource;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
+use App\Repositories\SubscriberRepository;
 use App\Services\Subscribers\ApiSubscriberService;
 
 class SubscribersController extends Controller
 {
-    /** @var SubscriberTenantRepositoryInterface */
+    /** @var SubscriberRepository */
     protected $subscribers;
 
     /** @var ApiSubscriberService */
     protected $apiService;
 
     public function __construct(
-        SubscriberTenantRepositoryInterface $subscribers,
+        SubscriberRepository $subscribers,
         ApiSubscriberService $apiService
     ) {
         $this->subscribers = $subscribers;

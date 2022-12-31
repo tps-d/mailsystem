@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __('lang.Email_Services'))
+@section('title', __('Email_Services'))
 
 @section('heading')
-    {{ __('lang.Email_Services') }}
+    {{ __('Email_Services') }}
 @endsection
 
 @section('content')

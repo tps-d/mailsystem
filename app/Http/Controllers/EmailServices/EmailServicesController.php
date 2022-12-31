@@ -8,17 +8,17 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailServiceRequest;
-use App\Repositories\EmailServiceTenantRepository;
+use App\Repositories\EmailServiceRepository;
 
 class EmailServicesController extends Controller
 {
-    /** @var EmailServiceTenantRepository */
+    /** @var EmailServiceRepository */
     private $emailServices;
 
-    public function __construct(EmailServiceTenantRepository $emailServices)
+    public function __construct(EmailServiceRepository $emailServices)
     {
         $this->emailServices = $emailServices;
     }

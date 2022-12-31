@@ -3,7 +3,7 @@
 @section('title', __("Subscriber") . " : {$subscriber->full_name}")
 
 @section('heading')
-    {{ __('lang.Subscribers') }}
+    {{ __('Subscribers') }}
 @stop
 
 @section('content')
@@ -64,7 +64,7 @@
 
     <div class="card">
         <div class="card-header">
-            {{ __('lang.Messages') }}
+            {{ __('Messages') }}
         </div>
         <div class="card-table">
             <table class="table">

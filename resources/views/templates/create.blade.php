@@ -3,7 +3,7 @@
 @section('title', __('New Template'))
 
 @section('heading')
-    {{ __('lang.Templates') }}
+    {{ __('Templates') }}
 @stop
 
 @section('content')

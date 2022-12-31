@@ -6,15 +6,15 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
-use App\Facades\Sendportal;
+
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 
 class CampaignDispatchRequest extends FormRequest
 {
     /**
-     * @var CampaignTenantRepositoryInterface
+     * @var CampaignRepository
      */
     protected $campaigns;
 
@@ -23,7 +23,7 @@ class CampaignDispatchRequest extends FormRequest
      */
     protected $campaign;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaigns)
+    public function __construct(CampaignRepository $campaigns)
     {
         parent::__construct();
 

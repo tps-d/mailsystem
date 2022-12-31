@@ -6,11 +6,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use App\Adapters\BaseMailAdapter;
 use App\Factories\MailAdapterFactory;
-use App\Interfaces\QuotaServiceInterface;
 use App\Models\EmailService;
 use App\Models\EmailServiceType;
 
-class QuotaService implements QuotaServiceInterface
+class QuotaService
 {
     public function exceedsQuota(EmailService $emailService, int $messageCount): bool
     {

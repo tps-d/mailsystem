@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __('lang.Subscribers'))
+@section('title', __('Subscribers'))
 
 @section('heading')
-    {{ __('lang.Subscribers') }}
+    {{ __('Subscribers') }}
 @endsection
 
 @section('content')

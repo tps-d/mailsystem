@@ -7,18 +7,18 @@ namespace App\Http\Controllers\Api;
 use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\CampaignStoreRequest;
 use App\Http\Resources\Campaign as CampaignResource;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 
 class CampaignsController extends Controller
 {
-    /** @var CampaignTenantRepositoryInterface */
+
     private $campaigns;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaigns)
+    public function __construct(CampaignRepository $campaigns)
     {
         $this->campaigns = $campaigns;
     }

@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\EmailService;
 use App\Models\EmailServiceType;
 
-class EmailServiceTenantRepository extends BaseTenantRepository
+class EmailServiceRepository extends BaseRepository
 {
 
     /**

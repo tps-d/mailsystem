@@ -3,7 +3,7 @@
 @section('title', __('New Subscriber'))
 
 @section('heading')
-    {{ __('lang.Subscribers') }}
+    {{ __('Subscribers') }}
 @stop
 
 @section('content')

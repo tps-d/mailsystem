@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', __('lang.Messages'))
+@section('title', __('Messages'))
 
-@section('heading', __('lang.Messages'))
+@section('heading', __('Messages'))
 
 @section('content')
 

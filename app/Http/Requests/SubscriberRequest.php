@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Facades\Sendportal;
+
 
 /**
  * @property-read string $subscriber

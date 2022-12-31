@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace App\Repositories\Messages;
+namespace App\Repositories;
 
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -10,13 +8,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use App\Facades\Helper;
 use App\Models\Campaign;
 use App\Models\Message;
-use App\Repositories\BaseTenantRepository;
+use App\Repositories\BaseRepository;
 
-abstract class BaseMessageTenantRepository extends BaseTenantRepository implements MessageTenantRepositoryInterface
+class MessageRepository extends BaseRepository
 {
+
     /** @var string */
     protected $modelName = Message::class;
 
@@ -198,5 +198,21 @@ abstract class BaseMessageTenantRepository extends BaseTenantRepository implemen
         } elseif ($status === 'sent') {
             $instance->whereNull('delivered_at');
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function countUniqueOpensPerPeriod(int $workspaceId, string $sourceType, int $sourceId, int $intervalInSeconds): Collection
+    {
+        return DB::table('sendportal_messages')
+            ->selectRaw('COUNT(*) as open_count, MIN(opened_at) as opened_at, FROM_UNIXTIME(MIN(UNIX_TIMESTAMP(opened_at) DIV ' . $intervalInSeconds . ') * ' . $intervalInSeconds . ') as period_start')
+            ->where('workspace_id', $workspaceId)
+            ->where('source_type', $sourceType)
+            ->where('source_id', $sourceId)
+            ->whereNotNull('opened_at')
+            ->groupByRaw('UNIX_TIMESTAMP(opened_at) DIV ' . $intervalInSeconds)
+            ->orderBy('opened_at')
+            ->get();
     }
 }

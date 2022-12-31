@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Log;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 use App\Services\Campaigns\CampaignDispatchService;
 
 class CampaignDispatchCommand extends Command
@@ -20,14 +20,14 @@ class CampaignDispatchCommand extends Command
     /** @var string */
     protected $description = 'Dispatch all campaigns waiting in the queue';
 
-    /** @var CampaignTenantRepositoryInterface */
+    /** @var CampaignRepositoryInterface */
     protected $campaignRepo;
 
     /** @var CampaignDispatchService */
     protected $campaignService;
 
     public function handle(
-        CampaignTenantRepositoryInterface $campaignRepo,
+        CampaignRepository $campaignRepo,
         CampaignDispatchService $campaignService
     ): void {
         $this->campaignRepo = $campaignRepo;

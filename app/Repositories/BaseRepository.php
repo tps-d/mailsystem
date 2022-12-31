@@ -4,7 +4,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use RuntimeException;
 
-abstract class BaseTenantRepository 
+abstract class BaseRepository 
 {
     /**
      * @var string

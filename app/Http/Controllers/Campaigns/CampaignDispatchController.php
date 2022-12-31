@@ -7,26 +7,26 @@ namespace App\Http\Controllers\Campaigns;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CampaignDispatchRequest;
-use App\Interfaces\QuotaServiceInterface;
+use App\Services\QuotaService;
 use App\Models\CampaignStatus;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 
 class CampaignDispatchController extends Controller
 {
-    /** @var CampaignTenantRepositoryInterface */
+    /** @var CampaignRepository */
     protected $campaigns;
 
     /**
-     * @var QuotaServiceInterface
+     * @var QuotaService
      */
     protected $quotaService;
 
     public function __construct(
-        CampaignTenantRepositoryInterface $campaigns,
-        QuotaServiceInterface $quotaService
+        CampaignRepository $campaigns,
+        QuotaService $quotaService
     ) {
         $this->campaigns = $campaigns;
         $this->quotaService = $quotaService;

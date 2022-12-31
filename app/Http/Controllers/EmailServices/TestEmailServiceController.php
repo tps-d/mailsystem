@@ -5,19 +5,19 @@ namespace App\Http\Controllers\EmailServices;
 
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailServiceTestRequest;
-use App\Repositories\EmailServiceTenantRepository;
+use App\Repositories\EmailServiceRepository;
 use App\Services\Messages\DispatchTestMessage;
 use App\Services\Messages\MessageOptions;
 
 class TestEmailServiceController extends Controller
 {
-    /** @var EmailServiceTenantRepository */
+    /** @var EmailServiceRepository */
     private $emailServices;
 
-    public function __construct(EmailServiceTenantRepository $emailServices)
+    public function __construct(EmailServiceRepository $emailServices)
     {
         $this->emailServices = $emailServices;
     }

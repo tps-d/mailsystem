@@ -7,10 +7,10 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Facades\Sendportal;
+
 use App\Http\Requests\TemplateStoreRequest;
 use App\Http\Requests\TemplateUpdateRequest;
-use App\Repositories\TemplateTenantRepository;
+use App\Repositories\TemplateRepository;
 use App\Services\Templates\TemplateService;
 use App\Traits\NormalizeTags;
 use Throwable;
@@ -19,13 +19,13 @@ class TemplatesController extends Controller
 {
     use NormalizeTags;
 
-    /** @var TemplateTenantRepository */
+    /** @var TemplateRepository */
     private $templates;
 
     /** @var TemplateService */
     private $service;
 
-    public function __construct(TemplateTenantRepository $templates, TemplateService $service)
+    public function __construct(TemplateRepository $templates, TemplateService $service)
     {
         $this->templates = $templates;
         $this->service = $service;

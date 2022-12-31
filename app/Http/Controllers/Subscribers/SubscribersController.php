@@ -13,23 +13,23 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Events\SubscriberAddedEvent;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscriberRequest;
 use App\Models\UnsubscribeEventType;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
-use App\Repositories\TagTenantRepository;
+use App\Repositories\SubscriberRepository;
+use App\Repositories\TagRepository;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SubscribersController extends Controller
 {
-    /** @var SubscriberTenantRepositoryInterface */
+    /** @var SubscriberRepository */
     private $subscriberRepo;
 
-    /** @var TagTenantRepository */
+    /** @var TagRepository */
     private $tagRepo;
 
-    public function __construct(SubscriberTenantRepositoryInterface $subscriberRepo, TagTenantRepository $tagRepo)
+    public function __construct(SubscriberRepository $subscriberRepo, TagRepository $tagRepo)
     {
         $this->subscriberRepo = $subscriberRepo;
         $this->tagRepo = $tagRepo;

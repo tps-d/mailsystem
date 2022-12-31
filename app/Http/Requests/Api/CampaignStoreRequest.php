@@ -6,21 +6,21 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\Facades\Sendportal;
+
 use App\Http\Requests\CampaignStoreRequest as BaseCampaignStoreRequest;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
-use App\Repositories\TagTenantRepository;
+use App\Repositories\CampaignRepository;
+use App\Repositories\TagRepository;
 
 class CampaignStoreRequest extends BaseCampaignStoreRequest
 {
     /**
-     * @var CampaignTenantRepositoryInterface
+     * @var CampaignRepository
      */
     protected $campaigns;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaigns)
+    public function __construct(CampaignRepository $campaigns)
     {
         parent::__construct();
 
@@ -44,7 +44,7 @@ class CampaignStoreRequest extends BaseCampaignStoreRequest
 
     public function rules(): array
     {
-        $tags = app(TagTenantRepository::class)->pluck(
+        $tags = app(TagRepository::class)->pluck(
             $this->workspaceId,
             'id'
         );

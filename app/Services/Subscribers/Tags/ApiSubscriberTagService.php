@@ -6,14 +6,14 @@ namespace App\Services\Subscribers\Tags;
 
 use Exception;
 use Illuminate\Support\Collection;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
+use App\Repositories\SubscriberRepository;
 
 class ApiSubscriberTagService
 {
-    /** @var SubscriberTenantRepositoryInterface */
+    /** @var SubscriberRepository */
     private $subscribers;
 
-    public function __construct(SubscriberTenantRepositoryInterface $subscribers)
+    public function __construct(SubscriberRepository $subscribers)
     {
         $this->subscribers = $subscribers;
     }

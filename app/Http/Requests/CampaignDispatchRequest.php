@@ -4,15 +4,15 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Facades\Sendportal;
-use App\Repositories\TagTenantRepository;
+
+use App\Repositories\TagRepository;
 
 class CampaignDispatchRequest extends FormRequest
 {
     public function rules(): array
     {
-        /** @var TagTenantRepository $tags */
-        $tags = app(TagTenantRepository::class)->pluck(
+        /** @var TagRepository $tags */
+        $tags = app(TagRepository::class)->pluck(
             0,
             'id'
         );

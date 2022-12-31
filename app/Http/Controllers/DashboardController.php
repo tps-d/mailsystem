@@ -6,25 +6,25 @@ use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\View\View;
 
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
-use App\Repositories\Messages\MessageTenantRepositoryInterface;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
+use App\Repositories\MessageRepository;
+use App\Repositories\SubscriberRepository;
 use App\Services\Campaigns\CampaignStatisticsService;
 
 class DashboardController extends Controller
 {
     /**
-     * @var SubscriberTenantRepositoryInterface
+     * @var SubscriberRepository
      */
     protected $subscribers;
 
     /**
-     * @var CampaignTenantRepositoryInterface
+     * @var CampaignRepositoryInterface
      */
     protected $campaigns;
 
     /**
-     * @var MessageTenantRepositoryInterface
+     * @var MessageRepository
      */
     protected $messages;
 
@@ -33,7 +33,7 @@ class DashboardController extends Controller
      */
     protected $campaignStatisticsService;
 
-    public function __construct(SubscriberTenantRepositoryInterface $subscribers, CampaignTenantRepositoryInterface $campaigns, MessageTenantRepositoryInterface $messages, CampaignStatisticsService $campaignStatisticsService)
+    public function __construct(SubscriberRepository $subscribers, CampaignRepository $campaigns, MessageRepository $messages, CampaignStatisticsService $campaignStatisticsService)
     {
         $this->subscribers = $subscribers;
         $this->campaigns = $campaigns;

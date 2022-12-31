@@ -7,16 +7,16 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Facades\Sendportal;
+
 use App\Models\Message;
-use App\Repositories\Messages\MessageTenantRepositoryInterface;
+use App\Repositories\MessageRepository;
 use App\Services\Content\MergeContentService;
 use App\Services\Content\MergeSubjectService;
 use App\Services\Messages\DispatchMessage;
 
 class MessagesController extends Controller
 {
-    /** @var MessageTenantRepositoryInterface */
+    /** @var MessageRepository */
     protected $messageRepo;
 
     /** @var DispatchMessage */
@@ -29,7 +29,7 @@ class MessagesController extends Controller
     protected $mergeSubjectService;
 
     public function __construct(
-        MessageTenantRepositoryInterface $messageRepo,
+        MessageRepository $messageRepo,
         DispatchMessage $dispatchMessage,
         MergeContentService $mergeContentService,
         MergeSubjectService $mergeSubjectService

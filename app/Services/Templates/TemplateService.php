@@ -7,17 +7,17 @@ namespace App\Services\Templates;
 use Exception;
 use Illuminate\Validation\ValidationException;
 use App\Models\Template;
-use App\Repositories\TemplateTenantRepository;
+use App\Repositories\TemplateRepository;
 use App\Traits\NormalizeTags;
 
 class TemplateService
 {
     use NormalizeTags;
 
-    /** @var TemplateTenantRepository */
+    /** @var TemplateRepository */
     private $templates;
 
-    public function __construct(TemplateTenantRepository $templates)
+    public function __construct(TemplateRepository $templates)
     {
         $this->templates = $templates;
     }

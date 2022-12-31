@@ -6,18 +6,18 @@ namespace App\Http\Controllers\Campaigns;
 
 use Exception;
 use Illuminate\Validation\ValidationException;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 
 class CampaignCancellationController extends Controller
 {
-    /** @var CampaignTenantRepositoryInterface $campaignRepository */
+
     private $campaignRepository;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaignRepository)
+    public function __construct(CampaignRepository $campaignRepository)
     {
         $this->campaignRepository = $campaignRepository;
     }

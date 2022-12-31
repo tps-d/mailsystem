@@ -6,25 +6,25 @@ namespace App\Http\Controllers\Api;
 
 use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SubscriberTagDestroyRequest;
 use App\Http\Requests\Api\SubscriberTagStoreRequest;
 use App\Http\Requests\Api\SubscriberTagUpdateRequest;
 use App\Http\Resources\Tag as TagResource;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
+use App\Repositories\SubscriberRepository;
 use App\Services\Subscribers\Tags\ApiSubscriberTagService;
 
 class SubscriberTagsController extends Controller
 {
-    /** @var SubscriberTenantRepositoryInterface */
+    /** @var SubscriberRepository */
     private $subscribers;
 
     /** @var ApiSubscriberTagService */
     private $apiService;
 
     public function __construct(
-        SubscriberTenantRepositoryInterface $subscribers,
+        SubscriberRepository $subscribers,
         ApiSubscriberTagService $apiService
     ) {
         $this->subscribers = $subscribers;

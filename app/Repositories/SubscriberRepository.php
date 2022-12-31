@@ -1,17 +1,21 @@
 <?php
-declare(strict_types=1);
 
-namespace App\Repositories\Subscribers;
+namespace App\Repositories;
 
 use Exception;
+
+use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use App\Models\Subscriber;
-use App\Repositories\BaseTenantRepository;
+use App\Repositories\BaseRepository;
 
-abstract class BaseSubscriberTenantRepository extends BaseTenantRepository implements SubscriberTenantRepositoryInterface
+class SubscriberRepository extends BaseRepository
 {
+
     /** @var string */
     protected $modelName = Subscriber::class;
 
@@ -143,5 +147,42 @@ abstract class BaseSubscriberTenantRepository extends BaseTenantRepository imple
                 ->whereIn('sendportal_tag_subscriber.tag_id', $tagIds)
                 ->distinct();
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGrowthChartData(CarbonPeriod $period, int $workspaceId): array
+    {
+        $startingValue = DB::table('sendportal_subscribers')
+            ->where('workspace_id', $workspaceId)
+            ->where(function (Illuminate\Database\Query\Builder $q) use ($period) {
+                $q->where('unsubscribed_at', '>=', $period->getStartDate())
+                    ->orWhereNull('unsubscribed_at');
+            })
+            ->where('created_at', '<', $period->getStartDate())
+            ->count();
+
+        $runningTotal = DB::table('sendportal_subscribers')
+            ->selectRaw("date_format(created_at, '%d-%m-%Y') AS date, count(*) as total")
+            ->where('workspace_id', $workspaceId)
+            ->where('created_at', '>=', $period->getStartDate())
+            ->where('created_at', '<=', $period->getEndDate())
+            ->groupBy('date')
+            ->get();
+
+        $unsubscribers = DB::table('sendportal_subscribers')
+            ->selectRaw("date_format(unsubscribed_at, '%d-%m-%Y') AS date, count(*) as total")
+            ->where('workspace_id', $workspaceId)
+            ->where('unsubscribed_at', '>=', $period->getStartDate())
+            ->where('unsubscribed_at', '<=', $period->getEndDate())
+            ->groupBy('date')
+            ->get();
+
+        return [
+            'startingValue' => $startingValue,
+            'runningTotal' => $runningTotal->flatten()->keyBy('date'),
+            'unsubscribers' => $unsubscribers->flatten()->keyBy('date'),
+        ];
     }
 }

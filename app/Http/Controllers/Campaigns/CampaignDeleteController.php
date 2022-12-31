@@ -8,16 +8,16 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 
 class CampaignDeleteController extends Controller
 {
-    /** @var CampaignTenantRepositoryInterface */
+    /** @var CampaignRepository */
     protected $campaigns;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaigns)
+    public function __construct(CampaignRepository $campaigns)
     {
         $this->campaigns = $campaigns;
     }

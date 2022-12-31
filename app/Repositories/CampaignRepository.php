@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repositories\Campaigns;
+namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -11,11 +11,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
-use App\Repositories\BaseTenantRepository;
+use App\Repositories\BaseRepository;
 use App\Traits\SecondsToHms;
 
-abstract class BaseCampaignTenantRepository extends BaseTenantRepository implements CampaignTenantRepositoryInterface
+class CampaignRepository extends BaseRepository
 {
+
     use SecondsToHms;
 
     /** @var string */
@@ -108,5 +109,29 @@ abstract class BaseCampaignTenantRepository extends BaseTenantRepository impleme
 
             $instance->whereIn('status_id', $sentStatuses);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAverageTimeToOpen(Campaign $campaign): string
+    {
+        $average = $campaign->opens()
+            ->selectRaw('ROUND(AVG(TIMESTAMPDIFF(SECOND, delivered_at, opened_at))) as average_time_to_open')
+            ->value('average_time_to_open');
+
+        return $average ? $this->secondsToHms($average) : 'N/A';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAverageTimeToClick(Campaign $campaign): string
+    {
+        $average = $campaign->clicks()
+            ->selectRaw('ROUND(AVG(TIMESTAMPDIFF(SECOND, delivered_at, clicked_at))) as average_time_to_click')
+            ->value('average_time_to_click');
+
+        return $average ? $this->secondsToHms($average) : 'N/A';
     }
 }

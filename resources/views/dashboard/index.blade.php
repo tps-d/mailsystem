@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __('lang.Dashboard'))
+@section('title', __('Dashboard'))
 
 @section('heading')
-    {{ __('lang.Dashboard') }}
+    {{ __('Dashboard') }}
 @endsection
 
 @section('content')
@@ -62,7 +62,18 @@
                                 <td>{{ number_format($campaignStats[$campaign->id]['ratios']['click'] * 100, 1) . '%' }}</td>
                                 <td><span title="{{ $campaign->created_at }}">{{ $campaign->created_at->diffForHumans() }}</span></td>
                                 <td>
-                                    @include('campaigns.partials.status')
+                                    @if($campaign->draft)
+                                        <span class="badge badge-light">{{ $campaign->status->name }}</span>
+                                    @elseif($campaign->queued)
+                                        <span class="badge badge-warning">{{ $campaign->status->name }}</span>
+                                    @elseif($campaign->sending)
+                                        <span class="badge badge-warning">{{ $campaign->status->name }}</span>
+                                    @elseif($campaign->sent)
+                                        <span class="badge badge-success">{{ $campaign->status->name }}</span>
+                                    @elseif($campaign->cancelled)
+                                        <span class="badge badge-danger">{{ $campaign->status->name }}</span>
+                                    @endif
+
                                 </td>
                                 <td>
                                     <div class="dropdown">

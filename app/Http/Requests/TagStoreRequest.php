@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Facades\Sendportal;
+
 
 class TagStoreRequest extends FormRequest
 {

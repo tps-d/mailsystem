@@ -22,7 +22,7 @@
                 <thead>
                 <tr>
                     <th>{{ __('Name') }}</th>
-                    <th>{{ __('lang.Subscribers') }}</th>
+                    <th>{{ __('Subscribers') }}</th>
                     <th>{{ __('Actions') }}</th>
                 </tr>
                 </thead>

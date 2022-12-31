@@ -5,17 +5,17 @@ namespace App\Services\Messages;
 use Exception;
 use App\Models\EmailService;
 use App\Models\Message;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 use Sendportal\Pro\Repositories\AutomationScheduleRepository;
 
 class ResolveEmailService
 {
-    /** @var CampaignTenantRepositoryInterface */
-    protected $campaignTenantRepository;
+    /** @var CampaignRepository */
+    protected $campaignRepository;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaignTenantRepository)
+    public function __construct(CampaignRepository $campaignRepository)
     {
-        $this->campaignTenantRepository = $campaignTenantRepository;
+        $this->campaignRepository = $campaignRepository;
     }
 
     /**
@@ -66,7 +66,7 @@ class ResolveEmailService
      */
     protected function resolveCampaignEmailService(Message $message): EmailService
     {
-        if (! $campaign = $this->campaignTenantRepository->find($message->workspace_id, $message->source_id, ['email_service'])) {
+        if (! $campaign = $this->campaignRepository->find($message->workspace_id, $message->source_id, ['email_service'])) {
             throw new Exception('Unable to resolve campaign for message id=' . $message->id);
         }
 

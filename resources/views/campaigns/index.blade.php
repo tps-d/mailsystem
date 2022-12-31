@@ -1,14 +1,23 @@
 @extends('layouts.app')
 
-@section('title', __('lang.Campaigns'))
+@section('title', __('Campaigns'))
 
 @section('heading')
-    {{ __('lang.Campaigns') }}
+    {{ __('Campaigns') }}
 @endsection
 
 @section('content')
 
-    @include('campaigns.partials.nav')
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('campaigns.index') ? 'active'  : '' }}"
+               href="{{ route('campaigns.index') }}">{{ __('Draft') }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('campaigns.sent') ? 'active'  : '' }}"
+               href="{{ route('campaigns.sent') }}">{{ __('Sent') }}</a>
+        </li>
+    </ul>
 
     @component('layouts.partials.actions')
         @slot('right')
@@ -24,7 +33,7 @@
                 <thead>
                 <tr>
                     <th>{{ __('Name') }}</th>
-                    @if (request()->routeIs('sendportal.campaigns.sent'))
+                    @if (request()->routeIs('campaigns.sent'))
                         <th>{{ __('Sent') }}</th>
                         <th>{{ __('Opened') }}</th>
                         <th>{{ __('Clicked') }}</th>
@@ -46,7 +55,7 @@
                                 <a href="{{ route('campaigns.status', $campaign->id) }}">{{ $campaign->name }}</a>
                             @endif
                         </td>
-                        @if (request()->routeIs('sendportal.campaigns.sent'))
+                        @if (request()->routeIs('campaigns.sent'))
                             <td>{{ $campaignStats[$campaign->id]['counts']['sent'] }}</td>
                             <td>{{ number_format($campaignStats[$campaign->id]['ratios']['open'] * 100, 1) . '%' }}</td>
                             <td>
@@ -55,7 +64,18 @@
                         @endif
                         <td><span title="{{ $campaign->created_at }}">{{ $campaign->created_at->diffForHumans() }}</span></td>
                         <td>
-                            @include('campaigns.partials.status')
+                            @if($campaign->draft)
+                                <span class="badge badge-light">{{ $campaign->status->name }}</span>
+                            @elseif($campaign->queued)
+                                <span class="badge badge-warning">{{ $campaign->status->name }}</span>
+                            @elseif($campaign->sending)
+                                <span class="badge badge-warning">{{ $campaign->status->name }}</span>
+                            @elseif($campaign->sent)
+                                <span class="badge badge-success">{{ $campaign->status->name }}</span>
+                            @elseif($campaign->cancelled)
+                                <span class="badge badge-danger">{{ $campaign->status->name }}</span>
+                            @endif
+
                         </td>
                         <td>
                             <div class="dropdown">
@@ -104,7 +124,7 @@
                     <tr>
                         <td colspan="100%">
                             <p class="empty-table-text">
-                                @if (request()->routeIs('sendportal.campaigns.index'))
+                                @if (request()->routeIs('campaigns.index'))
                                     {{ __('You do not have any draft campaigns.') }}
                                 @else
                                     {{ __('You do not have any sent campaigns.') }}

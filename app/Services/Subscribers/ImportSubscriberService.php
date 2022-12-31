@@ -5,14 +5,14 @@ namespace App\Services\Subscribers;
 use Exception;
 use Illuminate\Support\Arr;
 use App\Models\Subscriber;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
+use App\Repositories\SubscriberRepository;
 
 class ImportSubscriberService
 {
-    /** @var SubscriberTenantRepositoryInterface */
+    /** @var SubscriberRepository */
     protected $subscribers;
 
-    public function __construct(SubscriberTenantRepositoryInterface $subscribers)
+    public function __construct(SubscriberRepository $subscribers)
     {
         $this->subscribers = $subscribers;
     }

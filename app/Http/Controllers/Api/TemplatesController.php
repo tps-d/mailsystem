@@ -7,23 +7,23 @@ namespace App\Http\Controllers\Api;
 use Exception;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use App\Facades\Sendportal;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\TemplateStoreRequest;
 use App\Http\Requests\Api\TemplateUpdateRequest;
 use App\Http\Resources\Template as TemplateResource;
-use App\Repositories\TemplateTenantRepository;
+use App\Repositories\TemplateRepository;
 use App\Services\Templates\TemplateService;
 
 class TemplatesController extends Controller
 {
-    /** @var TemplateTenantRepository */
+    /** @var TemplateRepository */
     private $templates;
 
     /** @var TemplateService */
     private $service;
 
-    public function __construct(TemplateTenantRepository $templates, TemplateService $service)
+    public function __construct(TemplateRepository $templates, TemplateService $service)
     {
         $this->templates = $templates;
         $this->service = $service;

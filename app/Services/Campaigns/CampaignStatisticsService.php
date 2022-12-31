@@ -6,16 +6,16 @@ use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Models\Campaign;
-use App\Repositories\Campaigns\CampaignTenantRepositoryInterface;
+use App\Repositories\CampaignRepository;
 
 class CampaignStatisticsService
 {
     /**
-     * @var CampaignTenantRepositoryInterface
+     * @var CampaignRepositoryInterface
      */
     protected $campaigns;
 
-    public function __construct(CampaignTenantRepositoryInterface $campaigns)
+    public function __construct(CampaignRepository $campaigns)
     {
         $this->campaigns = $campaigns;
     }

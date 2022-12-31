@@ -9,14 +9,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Events\SubscriberAddedEvent;
 use App\Models\Subscriber;
-use App\Repositories\Subscribers\SubscriberTenantRepositoryInterface;
+use App\Repositories\SubscriberRepository;
 
 class ApiSubscriberService
 {
-    /** @var SubscriberTenantRepositoryInterface */
+    /** @var SubscriberRepository */
     protected $subscribers;
 
-    public function __construct(SubscriberTenantRepositoryInterface $subscribers)
+    public function __construct(SubscriberRepository $subscribers)
     {
         $this->subscribers = $subscribers;
     }

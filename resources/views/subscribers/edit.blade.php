@@ -3,7 +3,7 @@
 @section('title', __("Edit Subscriber") . " : {$subscriber->full_name}")
 
 @section('heading')
-    {{ __('lang.Subscribers') }}
+    {{ __('Subscribers') }}
 @stop
 
 @section('content')
