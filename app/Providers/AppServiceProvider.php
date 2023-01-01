@@ -11,7 +11,7 @@ use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 
 use Illuminate\Foundation\Application;
-
+use App\Services\Helper;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,8 +25,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(FormServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
 
-        $this->app->singleton('sendportal.resolver', function () {
-            return new ResolverService();
+        $this->app->singleton('mailsystem.helper', function () {
+            return new Helper();
         });
     }
 

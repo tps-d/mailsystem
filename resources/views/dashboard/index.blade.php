@@ -76,7 +76,7 @@
 
                                 </td>
                                 <td>
-                                    <div class="dropdown">
+                                    <div class="dropdown" style="overflow: hidden;">
                                         <button class="btn btn-light btn-sm btn-wide" type="button"
                                                 id="dropdownMenuButton"
                                                 data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true"
@@ -95,12 +95,10 @@
                                                     {{ __('View Report') }}
                                                 </a>
                                             @endif
-
                                             <a href="{{ route('campaigns.duplicate', $campaign->id) }}"
                                                class="dropdown-item">
                                                 {{ __('Duplicate') }}
                                             </a>
-
                                             @if ($campaign->draft)
                                                 <div class="dropdown-divider"></div>
                                                 <a href="{{ route('campaigns.destroy.confirm', $campaign->id) }}"

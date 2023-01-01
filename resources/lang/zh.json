@@ -4,8 +4,9 @@
 	"Automations" : "自动化",
 	"Templates" : "邮件模版",
 	"Subscribers" : "收件人",
-	"Messages" : "收信管理",
+	"Messages" : "收信状态",
 	"Email_Services" : "邮件服务器",
 	"Manage_Users" : "用户管理",
-	"Draft" : "草稿"
+	"Draft" : "未发送",
+	"Sent" : "已发送"
 }

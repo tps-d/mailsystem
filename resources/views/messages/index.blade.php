@@ -16,7 +16,7 @@
                            value="{{ request('search') }}">
                 </div>
 
-                @if(request()->route()->named('sendportal.messages.index'))
+                @if(request()->route()->named('messages.index'))
                     <div class="mr-2">
                         <select name="status" class="form-control">
                             <option
@@ -56,7 +56,7 @@
                     <th>{{ __('Source') }}</th>
                     <th>{{ __('Recipient') }}</th>
                     <th>{{ __('Status') }}</th>
-                    @if(request()->route()->named('sendportal.messages.draft'))
+                    @if(request()->route()->named('messages.draft'))
                         <th>{{ __('Actions') }}</th>
                         <th>
                             <button class="btn btn-xs btn-light" id="select-all">Select All</button>
@@ -92,7 +92,7 @@
                             <td>
                                 @include('messages.partials.status-row')
                             </td>
-                            @if(request()->route()->named('sendportal.messages.draft') &&  ! $message->sent_at)
+                            @if(request()->route()->named('messages.draft') &&  ! $message->sent_at)
                                 <td>
                                     <form action="{{ route('messages.send') }}" method="post" class="d-inline-block">
                                         @csrf

@@ -28,10 +28,10 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="javascript:;">
-                <i class="fa-fw fas fa-envelope mr-2"></i><span>{{ __('Messages') }}</span>
+                <i class="fa-fw fas fa-envelope mr-2"></i><span>收信管理</span>
             </a>
             <ul>
-                <li class="nav-item {{ request()->is('*messages*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('messages.index') }}">接受邮件</a></li>
+                <li class="nav-item {{ request()->is('*messages*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('messages.index') }}">{{ __('Messages') }}</a></li>
                 <li class="nav-item {{ request()->is('*subscribers*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('subscribers.index') }}">
                         <span>{{ __('Subscribers') }}</span>

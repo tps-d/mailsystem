@@ -156,7 +156,7 @@ class SubscriberRepository extends BaseRepository
     {
         $startingValue = DB::table('sendportal_subscribers')
             ->where('workspace_id', $workspaceId)
-            ->where(function (Illuminate\Database\Query\Builder $q) use ($period) {
+            ->where(function (\Illuminate\Database\Query\Builder $q) use ($period) {
                 $q->where('unsubscribed_at', '>=', $period->getStartDate())
                     ->orWhereNull('unsubscribed_at');
             })
