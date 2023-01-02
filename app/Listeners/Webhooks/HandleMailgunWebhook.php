@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sendportal\Base\Listeners\Webhooks;
+namespace App\Listeners\Webhooks;
 
 use Carbon\Carbon;
 use Exception;
