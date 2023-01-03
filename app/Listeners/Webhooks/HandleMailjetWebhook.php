@@ -15,7 +15,7 @@ use App\Services\Webhooks\EmailWebhookService;
 class HandleMailjetWebhook implements ShouldQueue
 {
     /** @var string */
-    public $queue = 'sendportal-webhook-process';
+    public $queue = 'webhook-process';
 
     /** @var EmailWebhookService */
     private $emailWebhookService;

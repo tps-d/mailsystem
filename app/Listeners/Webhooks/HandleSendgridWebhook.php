@@ -16,7 +16,7 @@ use App\Services\Webhooks\EmailWebhookService;
 class HandleSendgridWebhook implements ShouldQueue
 {
     /** @var string */
-    public $queue = 'sendportal-webhook-process';
+    public $queue = 'webhook-process';
 
     /** @var EmailWebhookService */
     private $emailWebhookService;

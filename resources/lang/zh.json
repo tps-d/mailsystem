@@ -1,6 +1,6 @@
 {
 	"Dashboard" : "首页",
-	"Campaigns" : "发信管理",
+	"Campaigns" : "发送邮件",
 	"Automations" : "自动化",
 	"Templates" : "邮件模版",
 	"Subscribers" : "收件人",

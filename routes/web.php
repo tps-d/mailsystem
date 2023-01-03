@@ -176,6 +176,14 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
 
         // Templates.
         $appRouter->resource('templates', 'TemplatesController')->except(['show']);
+
+        // Automations
+        $appRouter->name('automations.')->prefix('automations')->namespace('Automations')->group(static function ( Router $servicesRouter ) {
+            $servicesRouter->get('/queue/dispatch', 'QueueController@dispatch_jobs')->name('queue.dispatch');
+            $servicesRouter->get('/queue/webhook', 'QueueController@webhook_jobs')->name('queue.webhook');
+            $servicesRouter->get('/queue/failed', 'QueueController@failed_jobs')->name('queue.failed');
+        });
+
     });
 });
 

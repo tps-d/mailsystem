@@ -8,11 +8,10 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="javascript:;" role="button"  >
-                <i class="fa-fw fas fa-paper-plane mr-2"></i><span>{{ __('Campaigns') }}</span>
+                <i class="fa-fw fas fa-paper-plane mr-2"></i><span>发信管理</span>
             </a>
             <ul>
-              <li class="nav-item {{ request()->is('*campaigns*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('campaigns.index') }}">单发邮件</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">群发邮件</a></li>
+              <li class="nav-item {{ request()->is('*campaigns*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('campaigns.index') }}">{{ __('Campaigns') }}</a></li>
               <li class="nav-item {{ request()->is('*templates*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('templates.index') }}">
                     <span>{{ __('Templates') }}</span>
@@ -23,7 +22,6 @@
                     <span>{{ __('Email_Services') }}</span>
                 </a>
               </li>
-              <li class="nav-item"><a class="nav-link" href="#">发送进度</a></li>
             </ul>
         </li>
         <li class="nav-item">
@@ -44,7 +42,12 @@
                 <i class="fa-fw fas fa-sync-alt mr-2"></i><span>{{ __('Automations') }}</span>
             </a>
             <ul>
-              <li class="nav-item {{ request()->is('*automations*') ? 'active' : '' }}"><a class="nav-link" href="javascript:;">自动发信规则</a></li>
+              <li class="nav-item {{ request()->is('*queue*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('automations.queue.dispatch') }}">
+                    <span>执行队列</span>
+                </a>
+              </li>
+              <li class="nav-item"><a class="nav-link" href="javascript:;">自动发信规则</a></li>
               <li class="nav-item"><a class="nav-link" href="javascript:;">自动回信规则</a></li>
             </ul>
         </li>

@@ -12,7 +12,7 @@ use App\Services\Messages\DispatchMessage;
 class MessageDispatchHandler implements ShouldQueue
 {
     /** @var string */
-    public $queue = 'sendportal-message-dispatch';
+    public $queue = 'message-dispatch';
 
     /** @var DispatchMessage */
     protected $dispatchMessage;
