@@ -14,7 +14,7 @@
               <li class="nav-item {{ request()->is('*campaigns*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('campaigns.index') }}">{{ __('Campaigns') }}</a></li>
               <li class="nav-item {{ request()->is('*templates*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('templates.index') }}">
-                    <span>{{ __('Templates') }}</span>
+                    <span>{{ __('Email Templates') }}</span>
                 </a>
               </li>
               <li class="nav-item {{ request()->is('*email-services*') ? 'active' : '' }}">

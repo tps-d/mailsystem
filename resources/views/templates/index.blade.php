@@ -16,6 +16,39 @@
         @endslot
     @endcomponent
 
-    @include('templates.partials.grid')
+    <div class="card">
+        <div class="card-table table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>{{ __('Name') }}</th>
+                    <th>{{ __('Actions') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($templates as $template)
+                    <tr>
+                        <td>
+                            {{ $template->name }}
+                        </td>
+                        <td>
+                                                                <form action="{{ route('templates.destroy', $template->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <a href="{{ route('templates.edit', $template->id) }}"
+                                           class="btn btn-xs btn-light">{{ __('Edit') }}</a>
+                                        <button type="submit" class="btn btn-xs btn-light">{{ __('Delete') }}</button>
+                                    </form>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{{ $templates->links() }}
+
 
 @endsection
