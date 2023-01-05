@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use App\Http\Requests\TemplateStoreRequest;
 use App\Http\Requests\TemplateUpdateRequest;
 use App\Repositories\TemplateRepository;
+use App\Repositories\VariableRepository;
 use App\Services\Templates\TemplateService;
 use App\Traits\NormalizeTags;
 use Throwable;
@@ -25,10 +26,14 @@ class TemplatesController extends Controller
     /** @var TemplateService */
     private $service;
 
-    public function __construct(TemplateRepository $templates, TemplateService $service)
+    /** @var VariableRepository */
+    private $variable;
+
+    public function __construct(TemplateRepository $templates, TemplateService $service ,VariableRepository $variable)
     {
         $this->templates = $templates;
         $this->service = $service;
+        $this->variable = $variable;
     }
 
     /**
@@ -43,7 +48,8 @@ class TemplatesController extends Controller
 
     public function create(): View
     {
-        return view('templates.create');
+        $variables = $this->variable->all(0);
+        return view('templates.create', compact('variables'));
     }
 
     /**
@@ -66,7 +72,9 @@ class TemplatesController extends Controller
     {
         $template = $this->templates->find(0, $id);
 
-        return view('templates.edit', compact('template'));
+        $variables = $this->variable->all(0);
+
+        return view('templates.edit', compact('template','variables'));
     }
 
     /**

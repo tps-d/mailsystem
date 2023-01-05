@@ -15,6 +15,13 @@
 <div class="form-group row form-group-content template-content">
     <label for="id-field-content" class="control-label col-sm-2">{{ __('Content') }}</label>
     <div class="col-sm-10">
+       <div class="btn-group mb-2" id="variable_tags">
+            @foreach($variables as $variable)
+            <a class="btn btn-md btn-default" data-variable="{{ $variable->name }}" href="javascript:;">
+                {{ $variable->description }}
+            </a>
+            @endforeach
+        </div>
         <textarea id="id-field-content" class="form-control" name="content" cols="50"
                   rows="20">{{ old('content', $template->content ?? null) }}</textarea>
     </div>
@@ -59,6 +66,28 @@
                     elPreview.removeClass('d-none');
                     elButton.text('Show Preview');
                 }
+            });
+
+
+            $('#variable_tags').find('a').each(function(){
+                $(this).on('click',function(){
+                    var variable = $(this).data('variable');
+                    if(variable.length == 0){
+                        return;
+                    }
+
+                    variable = "{"+variable+"}";
+
+                    var doc = codeMirror.getDoc();
+                    var cursor = doc.getCursor();
+
+                    var pos = {
+                       line: cursor.line,
+                       ch: cursor.ch
+                    }
+
+                    doc.replaceRange(variable, pos);
+                });
             });
         });
     </script>

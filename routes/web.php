@@ -177,6 +177,9 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
         // Templates.
         $appRouter->resource('templates', 'TemplatesController')->except(['show']);
 
+        // Variable.
+        $appRouter->resource('variable', 'Variable\VariableController')->except(['show']);
+
         // Automations
         $appRouter->name('automations.')->prefix('automations')->namespace('Automations')->group(static function ( Router $servicesRouter ) {
             $servicesRouter->get('/queue/dispatch', 'QueueController@dispatch_jobs')->name('queue.dispatch');

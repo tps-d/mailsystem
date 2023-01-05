@@ -14,6 +14,7 @@ use App\Http\Requests\Api\TemplateUpdateRequest;
 use App\Http\Resources\Template as TemplateResource;
 use App\Repositories\TemplateRepository;
 use App\Services\Templates\TemplateService;
+use App\Repositories\VariableRepository;
 
 class TemplatesController extends Controller
 {
@@ -23,10 +24,14 @@ class TemplatesController extends Controller
     /** @var TemplateService */
     private $service;
 
-    public function __construct(TemplateRepository $templates, TemplateService $service)
+    /** @var VariableRepository */
+    private $variable;
+
+    public function __construct(TemplateRepository $templates, TemplateService $service ,VariableRepository $variable)
     {
         $this->templates = $templates;
         $this->service = $service;
+        $this->variable = $variable;
     }
 
     /**

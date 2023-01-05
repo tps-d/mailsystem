@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Validation\ValidationException;
 use App\Models\Template;
 use App\Repositories\TemplateRepository;
+use App\Repositories\VariableRepository;
 use App\Traits\NormalizeTags;
 
 class TemplateService

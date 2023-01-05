@@ -1,0 +1,2 @@
+<x-sendportal.text-field name="name" :label="__('Variable Name')" :value="$variable->name ?? null" />
+<x-sendportal.text-field name="description" :label="__('Description')" :value="$variable->description ?? null" />
