@@ -28,7 +28,7 @@ class CampaignsController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
 
         return CampaignResource::collection($this->campaigns->paginate($workspaceId, 'id', ['tags']));
     }
@@ -38,7 +38,7 @@ class CampaignsController extends Controller
      */
     public function store(CampaignStoreRequest $request): CampaignResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $data = Arr::except($request->validated(), ['tags']);
 
         $data['save_as_draft'] = $request->get('save_as_draft') ?? 0;
@@ -55,7 +55,7 @@ class CampaignsController extends Controller
      */
     public function show(int $id): CampaignResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->campaigns->find($workspaceId, $id);
 
         return new CampaignResource($campaign);
@@ -66,7 +66,7 @@ class CampaignsController extends Controller
      */
     public function update(CampaignStoreRequest $request, int $id): CampaignResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $data = Arr::except($request->validated(), ['tags']);
 
         $data['save_as_draft'] = $request->get('save_as_draft') ?? 0;

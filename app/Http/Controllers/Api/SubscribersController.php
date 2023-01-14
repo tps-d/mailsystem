@@ -36,7 +36,7 @@ class SubscribersController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $subscribers = $this->subscribers->paginate($workspaceId, 'last_name');
 
         return SubscriberResource::collection($subscribers);
@@ -47,7 +47,7 @@ class SubscribersController extends Controller
      */
     public function store(SubscriberStoreRequest $request): SubscriberResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $subscriber = $this->apiService->storeOrUpdate($workspaceId, collect($request->validated()));
 
         $subscriber->load('tags');
@@ -60,7 +60,7 @@ class SubscribersController extends Controller
      */
     public function show(int $id): SubscriberResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
 
         return new SubscriberResource($this->subscribers->find($workspaceId, $id, ['tags']));
     }
@@ -70,7 +70,7 @@ class SubscribersController extends Controller
      */
     public function update(SubscriberUpdateRequest $request, int $id): SubscriberResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $subscriber = $this->subscribers->update($workspaceId, $id, $request->validated());
 
         return new SubscriberResource($subscriber);
@@ -81,7 +81,7 @@ class SubscribersController extends Controller
      */
     public function destroy(int $id): Response
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $this->apiService->delete($workspaceId, $this->subscribers->find($workspaceId, $id));
 
         return response(null, 204);

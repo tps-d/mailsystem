@@ -13,6 +13,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailServiceRequest;
 use App\Repositories\EmailServiceRepository;
 
+use App\Facades\MailSystem;
+
 class EmailServicesController extends Controller
 {
     /** @var EmailServiceRepository */
@@ -28,7 +30,7 @@ class EmailServicesController extends Controller
      */
     public function index(): View
     {
-        $emailServices = $this->emailServices->all(0);
+        $emailServices = $this->emailServices->all(MailSystem::currentWorkspaceId());
 
         return view('email_services.index', compact('emailServices'));
     }
@@ -49,7 +51,7 @@ class EmailServicesController extends Controller
 
         $settings = $request->get('settings', []);
 
-        $this->emailServices->store(0, [
+        $this->emailServices->store(MailSystem::currentWorkspaceId(), [
             'name' => $request->name,
             'type_id' => $emailServiceType->id,
             'settings' => $settings,
@@ -64,7 +66,7 @@ class EmailServicesController extends Controller
     public function edit(int $emailServiceId)
     {
         $emailServiceTypes = $this->emailServices->getEmailServiceTypes()->pluck('name', 'id');
-        $emailService = $this->emailServices->find(0, $emailServiceId);
+        $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId);
         $emailServiceType = $this->emailServices->findType($emailService->type_id);
 
         return view('email_services.edit', compact('emailServiceTypes', 'emailService', 'emailServiceType'));
@@ -75,7 +77,7 @@ class EmailServicesController extends Controller
      */
     public function update(EmailServiceRequest $request, int $emailServiceId): RedirectResponse
     {
-        $emailService = $this->emailServices->find(0, $emailServiceId, ['type']);
+        $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId, ['type']);
 
         $settings = $request->get('settings');
 
@@ -91,13 +93,13 @@ class EmailServicesController extends Controller
      */
     public function delete(int $emailServiceId): RedirectResponse
     {
-        $emailService = $this->emailServices->find(0, $emailServiceId, ['campaigns']);
+        $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId, ['campaigns']);
 
         if ($emailService->in_use) {
             return redirect()->back()->withErrors(__("You cannot delete an email service that is currently used by a campaign or automation."));
         }
 
-        $this->emailServices->destroy(0, $emailServiceId);
+        $this->emailServices->destroy(MailSystem::currentWorkspaceId(), $emailServiceId);
 
         return redirect()->route('email_services.index');
     }

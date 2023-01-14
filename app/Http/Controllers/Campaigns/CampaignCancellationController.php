@@ -12,6 +12,8 @@ use App\Models\Campaign;
 use App\Models\CampaignStatus;
 use App\Repositories\CampaignRepository;
 
+use App\Facades\MailSystem;
+
 class CampaignCancellationController extends Controller
 {
 
@@ -27,7 +29,7 @@ class CampaignCancellationController extends Controller
      */
     public function confirm(int $campaignId)
     {
-        $campaign = $this->campaignRepository->find(0, $campaignId, ['status']);
+        $campaign = $this->campaignRepository->find(MailSystem::currentWorkspaceId(), $campaignId, ['status']);
 
         return view('campaigns.cancel', [
             'campaign' => $campaign,
@@ -40,7 +42,7 @@ class CampaignCancellationController extends Controller
     public function cancel(int $campaignId)
     {
         /** @var Campaign $campaign */
-        $campaign = $this->campaignRepository->find(0, $campaignId, ['status']);
+        $campaign = $this->campaignRepository->find(MailSystem::currentWorkspaceId(), $campaignId, ['status']);
         $originalStatus = $campaign->status;
 
         if (!$campaign->canBeCancelled()) {

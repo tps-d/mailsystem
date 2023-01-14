@@ -13,6 +13,8 @@ use App\Models\CampaignStatus;
 use App\Repositories\CampaignRepository;
 use App\Repositories\TagRepository;
 
+use App\Facades\MailSystem;
+
 class CampaignStoreRequest extends BaseCampaignStoreRequest
 {
     /**
@@ -25,7 +27,7 @@ class CampaignStoreRequest extends BaseCampaignStoreRequest
         parent::__construct();
 
         $this->campaigns = $campaigns;
-        $this->workspaceId = 0;
+        $this->workspaceId = MailSystem::currentWorkspaceId();
 
         Validator::extendImplicit('valid_status', function ($attribute, $value, $parameters, $validator) {
             return $this->campaign

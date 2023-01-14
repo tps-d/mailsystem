@@ -36,7 +36,7 @@ class SubscriberTagsController extends Controller
      */
     public function index(int $subscriberId): AnonymousResourceCollection
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $subscriber = $this->subscribers->find($workspaceId, $subscriberId, ['tags']);
 
         return TagResource::collection($subscriber->tags);
@@ -48,7 +48,7 @@ class SubscriberTagsController extends Controller
     public function store(SubscriberTagStoreRequest $request, int $subscriberId): AnonymousResourceCollection
     {
         $input = $request->validated();
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $tags = $this->apiService->store($workspaceId, $subscriberId, collect($input['tags']));
 
         return TagResource::collection($tags);
@@ -60,7 +60,7 @@ class SubscriberTagsController extends Controller
     public function update(SubscriberTagUpdateRequest $request, int $subscriberId): AnonymousResourceCollection
     {
         $input = $request->validated();
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $tags = $this->apiService->update($workspaceId, $subscriberId, collect($input['tags']));
 
         return TagResource::collection($tags);
@@ -72,7 +72,7 @@ class SubscriberTagsController extends Controller
     public function destroy(SubscriberTagDestroyRequest $request, int $subscriberId): AnonymousResourceCollection
     {
         $input = $request->validated();
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $tags = $this->apiService->destroy($workspaceId, $subscriberId, collect($input['tags']));
 
         return TagResource::collection($tags);

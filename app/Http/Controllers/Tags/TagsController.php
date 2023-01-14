@@ -13,6 +13,8 @@ use App\Http\Requests\TagStoreRequest;
 use App\Http\Requests\TagUpdateRequest;
 use App\Repositories\TagRepository;
 
+use App\Facades\MailSystem;
+
 class TagsController extends Controller
 {
     /** @var TagRepository */
@@ -28,7 +30,7 @@ class TagsController extends Controller
      */
     public function index(): View
     {
-        $tags = $this->tagRepository->paginate(0, 'name');
+        $tags = $this->tagRepository->paginate(MailSystem::currentWorkspaceId(), 'name');
 
         return view('tags.index', compact('tags'));
     }
@@ -43,7 +45,7 @@ class TagsController extends Controller
      */
     public function store(TagStoreRequest $request): RedirectResponse
     {
-        $this->tagRepository->store(0, $request->all());
+        $this->tagRepository->store(MailSystem::currentWorkspaceId(), $request->all());
 
         return redirect()->route('tags.index');
     }
@@ -53,7 +55,7 @@ class TagsController extends Controller
      */
     public function edit(int $id): View
     {
-        $tag = $this->tagRepository->find(0, $id, ['subscribers']);
+        $tag = $this->tagRepository->find(MailSystem::currentWorkspaceId(), $id, ['subscribers']);
 
         return view('tags.edit', compact('tag'));
     }
@@ -63,7 +65,7 @@ class TagsController extends Controller
      */
     public function update(int $id, TagUpdateRequest $request): RedirectResponse
     {
-        $this->tagRepository->update(0, $id, $request->all());
+        $this->tagRepository->update(MailSystem::currentWorkspaceId(), $id, $request->all());
 
         return redirect()->route('tags.index');
     }
@@ -73,7 +75,7 @@ class TagsController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        $this->tagRepository->destroy(0, $id);
+        $this->tagRepository->destroy(MailSystem::currentWorkspaceId(), $id);
 
         return redirect()->route('tags.index');
     }

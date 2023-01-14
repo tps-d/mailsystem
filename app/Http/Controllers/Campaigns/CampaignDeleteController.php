@@ -12,6 +12,8 @@ use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use App\Repositories\CampaignRepository;
 
+use App\Facades\MailSystem;
+
 class CampaignDeleteController extends Controller
 {
     /** @var CampaignRepository */
@@ -30,7 +32,7 @@ class CampaignDeleteController extends Controller
      */
     public function confirm(int $id)
     {
-        $campaign = $this->campaigns->find(0, $id);
+        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $id);
 
         if (!$campaign->draft) {
             return redirect()->route('campaigns.index')
@@ -47,14 +49,14 @@ class CampaignDeleteController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $campaign = $this->campaigns->find(0, $request->get('id'));
+        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $request->get('id'));
 
         if (!$campaign->draft) {
             return redirect()->route('campaigns.index')
                 ->withErrors(__('Unable to delete a campaign that is not in draft status'));
         }
 
-        $this->campaigns->destroy(0, $request->get('id'));
+        $this->campaigns->destroy(MailSystem::currentWorkspaceId(), $request->get('id'));
 
         return redirect()->route('campaigns.index')
             ->with('success', __('The Campaign has been successfully deleted'));

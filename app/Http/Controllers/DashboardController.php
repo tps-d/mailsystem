@@ -11,6 +11,8 @@ use App\Repositories\MessageRepository;
 use App\Repositories\SubscriberRepository;
 use App\Services\Campaigns\CampaignStatisticsService;
 
+use App\Facades\MailSystem;
+
 class DashboardController extends Controller
 {
     /**
@@ -46,7 +48,7 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $completedCampaigns = $this->campaigns->completedCampaigns($workspaceId, ['status']);
         $subscriberGrowthChart = $this->getSubscriberGrowthChart($workspaceId);
 

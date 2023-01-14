@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 
+use App\Facades\MailSystem;
 
 class ApiTokenController extends Controller
 {
@@ -28,7 +29,7 @@ class ApiTokenController extends Controller
      */
     public function index(): View
     {
-        $tokens = $this->apiTokensRepo->all(0);
+        $tokens = $this->apiTokensRepo->all(MailSystem::currentWorkspaceId());
 
         return view('api-tokens.index', compact('tokens'));
     }
@@ -43,7 +44,7 @@ class ApiTokenController extends Controller
         $newToken = Str::random(32);
 
         $this->apiTokensRepo->store(
-            0,
+            MailSystem::currentWorkspaceId(),
             ['api_token' => $newToken, 'description' => $input['description']]
         );
 
@@ -56,7 +57,7 @@ class ApiTokenController extends Controller
      */
     public function destroy(int $tokenId): RedirectResponse
     {
-        $this->apiTokensRepo->destroy(0, $tokenId);
+        $this->apiTokensRepo->destroy(MailSystem::currentWorkspaceId(), $tokenId);
 
         return redirect()->back();
     }

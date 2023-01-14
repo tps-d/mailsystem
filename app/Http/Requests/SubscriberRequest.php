@@ -6,6 +6,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+use App\Facades\MailSystem;
 
 /**
  * @property-read string $subscriber
@@ -22,7 +23,7 @@ class SubscriberRequest extends FormRequest
                 Rule::unique('sendportal_subscribers', 'email')
                     ->ignore($this->subscriber, 'id')
                     ->where(static function (Builder $query) {
-                        $query->where('workspace_id', 0);
+                        $query->where('workspace_id', MailSystem::currentWorkspaceId());
                     })
             ],
             'first_name' => [

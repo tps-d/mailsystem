@@ -11,6 +11,8 @@ use App\Http\Controllers\Controller;
 use App\Models\CampaignStatus;
 use App\Repositories\CampaignRepository;
 
+use App\Facades\MailSystem;
+
 class CampaignDuplicateController extends Controller
 {
     /** @var CampaignRepository */
@@ -28,7 +30,7 @@ class CampaignDuplicateController extends Controller
      */
     public function duplicate(int $campaignId): RedirectResponse
     {
-        $campaign = $this->campaigns->find(0, $campaignId);
+        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $campaignId);
 
         return redirect()->route('campaigns.create')->withInput([
             'name' => $campaign->name . ' - Duplicate',

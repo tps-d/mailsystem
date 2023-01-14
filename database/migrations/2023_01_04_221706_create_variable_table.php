@@ -17,7 +17,9 @@ class CreateVariableTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('workspace_id')->index();
             $table->string('name')->unique();
-            $table->string('description')->unique();
+            $table->string('description')->nullable();
+            $table->integer('value_type');
+            $table->string('value_from')->nullable();
             $table->timestamps();
         });
     }

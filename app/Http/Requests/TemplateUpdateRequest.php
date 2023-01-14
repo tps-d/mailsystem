@@ -24,6 +24,10 @@ class TemplateUpdateRequest extends FormRequest
                     ->ignore($this->template),
             ],
             'content' => 'required',
+            'web_hook' => [
+                'required',
+                'max:255'
+            ]
         ];
     }
 

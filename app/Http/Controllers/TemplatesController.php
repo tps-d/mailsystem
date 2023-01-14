@@ -16,6 +16,8 @@ use App\Services\Templates\TemplateService;
 use App\Traits\NormalizeTags;
 use Throwable;
 
+use App\Facades\MailSystem;
+
 class TemplatesController extends Controller
 {
     use NormalizeTags;
@@ -41,14 +43,14 @@ class TemplatesController extends Controller
      */
     public function index(): View
     {
-        $templates = $this->templates->paginate(0, 'name');
+        $templates = $this->templates->paginate(MailSystem::currentWorkspaceId(), 'name');
 
         return view('templates.index', compact('templates'));
     }
 
     public function create(): View
     {
-        $variables = $this->variable->all(0);
+        $variables = $this->variable->getCache();
         return view('templates.create', compact('variables'));
     }
 
@@ -59,7 +61,7 @@ class TemplatesController extends Controller
     {
         $data = $request->validated();
 
-        $this->service->store(0, $data);
+        $this->service->store(MailSystem::currentWorkspaceId(), $data);
 
         return redirect()
             ->route('templates.index');
@@ -70,9 +72,9 @@ class TemplatesController extends Controller
      */
     public function edit(int $id): View
     {
-        $template = $this->templates->find(0, $id);
+        $template = $this->templates->find(MailSystem::currentWorkspaceId(), $id);
 
-        $variables = $this->variable->all(0);
+        $variables = $this->variable->getCache();
 
         return view('templates.edit', compact('template','variables'));
     }
@@ -84,7 +86,7 @@ class TemplatesController extends Controller
     {
         $data = $request->validated();
 
-        $this->service->update(0, $id, $data);
+        $this->service->update(MailSystem::currentWorkspaceId(), $id, $data);
 
         return redirect()
             ->route('templates.index');
@@ -95,7 +97,7 @@ class TemplatesController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        $this->service->delete(0, $id);
+        $this->service->delete(MailSystem::currentWorkspaceId(), $id);
 
         return redirect()
             ->route('templates.index')

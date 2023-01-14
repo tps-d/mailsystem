@@ -21,6 +21,8 @@ use App\Http\Requests\SubscribersImportRequest;
 use App\Repositories\TagRepository;
 use App\Services\Subscribers\ImportSubscriberService;
 
+use App\Facades\MailSystem;
+
 class SubscribersImportController extends Controller
 {
     /** @var ImportSubscriberService */
@@ -36,7 +38,7 @@ class SubscribersImportController extends Controller
      */
     public function show(TagRepository $tagRepo): ViewContract
     {
-        $tags = $tagRepo->pluck(0, 'name', 'id');
+        $tags = $tagRepo->pluck(MailSystem::currentWorkspaceId(), 'name', 'id');
 
         return view('subscribers.import', compact('tags'));
     }
@@ -73,7 +75,7 @@ class SubscribersImportController extends Controller
                 $data = Arr::only($line, ['id', 'email', 'first_name', 'last_name']);
 
                 $data['tags'] = $request->get('tags') ?? [];
-                $subscriber = $this->subscriberService->import(0, $data);
+                $subscriber = $this->subscriberService->import(MailSystem::currentWorkspaceId(), $data);
 
                 if ($subscriber->wasRecentlyCreated) {
                     $counter['created']++;

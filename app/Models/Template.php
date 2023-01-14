@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Template extends BaseModel
 {
+    /*
     use HasFactory;
 
     // NOTE(david): we require this because of namespace issues when resolving factories from models
@@ -32,7 +33,7 @@ class Template extends BaseModel
     {
         return TemplateFactory::new();
     }
-
+*/
     /** @var string */
     protected $table = 'sendportal_templates';
 

@@ -7,6 +7,7 @@ namespace App\Http\Requests\Api;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+use App\Facades\MailSystem;
 
 class TagStoreRequest extends FormRequest
 {
@@ -16,7 +17,7 @@ class TagStoreRequest extends FormRequest
             'name' => [
                 'required',
                 Rule::unique('sendportal_tags')
-                    ->where('workspace_id', 0),
+                    ->where('workspace_id', MailSystem::currentWorkspaceId()),
             ],
             'subscribers' => [
                 'array',

@@ -6,7 +6,7 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
-
+use App\Facades\MailSystem;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
 use App\Repositories\CampaignRepository;
@@ -41,7 +41,7 @@ class CampaignDispatchRequest extends FormRequest
      */
     public function getCampaign(array $relations = []): Campaign
     {
-        return $this->campaign = $this->campaigns->find(0, $this->id, $relations);
+        return $this->campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $this->id, $relations);
     }
 
     public function rules()

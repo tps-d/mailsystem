@@ -14,6 +14,8 @@ use App\Services\QuotaService;
 use App\Models\CampaignStatus;
 use App\Repositories\CampaignRepository;
 
+use App\Facades\MailSystem;
+
 class CampaignDispatchController extends Controller
 {
     /** @var CampaignRepository */
@@ -39,7 +41,7 @@ class CampaignDispatchController extends Controller
      */
     public function send(CampaignDispatchRequest $request, int $id): RedirectResponse
     {
-        $campaign = $this->campaigns->find(0, $id, ['email_service', 'messages']);
+        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $id, ['email_service', 'messages']);
 
         if ($campaign->status_id !== CampaignStatus::STATUS_DRAFT) {
             return redirect()->route('campaigns.status', $id);

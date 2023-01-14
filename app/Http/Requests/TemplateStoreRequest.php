@@ -23,6 +23,10 @@ class TemplateStoreRequest extends FormRequest
                     ->where('workspace_id', 0),
             ],
             'content' => 'required',
+            'web_hook' => [
+                'required',
+                'max:255'
+            ],
         ];
     }
 

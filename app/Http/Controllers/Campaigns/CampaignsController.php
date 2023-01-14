@@ -18,6 +18,8 @@ use App\Repositories\TagRepository;
 use App\Repositories\TemplateRepository;
 use App\Services\Campaigns\CampaignStatisticsService;
 
+use App\Facades\MailSystem;
+
 class CampaignsController extends Controller
 {
     /** @var CampaignRepository */
@@ -61,7 +63,7 @@ class CampaignsController extends Controller
      */
     public function index(): ViewContract
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $params = ['draft' => true];
         $campaigns = $this->campaigns->paginate($workspaceId, 'created_atDesc', ['status'], 25, $params);
 
@@ -76,7 +78,7 @@ class CampaignsController extends Controller
      */
     public function sent(): ViewContract
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $params = ['sent' => true];
         $campaigns = $this->campaigns->paginate($workspaceId, 'created_atDesc', ['status'], 25, $params);
 
@@ -91,9 +93,9 @@ class CampaignsController extends Controller
      */
     public function create(): ViewContract
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
-        $emailServices = $this->emailServices->all(0, 'id', ['type'])
+        $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
             ->map(static function (EmailService $emailService) {
                 $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
                 return $emailService;
@@ -107,7 +109,7 @@ class CampaignsController extends Controller
      */
     public function store(CampaignStoreRequest $request): RedirectResponse
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->campaigns->store($workspaceId, $this->handleCheckboxes($request->validated()));
 
         return redirect()->route('campaigns.preview', $campaign->id);
@@ -118,7 +120,7 @@ class CampaignsController extends Controller
      */
     public function show(int $id): ViewContract
     {
-        $campaign = $this->campaigns->find(0, $id);
+        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $id);
 
         return view('campaigns.show', compact('campaign'));
     }
@@ -128,7 +130,7 @@ class CampaignsController extends Controller
      */
     public function edit(int $id): ViewContract
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->campaigns->find($workspaceId, $id);
         $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
             ->map(static function (EmailService $emailService) {
@@ -145,7 +147,7 @@ class CampaignsController extends Controller
      */
     public function update(int $campaignId, CampaignStoreRequest $request): RedirectResponse
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->campaigns->update(
             $workspaceId,
             $campaignId,
@@ -161,14 +163,14 @@ class CampaignsController extends Controller
      */
     public function preview(int $id)
     {
-        $campaign = $this->campaigns->find(0, $id);
-        $subscriberCount = $this->subscribers->countActive(0);
+        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $id);
+        $subscriberCount = $this->subscribers->countActive(MailSystem::currentWorkspaceId());
 
         if (!$campaign->draft) {
             return redirect()->route('campaigns.status', $id);
         }
 
-        $tags = $this->tags->all(0, 'name');
+        $tags = $this->tags->all(MailSystem::currentWorkspaceId(), 'name');
 
         return view('campaigns.preview', compact('campaign', 'tags', 'subscriberCount'));
     }
@@ -179,7 +181,7 @@ class CampaignsController extends Controller
      */
     public function status(int $id)
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->campaigns->find($workspaceId, $id, ['status']);
 
         if ($campaign->sent) {

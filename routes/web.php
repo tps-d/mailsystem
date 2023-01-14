@@ -6,6 +6,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RequireWorkspace;
 
+use App\Repositories\VariableRepository;
+Route::get('/test', function(){
+    //VariableRepository::flashVariableContent('CAPTCHA_CODE');
+    //VariableRepository::flashVariableContent('EXCHANGE_CODE');
+    VariableRepository::flashVariableContent('COUPON_CODE');
+});
+
 Auth::routes(
     [
         'verify' => config('mailsystem.auth.register', false),

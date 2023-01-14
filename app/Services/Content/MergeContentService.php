@@ -8,6 +8,7 @@ use Exception;
 use App\Models\Campaign;
 use App\Models\Message;
 use App\Repositories\CampaignRepository;
+use App\Repositories\VariableRepository;
 use App\Traits\NormalizeTags;
 use Sendportal\Pro\Repositories\AutomationScheduleRepository;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
@@ -19,14 +20,19 @@ class MergeContentService
     /** @var CampaignRepository */
     protected $campaignRepo;
 
+    /** @var VariableRepository */
+    protected $variableRepo;
+
     /** @var CssToInlineStyles */
     protected $cssProcessor;
 
     public function __construct(
         CampaignRepository $campaignRepo,
+        VariableRepository $variableRepo,
         CssToInlineStyles $cssProcessor
     ) {
         $this->campaignRepo = $campaignRepo;
+        $this->variableRepo = $variableRepo;
         $this->cssProcessor = $cssProcessor;
     }
 
@@ -43,22 +49,7 @@ class MergeContentService
      */
     protected function resolveContent(Message $message): string
     {
-        if ($message->isCampaign()) {
-            $mergedContent = $this->mergeCampaignContent($message);
-        } elseif ($message->isAutomation()) {
-            $mergedContent = $this->mergeAutomationContent($message);
-        } else {
-            throw new Exception('Invalid message source type for message id=' . $message->id);
-        }
 
-        return $this->mergeTags($mergedContent, $message);
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected function mergeCampaignContent(Message $message): string
-    {
         /** @var Campaign $campaign */
         $campaign = $this->campaignRepo->find($message->workspace_id, $message->source_id, ['template']);
 
@@ -66,9 +57,15 @@ class MergeContentService
             throw new Exception('Unable to resolve campaign step for message id= ' . $message->id);
         }
 
-        return $campaign->template
-            ? $this->mergeContent($campaign->content, $campaign->template->content)
-            : $campaign->content;
+        if ($message->isCampaign()) {
+            $mergedContent = $campaign->template ? $this->mergeContent($campaign->content, $campaign->template->content) : $campaign->content;
+        } elseif ($message->isAutomation()) {
+            $mergedContent = $this->mergeAutomationContent($message);
+        } else {
+            throw new Exception('Invalid message source type for message id=' . $message->id);
+        }
+
+        return $this->mergeTags($mergedContent, $message ,$campaign->template);
     }
 
     /**
@@ -96,13 +93,14 @@ class MergeContentService
         return str_ireplace(['{{content}}', '{{ content }}'], $customContent ?: '', $templateContent);
     }
 
-    protected function mergeTags(string $content, Message $message): string
+    protected function mergeTags(string $content, Message $message, $template): string
     {
         $content = $this->compileTags($content);
 
         $content = $this->mergeSubscriberTags($content, $message);
         $content = $this->mergeUnsubscribeLink($content, $message);
         $content = $this->mergeWebviewLink($content, $message);
+        $content = $this->mergeUserTags($content, $message, $template);
 
         return $content;
     }
@@ -156,6 +154,25 @@ class MergeContentService
         $webviewLink = $this->generateWebviewLink($message);
 
         return str_ireplace('{{webview_url}}', $webviewLink, $content);
+    }
+
+    protected function mergeUserTags(string $content, Message $message): string
+    {
+        $variables = $this->variableRepo->getCache();
+
+        $email_pieces = explode('@',$message->recipient_email);
+        $emial_username = $email_pieces[0];
+
+        foreach($variables as $name => $description){
+            $vkey = "{".$name."}";
+            if(false !== strpos($content, $vkey)){
+
+                $variableContent = $this->variableRepo->flashVariableContent($name);
+                $content = str_ireplace($vkey, $variableContent ,$content);
+            }
+        }
+
+        return $content;
     }
 
     protected function generateWebviewLink(Message $message): string

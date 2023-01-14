@@ -21,6 +21,8 @@ use App\Repositories\SubscriberRepository;
 use App\Repositories\TagRepository;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+use App\Facades\MailSystem;
+
 class SubscribersController extends Controller
 {
     /** @var SubscriberRepository */
@@ -41,13 +43,13 @@ class SubscribersController extends Controller
     public function index(): View
     {
         $subscribers = $this->subscriberRepo->paginate(
-            0,
+            MailSystem::currentWorkspaceId(),
             'email',
             ['tags'],
             50,
             request()->all()
         )->withQueryString();
-        $tags = $this->tagRepo->pluck(0, 'name', 'id');
+        $tags = $this->tagRepo->pluck(MailSystem::currentWorkspaceId(), 'name', 'id');
 
         return view('subscribers.index', compact('subscribers', 'tags'));
     }
@@ -57,7 +59,7 @@ class SubscribersController extends Controller
      */
     public function create(): View
     {
-        $tags = $this->tagRepo->pluck(0);
+        $tags = $this->tagRepo->pluck(MailSystem::currentWorkspaceId());
         $selectedTags = [];
 
         return view('subscribers.create', compact('tags', 'selectedTags'));
@@ -72,7 +74,7 @@ class SubscribersController extends Controller
         $data['unsubscribed_at'] = $request->has('subscribed') ? null : now();
         $data['unsubscribe_event_id'] = $request->has('subscribed') ? null : UnsubscribeEventType::MANUAL_BY_ADMIN;
 
-        $subscriber = $this->subscriberRepo->store(0, $data);
+        $subscriber = $this->subscriberRepo->store(MailSystem::currentWorkspaceId(), $data);
 
         event(new SubscriberAddedEvent($subscriber));
 
@@ -98,8 +100,8 @@ class SubscribersController extends Controller
      */
     public function edit(int $id): View
     {
-        $subscriber = $this->subscriberRepo->find(0, $id);
-        $tags = $this->tagRepo->pluck(0);
+        $subscriber = $this->subscriberRepo->find(MailSystem::currentWorkspaceId(), $id);
+        $tags = $this->tagRepo->pluck(MailSystem::currentWorkspaceId());
         $selectedTags = $subscriber->tags->pluck('name', 'id');
 
         return view('subscribers.edit', compact('subscriber', 'tags', 'selectedTags'));
@@ -110,7 +112,7 @@ class SubscribersController extends Controller
      */
     public function update(SubscriberRequest $request, int $id): RedirectResponse
     {
-        $subscriber = $this->subscriberRepo->find(0, $id);
+        $subscriber = $this->subscriberRepo->find(MailSystem::currentWorkspaceId(), $id);
         $data = $request->validated();
 
         // updating subscriber from subscribed -> unsubscribed
@@ -127,7 +129,7 @@ class SubscribersController extends Controller
             $data['tags'] = [];
         }
 
-        $this->subscriberRepo->update(0, $id, $data);
+        $this->subscriberRepo->update(MailSystem::currentWorkspaceId(), $id, $data);
 
         return redirect()->route('subscribers.index');
     }
@@ -137,7 +139,7 @@ class SubscribersController extends Controller
      */
     public function destroy($id)
     {
-        $subscriber = $this->subscriberRepo->find(0, $id);
+        $subscriber = $this->subscriberRepo->find(MailSystem::currentWorkspaceId(), $id);
 
         $subscriber->delete();
 
@@ -154,7 +156,7 @@ class SubscribersController extends Controller
      */
     public function export()
     {
-        $subscribers = $this->subscriberRepo->all(0, 'id');
+        $subscribers = $this->subscriberRepo->all(MailSystem::currentWorkspaceId(), 'id');
 
         if (!$subscribers->count()) {
             return redirect()->route('subscribers.index')->withErrors(__('There are no subscribers to export'));

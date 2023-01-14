@@ -39,7 +39,7 @@ class TemplatesController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $templates = $this->templates->paginate($workspaceId, 'name');
 
         return TemplateResource::collection($templates);
@@ -51,7 +51,7 @@ class TemplatesController extends Controller
      */
     public function show(int $id): TemplateResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
 
         return new TemplateResource($this->templates->find($workspaceId, $id));
     }
@@ -61,7 +61,7 @@ class TemplatesController extends Controller
      */
     public function store(TemplateStoreRequest $request): TemplateResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $template = $this->service->store($workspaceId, $request->validated());
 
         return new TemplateResource($template);
@@ -72,7 +72,7 @@ class TemplatesController extends Controller
      */
     public function update(TemplateUpdateRequest $request, int $id): TemplateResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $template = $this->service->update($workspaceId, $id, $request->validated());
 
         return new TemplateResource($template);
@@ -83,7 +83,7 @@ class TemplatesController extends Controller
      */
     public function destroy(int $id): Response
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $this->service->delete($workspaceId, $id);
 
         return response(null, 204);

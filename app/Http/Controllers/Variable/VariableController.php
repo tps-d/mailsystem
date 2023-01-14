@@ -11,7 +11,10 @@ use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VariableStoreRequest;
 use App\Http\Requests\VariableUpdateRequest;
+
+use App\Models\Variable;
 use App\Repositories\VariableRepository;
+use App\Facades\MailSystem;
 
 class VariableController extends Controller
 {
@@ -28,14 +31,15 @@ class VariableController extends Controller
      */
     public function index(): View
     {
-        $variables = $this->variableRepository->paginate(0, 'name');
+        $variables = $this->variableRepository->paginate(MailSystem::currentWorkspaceId(), 'name');
 
         return view('variable.index', compact('variables'));
     }
 
     public function create(): View
-    {
-        return view('variable.create');
+    {   
+        $value_types = Variable::$value_types_map;
+        return view('variable.create', compact('value_types'));
     }
 
     /**
@@ -43,7 +47,9 @@ class VariableController extends Controller
      */
     public function store(VariableStoreRequest $request): RedirectResponse
     {
-        $this->variableRepository->store(0, $request->all());
+        $this->variableRepository->store(MailSystem::currentWorkspaceId(), $request->all());
+
+        $this->variableRepository->rebuildCache();
 
         return redirect()->route('variable.index');
     }
@@ -53,7 +59,7 @@ class VariableController extends Controller
      */
     public function edit(int $id): View
     {
-        $variable = $this->variableRepository->find(0, $id);
+        $variable = $this->variableRepository->find(MailSystem::currentWorkspaceId(), $id);
 
         return view('variable.edit', compact('variable'));
     }
@@ -63,7 +69,9 @@ class VariableController extends Controller
      */
     public function update(int $id, VariableUpdateRequest $request): RedirectResponse
     {
-        $this->variableRepository->update(0, $id, $request->all());
+        $this->variableRepository->update(MailSystem::currentWorkspaceId(), $id, $request->all());
+
+        $this->variableRepository->rebuildCache();
 
         return redirect()->route('variable.index');
     }
@@ -73,7 +81,9 @@ class VariableController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        $this->variableRepository->destroy(0, $id);
+        $this->variableRepository->destroy(MailSystem::currentWorkspaceId(), $id);
+
+        $this->variableRepository->rebuildCache();
 
         return redirect()->route('variable.index');
     }

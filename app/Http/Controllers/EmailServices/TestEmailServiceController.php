@@ -12,6 +12,8 @@ use App\Repositories\EmailServiceRepository;
 use App\Services\Messages\DispatchTestMessage;
 use App\Services\Messages\MessageOptions;
 
+use App\Facades\MailSystem;
+
 class TestEmailServiceController extends Controller
 {
     /** @var EmailServiceRepository */
@@ -24,7 +26,7 @@ class TestEmailServiceController extends Controller
 
     public function create(int $emailServiceId)
     {
-        $emailService = $this->emailServices->find(0, $emailServiceId);
+        $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId);
 
         return view('email_services.test', compact('emailService'));
     }
@@ -34,7 +36,7 @@ class TestEmailServiceController extends Controller
      */
     public function store(int $emailServiceId, EmailServiceTestRequest $request, DispatchTestMessage $dispatchTestMessage): RedirectResponse
     {
-        $emailService = $this->emailServices->find(0, $emailServiceId);
+        $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId);
 
         $options = new MessageOptions();
         $options->setFromEmail($request->input('from'));

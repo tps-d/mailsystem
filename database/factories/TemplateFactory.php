@@ -18,7 +18,8 @@ class TemplateFactory extends Factory
         return [
             'name' => $this->faker->word,
             'workspace_id' => 0,
-            'content' => '{{content}}'
+            'content' => '{{content}}',
+            'web_hook' => null
         ];
     }
 }

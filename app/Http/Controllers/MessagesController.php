@@ -13,6 +13,7 @@ use App\Repositories\MessageRepository;
 use App\Services\Content\MergeContentService;
 use App\Services\Content\MergeSubjectService;
 use App\Services\Messages\DispatchMessage;
+use App\Facades\MailSystem;
 
 class MessagesController extends Controller
 {
@@ -51,7 +52,7 @@ class MessagesController extends Controller
         $params['sent'] = true;
 
         $messages = $this->messageRepo->paginateWithSource(
-            0,
+            MailSystem::currentWorkspaceId(),
             'sent_atDesc',
             [],
             50,
@@ -69,7 +70,7 @@ class MessagesController extends Controller
     public function draft(): View
     {
         $messages = $this->messageRepo->paginateWithSource(
-            0,
+            MailSystem::currentWorkspaceId(),
             'created_atDesc',
             [],
             50,
@@ -86,7 +87,7 @@ class MessagesController extends Controller
      */
     public function show(int $messageId): View
     {
-        $message = $this->messageRepo->find(0, $messageId);
+        $message = $this->messageRepo->find(MailSystem::currentWorkspaceId(), $messageId);
 
         $content = $this->mergeContentService->handle($message);
         $subject = $this->mergeSubjectService->handle($message);
@@ -102,7 +103,7 @@ class MessagesController extends Controller
     public function send(): RedirectResponse
     {
         if (!$message = $this->messageRepo->find(
-            0,
+            MailSystem::currentWorkspaceId(),
             request('id'),
             ['subscriber']
         )) {
@@ -129,7 +130,7 @@ class MessagesController extends Controller
     public function delete(): RedirectResponse
     {
         if (!$message = $this->messageRepo->find(
-            0,
+            MailSystem::currentWorkspaceId(),
             request('id')
         )) {
             return redirect()->back()->withErrors(__('Unable to locate that message'));
@@ -140,7 +141,7 @@ class MessagesController extends Controller
         }
 
         $this->messageRepo->destroy(
-            0,
+            MailSystem::currentWorkspaceId(),
             $message->id
         );
 
@@ -162,7 +163,7 @@ class MessagesController extends Controller
         }
 
         if (!$messages = $this->messageRepo->getWhereIn(
-            0,
+            MailSystem::currentWorkspaceId(),
             request('messages'),
             ['subscriber']
         )) {

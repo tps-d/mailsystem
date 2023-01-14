@@ -34,7 +34,7 @@ class CampaignDispatchController extends Controller
     public function send(CampaignDispatchRequest $request, $campaignId)
     {
         $campaign = $request->getCampaign(['email_service', 'messages']);
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
 
         if ($this->quotaService->exceedsQuota($campaign->email_service, $campaign->unsent_count)) {
             return response([

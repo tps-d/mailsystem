@@ -25,6 +25,12 @@ class DatabaseSeeder extends Seeder
                     'api_token' => Str::random(80),
                 ]);
 
+        DB::table('workspaces')->insert([
+                   'owner_id' => 1,
+                    'name' => 'default',
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
         //$this->call(UserSeeder::class);
     }
 }

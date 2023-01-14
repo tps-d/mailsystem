@@ -16,6 +16,8 @@ use App\Presenters\CampaignReportPresenter;
 use App\Repositories\CampaignRepository;
 use App\Repositories\MessageRepository;
 
+use App\Facades\MailSystem;
+
 class CampaignReportsController extends Controller
 {
     /** @var CampaignRepository */
@@ -40,7 +42,7 @@ class CampaignReportsController extends Controller
      */
     public function index(int $id, Request $request)
     {
-        $campaign = $this->campaignRepo->find(0, $id);
+        $campaign = $this->campaignRepo->find(MailSystem::currentWorkspaceId(), $id);
 
         if ($campaign->draft) {
             return redirect()->route('campaigns.edit', $id);
@@ -50,7 +52,7 @@ class CampaignReportsController extends Controller
             return redirect()->route('campaigns.status', $id);
         }
 
-        $presenter = new CampaignReportPresenter($campaign, 0, (int) $request->get('interval', 24));
+        $presenter = new CampaignReportPresenter($campaign, MailSystem::currentWorkspaceId(), (int) $request->get('interval', 24));
         $presenterData = $presenter->generate();
 
         $data = [
@@ -72,7 +74,7 @@ class CampaignReportsController extends Controller
      */
     public function recipients(int $id)
     {
-        $campaign = $this->campaignRepo->find(0, $id);
+        $campaign = $this->campaignRepo->find(MailSystem::currentWorkspaceId(), $id);
 
         if ($campaign->draft) {
             return redirect()->route('campaigns.edit', $id);
@@ -82,7 +84,7 @@ class CampaignReportsController extends Controller
             return redirect()->route('campaigns.status', $id);
         }
 
-        $messages = $this->messageRepo->recipients(0, Campaign::class, $id);
+        $messages = $this->messageRepo->recipients(MailSystem::currentWorkspaceId(), Campaign::class, $id);
 
         return view('campaigns.reports.recipients', compact('campaign', 'messages'));
     }
@@ -95,7 +97,7 @@ class CampaignReportsController extends Controller
      */
     public function opens(int $id)
     {
-        $campaign = $this->campaignRepo->find(0, $id);
+        $campaign = $this->campaignRepo->find(MailSystem::currentWorkspaceId(), $id);
         $averageTimeToOpen = $this->campaignRepo->getAverageTimeToOpen($campaign);
 
         if ($campaign->draft) {
@@ -106,7 +108,7 @@ class CampaignReportsController extends Controller
             return redirect()->route('campaigns.status', $id);
         }
 
-        $messages = $this->messageRepo->opens(0, Campaign::class, $id);
+        $messages = $this->messageRepo->opens(MailSystem::currentWorkspaceId(), Campaign::class, $id);
 
         return view('campaigns.reports.opens', compact('campaign', 'messages', 'averageTimeToOpen'));
     }
@@ -119,7 +121,7 @@ class CampaignReportsController extends Controller
      */
     public function clicks(int $id)
     {
-        $campaign = $this->campaignRepo->find(0, $id);
+        $campaign = $this->campaignRepo->find(MailSystem::currentWorkspaceId(), $id);
         $averageTimeToClick = $this->campaignRepo->getAverageTimeToClick($campaign);
 
         if ($campaign->draft) {
@@ -130,7 +132,7 @@ class CampaignReportsController extends Controller
             return redirect()->route('campaigns.status', $id);
         }
 
-        $messages = $this->messageRepo->clicks(0, Campaign::class, $id);
+        $messages = $this->messageRepo->clicks(MailSystem::currentWorkspaceId(), Campaign::class, $id);
 
         return view('campaigns.reports.clicks', compact('campaign', 'messages', 'averageTimeToClick'));
     }
@@ -143,7 +145,7 @@ class CampaignReportsController extends Controller
      */
     public function bounces(int $id)
     {
-        $campaign = $this->campaignRepo->find(0, $id);
+        $campaign = $this->campaignRepo->find(MailSystem::currentWorkspaceId(), $id);
 
         if ($campaign->draft) {
             return redirect()->route('campaigns.edit', $id);
@@ -153,7 +155,7 @@ class CampaignReportsController extends Controller
             return redirect()->route('campaigns.status', $id);
         }
 
-        $messages = $this->messageRepo->bounces(0, Campaign::class, $id);
+        $messages = $this->messageRepo->bounces(MailSystem::currentWorkspaceId(), Campaign::class, $id);
 
         return view('campaigns.reports.bounces', compact('campaign', 'messages'));
     }
@@ -166,7 +168,7 @@ class CampaignReportsController extends Controller
      */
     public function unsubscribes(int $id)
     {
-        $campaign = $this->campaignRepo->find(0, $id);
+        $campaign = $this->campaignRepo->find(MailSystem::currentWorkspaceId(), $id);
 
         if ($campaign->draft) {
             return redirect()->route('campaigns.edit', $id);
@@ -176,7 +178,7 @@ class CampaignReportsController extends Controller
             return redirect()->route('campaigns.status', $id);
         }
 
-        $messages = $this->messageRepo->unsubscribes(0, Campaign::class, $id);
+        $messages = $this->messageRepo->unsubscribes(MailSystem::currentWorkspaceId(), Campaign::class, $id);
 
         return view('campaigns.reports.unsubscribes', compact('campaign', 'messages'));
     }

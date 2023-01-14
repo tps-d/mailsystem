@@ -36,7 +36,7 @@ class TagsController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
 
         return TagResource::collection(
             $this->tags->paginate($workspaceId, 'name', [], request()->get('per_page', 25))
@@ -49,7 +49,7 @@ class TagsController extends Controller
     public function store(TagStoreRequest $request): TagResource
     {
         $input = $request->validated();
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $tag = $this->apiService->store($workspaceId, collect($input));
 
         $tag->load('subscribers');
@@ -62,7 +62,7 @@ class TagsController extends Controller
      */
     public function show(int $id): TagResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
 
         return new TagResource($this->tags->find($workspaceId, $id));
     }
@@ -72,7 +72,7 @@ class TagsController extends Controller
      */
     public function update(TagUpdateRequest $request, int $id): TagResource
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $tag = $this->tags->update($workspaceId, $id, $request->validated());
 
         return new TagResource($tag);
@@ -83,7 +83,7 @@ class TagsController extends Controller
      */
     public function destroy(int $id): Response
     {
-        $workspaceId = 0;
+        $workspaceId = MailSystem::currentWorkspaceId();
         $this->tags->destroy($workspaceId, $id);
 
         return response(null, 204);
