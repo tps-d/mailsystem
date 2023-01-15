@@ -5,6 +5,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3",
+        "ajaxray/short-code": "^1.1",
         "doctrine/dbal": "^3.3",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
@@ -14,8 +15,8 @@
         "laravel/ui": "^3.0",
         "mailgun/mailgun-php": "^3.5",
         "nyholm/psr7": "^1.5",
-        "symfony/http-client": "^5.4",
-        "rap2hpoutre/fast-excel": "^2.3"
+        "rap2hpoutre/fast-excel": "^2.3",
+        "symfony/http-client": "^5.4"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",

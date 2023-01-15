@@ -7,13 +7,6 @@
 
 @include('templates.partials.editor')
 
-<div class="form-group row form-group-name">
-    <label for="id-field-web_hook" class="control-label col-sm-2">Web hook</label>
-    <div class="col-sm-6">
-        <input id="id-field-web_hook" class="form-control" name="web_hook" type="text" value="{{ old('web_hook', $template->web_hook ?? '') }}">
-    </div>
-</div>
-
 <div class="form-group row">
     <div class="offset-2 col-10">
         <a href="#" class="btn btn-md btn-secondary btn-preview">{{ __('Show Preview') }}</a>

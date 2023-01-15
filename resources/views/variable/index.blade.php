@@ -23,6 +23,7 @@
                 <tr>
                     <th>{{ __('Name') }}</th>
                     <th>{{ __('Description') }}</th>
+                    <th>{{ __('Value Type') }}</th>
                     <th>{{ __('Actions') }}</th>
                 </tr>
                 </thead>
@@ -35,6 +36,7 @@
                             </a>
                         </td>
                         <td>{{ $variable->description }}</td>
+                        <td>{{ $variable->value_type_name }}</td>
                         <td>
                             @include('variable.partials.actions')
                         </td>

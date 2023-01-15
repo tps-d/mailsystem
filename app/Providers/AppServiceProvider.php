@@ -13,7 +13,6 @@ use RuntimeException;
 use Illuminate\Foundation\Application;
 
 use App\Services\Helper;
-use App\Services\NumberConversion;
 use App\Services\MailSystem;
 use App\Services\ResolverService;
 //use App\Facades\MailSystem;
@@ -64,10 +63,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('mailsystem.resolver', function () {
             return new ResolverService();
-        });
-
-        $this->app->singleton('mailsystem.numberconversion', function () {
-            return new NumberConversion();
         });
  
     }

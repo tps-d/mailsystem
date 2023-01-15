@@ -4,7 +4,8 @@ namespace App\Repositories;
 
 use Illuminate\Support\Facades\Cache;
 use App\Models\Variable;
-use App\Facades\NumberConversion;
+
+use App\Facades\Helper;
 
 class VariableRepository extends BaseRepository
 {
@@ -46,55 +47,68 @@ class VariableRepository extends BaseRepository
 
         $cache_list = $variables->all();
 
-        Cache::forever('template_variables', json_encode($cache_list));
+        Cache::forever('template_variables_'.$workspaceId, json_encode($cache_list));
     }
 
-    public function flashVariableContent($name)
-    {
-        $content = "";
+    public function flashVariableContent($workspaceId,$recipient_email,$variable){
 
+        $tag_name = $variable['name'] ?? '';
+        $value_type = $variable['value_type'] ?? '';
+        $value_from = $variable['value_from'] ?? '';
 
+        $time_limit = 600;
 
-        switch($name){
-            case 'CAPTCHA_CODE':
-                // 加密
-                $encryption = NumberConversion::generateCardByNum(32003, 4);
-                echo $encryption;
-                echo "<hr/>";
-                // 解密;
-                $decrypt = NumberConversion::generateNumByCard("gjv5r6vhhvASFBSWW#" );
-                echo $decrypt;
-
-
-
+        switch($value_type){
+            //随机数值
+            case 1:
+                $variableContent = \ShortCode\Random::get(6);
                 break;
-            case 'EXCHANGE_CODE':
 
-                $psa= NumberConversion::encode_pass("woshi ceshi yong de ","123","encode",64);
-                echo $psa;
-                echo "<hr/>";
-                echo NumberConversion::encode_pass($psa,"123",'decode',64);
-                // code...
-            case 'COUPON_CODE':
+            //随机可逆字符串
+            case 2:
 
-                $psa= NumberConversion::alphabet_to_number("cmworldcom");
-                echo $psa;
-                echo "<hr/>";
-                echo NumberConversion::number_to_alphabet($psa);
+                $variableContent = Helper::authcode($recipient_email,'ENCODE', 'workspace_'.$workspaceId );
                 break;
-            case 'LAST_OFFICE_URL':
-                // code...
+
+            //随机可逆字符串带时间限制
+            case 3:
+                
+                $variableContent = Helper::authcode($recipient_email,'ENCODE', 'workspace_'.$workspaceId , $time_limit);
                 break;
-            case 'LAST_DWONLOAD_URL':
-                // code...
+
+            //固定值
+            case 4:
+
+                $value_from = $variable['value_from'] ?? null;
+                if(!$value_from){
+                    throw new Exception('No value for "'.$variable_content.'"');
+                }
+
+                $variableContent = $variable['value_from'];
                 break;
-            case 'LAST_QRCODE_IMG':
-                // code...
+
+            //Web hook
+            case 5:
+
+                $value_from = $variable['value_from'] ?? null;
+                if(!$value_from){
+                    throw new Exception('No value for "'.$variable_content.'"');
+                }
+
+                $_post_data = ['name' => $recipient_email];
+                $result = Helper::httpFetchJson($value_from,'POST',$_post_data);
+                $json_res = json_decode($result,true);
+                if(!$json_res || !isset($json_res['value'])){
+                    throw new Exception('"'.$value_from.'" get unknow result: '.$result);
+                }
+
+                $variableContent = $json_res['value'];
+
                 break;
             default:
-
+                 throw new Exception('unknow value_type for "'.$tag_name.'" with : '.json_encode($variable));
         }
-
-        return $content;
+        
+        return $variableContent;
     }
 }

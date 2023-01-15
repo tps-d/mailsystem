@@ -50,7 +50,7 @@ class TemplatesController extends Controller
 
     public function create(): View
     {
-        $variables = $this->variable->getCache();
+        $variables = $this->variable->getCache(MailSystem::currentWorkspaceId());
         return view('templates.create', compact('variables'));
     }
 
@@ -74,8 +74,8 @@ class TemplatesController extends Controller
     {
         $template = $this->templates->find(MailSystem::currentWorkspaceId(), $id);
 
-        $variables = $this->variable->getCache();
-
+        $variables = $this->variable->getCache(MailSystem::currentWorkspaceId());
+        
         return view('templates.edit', compact('template','variables'));
     }
 

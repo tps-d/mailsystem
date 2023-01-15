@@ -28,4 +28,8 @@ class Variable extends BaseModel
         5 => 'Web hook'
     ];
 
+    protected function getValueTypeNameAttribute()
+    {
+        return Variable::$value_types_map[$this->value_type];
+    }
 }

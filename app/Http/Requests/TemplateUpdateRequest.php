@@ -23,11 +23,7 @@ class TemplateUpdateRequest extends FormRequest
                     ->where('workspace_id', 0)
                     ->ignore($this->template),
             ],
-            'content' => 'required',
-            'web_hook' => [
-                'required',
-                'max:255'
-            ]
+            'content' => 'required'
         ];
     }
 

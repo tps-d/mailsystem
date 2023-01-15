@@ -49,7 +49,7 @@ class VariableController extends Controller
     {
         $this->variableRepository->store(MailSystem::currentWorkspaceId(), $request->all());
 
-        $this->variableRepository->rebuildCache();
+        $this->variableRepository->rebuildCache(MailSystem::currentWorkspaceId());
 
         return redirect()->route('variable.index');
     }
@@ -60,8 +60,8 @@ class VariableController extends Controller
     public function edit(int $id): View
     {
         $variable = $this->variableRepository->find(MailSystem::currentWorkspaceId(), $id);
-
-        return view('variable.edit', compact('variable'));
+        $value_types = Variable::$value_types_map;
+        return view('variable.edit', compact('variable','value_types'));
     }
 
     /**
@@ -71,7 +71,7 @@ class VariableController extends Controller
     {
         $this->variableRepository->update(MailSystem::currentWorkspaceId(), $id, $request->all());
 
-        $this->variableRepository->rebuildCache();
+        $this->variableRepository->rebuildCache(MailSystem::currentWorkspaceId());
 
         return redirect()->route('variable.index');
     }

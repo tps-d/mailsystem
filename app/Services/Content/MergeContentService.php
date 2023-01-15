@@ -49,7 +49,22 @@ class MergeContentService
      */
     protected function resolveContent(Message $message): string
     {
+        if ($message->isCampaign()) {
+            $mergedContent = $this->mergeCampaignContent($message);
+        } elseif ($message->isAutomation()) {
+            $mergedContent = $this->mergeAutomationContent($message);
+        } else {
+            throw new Exception('Invalid message source type for message id=' . $message->id);
+        }
 
+        return $this->mergeTags($mergedContent, $message);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function mergeCampaignContent(Message $message): string
+    {
         /** @var Campaign $campaign */
         $campaign = $this->campaignRepo->find($message->workspace_id, $message->source_id, ['template']);
 
@@ -57,15 +72,9 @@ class MergeContentService
             throw new Exception('Unable to resolve campaign step for message id= ' . $message->id);
         }
 
-        if ($message->isCampaign()) {
-            $mergedContent = $campaign->template ? $this->mergeContent($campaign->content, $campaign->template->content) : $campaign->content;
-        } elseif ($message->isAutomation()) {
-            $mergedContent = $this->mergeAutomationContent($message);
-        } else {
-            throw new Exception('Invalid message source type for message id=' . $message->id);
-        }
-
-        return $this->mergeTags($mergedContent, $message ,$campaign->template);
+        return $campaign->template
+            ? $this->mergeContent($campaign->content, $campaign->template->content)
+            : $campaign->content;
     }
 
     /**
@@ -93,14 +102,14 @@ class MergeContentService
         return str_ireplace(['{{content}}', '{{ content }}'], $customContent ?: '', $templateContent);
     }
 
-    protected function mergeTags(string $content, Message $message, $template): string
+    protected function mergeTags(string $content, Message $message): string
     {
         $content = $this->compileTags($content);
 
         $content = $this->mergeSubscriberTags($content, $message);
         $content = $this->mergeUnsubscribeLink($content, $message);
         $content = $this->mergeWebviewLink($content, $message);
-        $content = $this->mergeUserTags($content, $message, $template);
+        $content = $this->mergeUserTags($content, $message);
 
         return $content;
     }
@@ -158,16 +167,12 @@ class MergeContentService
 
     protected function mergeUserTags(string $content, Message $message): string
     {
-        $variables = $this->variableRepo->getCache();
+        $variables = $this->variableRepo->getCache($message->workspace_id);
 
-        $email_pieces = explode('@',$message->recipient_email);
-        $emial_username = $email_pieces[0];
-
-        foreach($variables as $name => $description){
-            $vkey = "{".$name."}";
+        foreach($variables as $tag_name => $variable){
+            $vkey = "{".$tag_name."}";
             if(false !== strpos($content, $vkey)){
-
-                $variableContent = $this->variableRepo->flashVariableContent($name);
+                $variableContent = $this->variableRepo->flashVariableContent($message->workspace_id,$message->recipient_email,$variable);
                 $content = str_ireplace($vkey, $variableContent ,$content);
             }
         }

@@ -16,7 +16,7 @@ class CreateVariableTable extends Migration
         Schema::create('sendportal_variable', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('workspace_id')->index();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('description')->nullable();
             $table->integer('value_type');
             $table->string('value_from')->nullable();

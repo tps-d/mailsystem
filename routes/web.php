@@ -7,10 +7,77 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RequireWorkspace;
 
 use App\Repositories\VariableRepository;
+use App\Facades\Helper;
+
 Route::get('/test', function(){
-    //VariableRepository::flashVariableContent('CAPTCHA_CODE');
-    //VariableRepository::flashVariableContent('EXCHANGE_CODE');
-    VariableRepository::flashVariableContent('COUPON_CODE');
+ 
+$recipient_email = "f24cxLFOzq4KaKIyyZI9JtKEbjG0wCmaQzbbK0K+Ohc6eldSuyZi4ts1ZZk";
+$variableContent = Helper::authcode($recipient_email);
+
+echo  $variableContent;
+exit;
+
+$hashids = new Hashids\Hashids('',6);
+
+
+$base_str = "cmworld_5345y65.csdvdcsdcsdcsdcsdcsdcsdc";
+echo $base_str;
+echo "<hr/>";
+$base_str = base64_encode($base_str);
+$base_str = rtrim($base_str,"=");
+echo $base_str;
+echo "<hr/>";
+$base_str = ShortCode\Reversible::revert($base_str );
+echo $base_str;
+echo "<hr/>";
+$chars = preg_split('//', $base_str, -1, PREG_SPLIT_NO_EMPTY);
+print_r($chars);
+echo "<hr/>";
+$id = $hashids->encode($chars);
+echo $id;
+exit;
+$numbers = $hashids->decode($id);
+print_r($numbers);
+
+$base_str = ShortCode\Reversible::convert($base_str);
+echo $base_str;
+echo "<hr/>";
+$base_str = base64_decode($base_str);
+echo $base_str;
+echo "<hr/>";
+/*
+$hash = NumberConversion::alphaID($base_str,true);
+echo $hash;
+
+echo "<hr/>";
+$numbers = NumberConversion::alphaID($hash,false);
+print_r($numbers);
+*/
+exit;
+
+                $encryption = NumberConversion::generateCardByNum(32003, 4);
+                echo $encryption;
+                echo "<hr/>";
+                // 解密;
+                $decrypt = NumberConversion::generateNumByCard("gjv5r6vhhvASFBSWW#" );
+                echo $decrypt;
+
+/*
+                break;
+            case 'EXCHANGE_CODE':
+
+                $psa= NumberConversion::encode_pass("woshi ceshi yong de ","123","encode",64);
+                echo $psa;
+                echo "<hr/>";
+                echo NumberConversion::encode_pass($psa,"123",'decode',64);
+                // code...
+            case 'COUPON_CODE':
+
+                $psa= NumberConversion::alphabet_to_number("cmworldcom");
+                echo $psa;
+                echo "<hr/>";
+                echo NumberConversion::number_to_alphabet($psa);
+                */
 });
 
 Auth::routes(

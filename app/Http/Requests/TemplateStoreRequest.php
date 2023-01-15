@@ -22,11 +22,7 @@ class TemplateStoreRequest extends FormRequest
                 Rule::unique('sendportal_templates')
                     ->where('workspace_id', 0),
             ],
-            'content' => 'required',
-            'web_hook' => [
-                'required',
-                'max:255'
-            ],
+            'content' => 'required'
         ];
     }
 

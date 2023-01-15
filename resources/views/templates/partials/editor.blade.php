@@ -16,9 +16,9 @@
     <label for="id-field-content" class="control-label col-sm-2">{{ __('Content') }}</label>
     <div class="col-sm-10">
        <div class="btn-group mb-2" id="variable_tags">
-            @foreach($variables as $name => $description)
-            <a class="btn btn-md btn-default" data-variable="{{ $name }}" href="javascript:;">
-                {{ $description }}
+            @foreach($variables as $variable)
+            <a class="btn btn-md btn-default" data-variable="{{ $variable['name'] }}" href="javascript:;">
+                {{ $variable['description'] }}
             </a>
             @endforeach
         </div>
