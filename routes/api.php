@@ -23,6 +23,8 @@ Route::prefix('v1')->namespace('\App\Http\Controllers\Api')->group( function () 
         ->name('tags.subscribers.destroy');
 
     Route::apiResource('templates', 'TemplatesController');
+
+    Route::post('message/send', 'MessageDispatchController@send')->name('message.send');
 });
 
 // Non-auth'd API routes.

@@ -10,12 +10,14 @@ use Illuminate\View\View;
 
 use App\Http\Requests\TemplateStoreRequest;
 use App\Http\Requests\TemplateUpdateRequest;
+use App\Repositories\EmailServiceRepository;
 use App\Repositories\TemplateRepository;
 use App\Repositories\VariableRepository;
 use App\Services\Templates\TemplateService;
 use App\Traits\NormalizeTags;
 use Throwable;
 
+use App\Models\EmailService;
 use App\Facades\MailSystem;
 
 class TemplatesController extends Controller
@@ -28,13 +30,17 @@ class TemplatesController extends Controller
     /** @var TemplateService */
     private $service;
 
+    /** @var EmailServiceRepository */
+    protected $emailServices;
+
     /** @var VariableRepository */
     private $variable;
 
-    public function __construct(TemplateRepository $templates, TemplateService $service ,VariableRepository $variable)
+    public function __construct(TemplateRepository $templates, TemplateService $service ,EmailServiceRepository $emailServices,VariableRepository $variable)
     {
         $this->templates = $templates;
         $this->service = $service;
+        $this->emailServices = $emailServices;
         $this->variable = $variable;
     }
 
@@ -50,8 +56,16 @@ class TemplatesController extends Controller
 
     public function create(): View
     {
-        $variables = $this->variable->getCache(MailSystem::currentWorkspaceId());
-        return view('templates.create', compact('variables'));
+        $workspaceId = MailSystem::currentWorkspaceId();
+        $variables = $this->variable->getCache($workspaceId);
+
+        $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
+            ->map(static function (EmailService $emailService) {
+                $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
+                return $emailService;
+            });
+        $service_options =  [null => '- Select -'] + $emailServices->pluck('formatted_name', 'id')->all();
+        return view('templates.create', compact('variables', 'service_options'));
     }
 
     /**
@@ -60,7 +74,6 @@ class TemplatesController extends Controller
     public function store(TemplateStoreRequest $request): RedirectResponse
     {
         $data = $request->validated();
-
         $this->service->store(MailSystem::currentWorkspaceId(), $data);
 
         return redirect()
@@ -72,11 +85,18 @@ class TemplatesController extends Controller
      */
     public function edit(int $id): View
     {
-        $template = $this->templates->find(MailSystem::currentWorkspaceId(), $id);
+        $workspaceId = MailSystem::currentWorkspaceId();
+        $template = $this->templates->find($workspaceId, $id);
 
-        $variables = $this->variable->getCache(MailSystem::currentWorkspaceId());
+        $variables = $this->variable->getCache($workspaceId);
         
-        return view('templates.edit', compact('template','variables'));
+        $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
+            ->map(static function (EmailService $emailService) {
+                $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
+                return $emailService;
+            });
+        $service_options = [null => '- Select -'] + $emailServices->pluck('formatted_name', 'id')->all();
+        return view('templates.edit', compact('template','variables','service_options'));
     }
 
     /**
@@ -85,7 +105,6 @@ class TemplatesController extends Controller
     public function update(TemplateUpdateRequest $request, int $id): RedirectResponse
     {
         $data = $request->validated();
-
         $this->service->update(MailSystem::currentWorkspaceId(), $id, $data);
 
         return redirect()

@@ -7,6 +7,7 @@ namespace App\Http\Requests\Api;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+use App\Facades\MailSystem;
 
 class TemplateStoreRequest extends FormRequest
 {
@@ -18,7 +19,7 @@ class TemplateStoreRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('sendportal_templates')
-                    ->where('workspace_id', 0),
+                    ->where('workspace_id', MailSystem::currentWorkspaceId()),
             ],
             'content' => [
                 'required',

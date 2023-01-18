@@ -9,6 +9,7 @@ use App\Models\Campaign;
 use App\Models\Message;
 use App\Repositories\CampaignRepository;
 use App\Repositories\VariableRepository;
+use App\Repositories\AutomationsRepository;
 use App\Traits\NormalizeTags;
 use Sendportal\Pro\Repositories\AutomationScheduleRepository;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
@@ -20,6 +21,9 @@ class MergeContentService
     /** @var CampaignRepository */
     protected $campaignRepo;
 
+    /** @var AutomationsRepository */
+    protected $automationsRepo;
+
     /** @var VariableRepository */
     protected $variableRepo;
 
@@ -28,10 +32,12 @@ class MergeContentService
 
     public function __construct(
         CampaignRepository $campaignRepo,
+        AutomationsRepository $automationsRepo,
         VariableRepository $variableRepo,
         CssToInlineStyles $cssProcessor
     ) {
         $this->campaignRepo = $campaignRepo;
+        $this->automationsRepo = $automationsRepo;
         $this->variableRepo = $variableRepo;
         $this->cssProcessor = $cssProcessor;
     }
@@ -49,6 +55,7 @@ class MergeContentService
      */
     protected function resolveContent(Message $message): string
     {
+
         if ($message->isCampaign()) {
             $mergedContent = $this->mergeCampaignContent($message);
         } elseif ($message->isAutomation()) {
@@ -82,17 +89,15 @@ class MergeContentService
      */
     protected function mergeAutomationContent(Message $message): string
     {
-        if (!$schedule = app(AutomationScheduleRepository::class)->find($message->source_id, ['automation_step'])) {
-            throw new Exception('Unable to resolve automation step for message id=' . $message->id);
+        $automations = $this->automationsRepo->find($message->workspace_id, $message->source_id, ['template']);
+
+        if (!$automations) {
+            throw new Exception('Unable to resolve automations step for message id= ' . $message->id);
         }
 
-        if (!$content = $schedule->automation_step->content) {
-            throw new Exception('Unable to resolve content for automation step id=' . $schedule->automation_step_id);
-        }
-
-        if (!$template = $schedule->automation_step->template) {
-            throw new Exception('Unable to resolve template for automation step id=' . $schedule->automation_step_id);
-        }
+        return $automations->template
+            ? $this->mergeContent($automations->content, $automations->template->content)
+            : $automations->content;
 
         return $this->mergeContent($content, $template->content);
     }

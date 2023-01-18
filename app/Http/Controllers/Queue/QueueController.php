@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Automations;
+namespace App\Http\Controllers\Queue;
 
 use Exception;
 use Illuminate\Contracts\View\View as ViewContract;
@@ -24,7 +24,7 @@ class QueueController extends Controller
         $query = (new Jobs())->newQuery();
         $jobs = $query->where('queue', 'message-dispatch')->orderBy('created_at', 'desc')->paginate(25);
 
-        return view('automations.queue', [
+        return view('queue.queue', [
             'jobs' => $jobs
         ]);
     }
@@ -37,7 +37,7 @@ class QueueController extends Controller
         $query = (new Jobs())->newQuery();
         $jobs = $query->where('queue', 'webhook-process')->orderBy('created_at', 'desc')->paginate(25);
 
-        return view('automations.queue', [
+        return view('queue.queue', [
             'jobs' => $jobs
         ]);
     }
@@ -50,7 +50,7 @@ class QueueController extends Controller
         $query = (new FailedJobs())->newQuery();
         $jobs = $query->orderBy('created_at', 'desc')->paginate(25);
 
-        return view('automations.failed_jobs', [
+        return view('queue.failed_jobs', [
             'jobs' => $jobs
         ]);
     }

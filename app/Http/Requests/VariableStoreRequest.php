@@ -7,6 +7,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+use App\Facades\MailSystem;
 
 class VariableStoreRequest extends FormRequest
 {
@@ -17,7 +18,7 @@ class VariableStoreRequest extends FormRequest
                 'required',
                 'max:255',
                 Rule::unique('sendportal_variable')
-                    ->where('workspace_id', 0),
+                    ->where('workspace_id', MailSystem::currentWorkspaceId()),
             ],
         ];
     }

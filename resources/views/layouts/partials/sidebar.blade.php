@@ -30,20 +30,11 @@
                         <span>{{ __('Subscribers') }}</span>
                     </a>
                 </li>
-            </ul>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="fa-fw fas fa-sync-alt mr-2"></i><span>{{ __('Automations') }}</span>
-            </a>
-            <ul>
-              <li class="nav-item {{ request()->is('*queue*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('automations.queue.dispatch') }}">
+               <li class="nav-item {{ request()->is('*queue*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('queue.dispatch') }}">
                     <span>执行队列</span>
                 </a>
               </li>
-              <li class="nav-item"><a class="nav-link" href="javascript:;">自动发信规则</a></li>
-              <li class="nav-item"><a class="nav-link" href="javascript:;">自动回信规则</a></li>
             </ul>
         </li>
         <!--

@@ -11,73 +11,8 @@ use App\Facades\Helper;
 
 Route::get('/test', function(){
  
-$recipient_email = "f24cxLFOzq4KaKIyyZI9JtKEbjG0wCmaQzbbK0K+Ohc6eldSuyZi4ts1ZZk";
-$variableContent = Helper::authcode($recipient_email);
-
-echo  $variableContent;
-exit;
-
-$hashids = new Hashids\Hashids('',6);
 
 
-$base_str = "cmworld_5345y65.csdvdcsdcsdcsdcsdcsdcsdc";
-echo $base_str;
-echo "<hr/>";
-$base_str = base64_encode($base_str);
-$base_str = rtrim($base_str,"=");
-echo $base_str;
-echo "<hr/>";
-$base_str = ShortCode\Reversible::revert($base_str );
-echo $base_str;
-echo "<hr/>";
-$chars = preg_split('//', $base_str, -1, PREG_SPLIT_NO_EMPTY);
-print_r($chars);
-echo "<hr/>";
-$id = $hashids->encode($chars);
-echo $id;
-exit;
-$numbers = $hashids->decode($id);
-print_r($numbers);
-
-$base_str = ShortCode\Reversible::convert($base_str);
-echo $base_str;
-echo "<hr/>";
-$base_str = base64_decode($base_str);
-echo $base_str;
-echo "<hr/>";
-/*
-$hash = NumberConversion::alphaID($base_str,true);
-echo $hash;
-
-echo "<hr/>";
-$numbers = NumberConversion::alphaID($hash,false);
-print_r($numbers);
-*/
-exit;
-
-                $encryption = NumberConversion::generateCardByNum(32003, 4);
-                echo $encryption;
-                echo "<hr/>";
-                // 解密;
-                $decrypt = NumberConversion::generateNumByCard("gjv5r6vhhvASFBSWW#" );
-                echo $decrypt;
-
-/*
-                break;
-            case 'EXCHANGE_CODE':
-
-                $psa= NumberConversion::encode_pass("woshi ceshi yong de ","123","encode",64);
-                echo $psa;
-                echo "<hr/>";
-                echo NumberConversion::encode_pass($psa,"123",'decode',64);
-                // code...
-            case 'COUPON_CODE':
-
-                $psa= NumberConversion::alphabet_to_number("cmworldcom");
-                echo $psa;
-                echo "<hr/>";
-                echo NumberConversion::number_to_alphabet($psa);
-                */
 });
 
 Auth::routes(
@@ -185,10 +120,7 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
             $campaignRouter->get('{id}/status', 'CampaignsController@status')->name('status');
             $campaignRouter->post('{id}/test', 'CampaignTestController@handle')->name('test');
 
-            $campaignRouter->get(
-                '{id}/confirm-delete',
-                'CampaignDeleteController@confirm'
-            )->name('destroy.confirm');
+            $campaignRouter->get('{id}/confirm-delete','CampaignDeleteController@confirm')->name('destroy.confirm');
             $campaignRouter->delete('', 'CampaignDeleteController@destroy')->name('destroy');
 
             $campaignRouter->get('{id}/duplicate', 'CampaignDuplicateController@duplicate')->name('duplicate');
@@ -197,19 +129,11 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
             $campaignRouter->post('{id}/cancel', 'CampaignCancellationController@cancel')->name('cancel');
 
             $campaignRouter->get('{id}/report', 'CampaignReportsController@index')->name('reports.index');
-            $campaignRouter->get('{id}/report/recipients', 'CampaignReportsController@recipients')
-                ->name('reports.recipients');
+            $campaignRouter->get('{id}/report/recipients', 'CampaignReportsController@recipients')->name('reports.recipients');
             $campaignRouter->get('{id}/report/opens', 'CampaignReportsController@opens')->name('reports.opens');
-            $campaignRouter->get(
-                '{id}/report/clicks',
-                'CampaignReportsController@clicks'
-            )->name('reports.clicks');
-            $campaignRouter->get('{id}/report/unsubscribes', 'CampaignReportsController@unsubscribes')
-                ->name('reports.unsubscribes');
-            $campaignRouter->get(
-                '{id}/report/bounces',
-                'CampaignReportsController@bounces'
-            )->name('reports.bounces');
+            $campaignRouter->get('{id}/report/clicks','CampaignReportsController@clicks')->name('reports.clicks');
+            $campaignRouter->get('{id}/report/unsubscribes', 'CampaignReportsController@unsubscribes')->name('reports.unsubscribes');
+            $campaignRouter->get('{id}/report/bounces','CampaignReportsController@bounces')->name('reports.bounces');
         });
 
         // Messages.
@@ -255,12 +179,49 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
         $appRouter->resource('variable', 'Variable\VariableController')->except(['show']);
 
         // Automations
-        $appRouter->name('automations.')->prefix('automations')->namespace('Automations')->group(static function ( Router $servicesRouter ) {
-            $servicesRouter->get('/queue/dispatch', 'QueueController@dispatch_jobs')->name('queue.dispatch');
-            $servicesRouter->get('/queue/webhook', 'QueueController@webhook_jobs')->name('queue.webhook');
-            $servicesRouter->get('/queue/failed', 'QueueController@failed_jobs')->name('queue.failed');
+        $appRouter->resource('automations', 'Automations\AutomationsController')->except(['show', 'destroy']);
+        $appRouter->name('automations.')->prefix('automations')->namespace('Automations')->group(static function ( Router $automationsRouter ) {
+
+            $automationsRouter->get('sent', 'AutomationsController@sent')->name('sent');
+            $automationsRouter->get('{id}', 'AutomationsController@show')->name('show');
+            $automationsRouter->get('{id}/preview', 'AutomationsController@preview')->name('preview');
+            $automationsRouter->put('{id}/send', 'AutomationsDispatchController@send')->name('send');
+            $automationsRouter->get('{id}/status', 'AutomationsController@status')->name('status');
+            $automationsRouter->post('{id}/test', 'AutomationsTestController@handle')->name('test');
+
+            $automationsRouter->get(
+                '{id}/confirm-delete',
+                'CampaignDeleteController@confirm'
+            )->name('destroy.confirm');
+            $automationsRouter->delete('', 'CampaignDeleteController@destroy')->name('destroy');
+
+            $automationsRouter->get('{id}/duplicate', 'CampaignDuplicateController@duplicate')->name('duplicate');
+
+            $automationsRouter->get('{id}/confirm-cancel', 'CampaignCancellationController@confirm')->name('confirm-cancel');
+            $automationsRouter->post('{id}/cancel', 'CampaignCancellationController@cancel')->name('cancel');
+
+            $automationsRouter->get('{id}/report', 'CampaignReportsController@index')->name('reports.index');
+            $automationsRouter->get('{id}/report/recipients', 'CampaignReportsController@recipients')
+                ->name('reports.recipients');
+            $automationsRouter->get('{id}/report/opens', 'CampaignReportsController@opens')->name('reports.opens');
+            $automationsRouter->get(
+                '{id}/report/clicks',
+                'CampaignReportsController@clicks'
+            )->name('reports.clicks');
+            $automationsRouter->get('{id}/report/unsubscribes', 'CampaignReportsController@unsubscribes')
+                ->name('reports.unsubscribes');
+            $automationsRouter->get(
+                '{id}/report/bounces',
+                'CampaignReportsController@bounces'
+            )->name('reports.bounces');
         });
 
+        // Queue
+        $appRouter->name('queue.')->prefix('queue')->namespace('Queue')->group(static function ( Router $automationsRouter ) {
+            $automationsRouter->get('/queue/dispatch', 'QueueController@dispatch_jobs')->name('dispatch');
+            $automationsRouter->get('/queue/webhook', 'QueueController@webhook_jobs')->name('webhook');
+            $automationsRouter->get('/queue/failed', 'QueueController@failed_jobs')->name('failed');
+        });
     });
 });
 

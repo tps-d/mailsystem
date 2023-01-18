@@ -40,6 +40,7 @@ class Template extends BaseModel
     /** @var array */
     protected $guarded = [];
 
+
     /**
      * Campaigns using this template
      */

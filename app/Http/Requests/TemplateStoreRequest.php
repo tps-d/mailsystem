@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+use App\Facades\MailSystem;
 
 class TemplateStoreRequest extends FormRequest
 {
@@ -19,8 +20,7 @@ class TemplateStoreRequest extends FormRequest
             'name' => [
                 'required',
                 'max:255',
-                Rule::unique('sendportal_templates')
-                    ->where('workspace_id', 0),
+                Rule::unique('sendportal_templates')->where('workspace_id', MailSystem::currentWorkspaceId())
             ],
             'content' => 'required'
         ];
@@ -30,6 +30,7 @@ class TemplateStoreRequest extends FormRequest
     {
         return [
             'name.unique' => __('The template name must be unique.'),
+            'email_service_id.required' => __('Please select an email service.'),
         ];
     }
 }

@@ -126,7 +126,7 @@ class Message extends BaseModel
      */
     public function isAutomation(): bool
     {
-        return false;
+        return $this->source_type === Automations::class;
     }
 
     /**

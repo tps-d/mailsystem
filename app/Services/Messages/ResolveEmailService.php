@@ -6,16 +6,20 @@ use Exception;
 use App\Models\EmailService;
 use App\Models\Message;
 use App\Repositories\CampaignRepository;
-use Sendportal\Pro\Repositories\AutomationScheduleRepository;
+use App\Repositories\AutomationsRepository;
 
 class ResolveEmailService
 {
     /** @var CampaignRepository */
     protected $campaignRepository;
 
-    public function __construct(CampaignRepository $campaignRepository)
+    /** @var AutomationsRepository */
+    protected $automationsRepository;
+
+    public function __construct(CampaignRepository $campaignRepository,AutomationsRepository $automationsRepository)
     {
         $this->campaignRepository = $campaignRepository;
+        $this->automationsRepository = $automationsRepository;
     }
 
     /**
@@ -43,14 +47,11 @@ class ResolveEmailService
      */
     protected function resolveAutomationEmailService(Message $message): EmailService
     {
-        if (!$automationSchedule = app(AutomationScheduleRepository::class)->find(
-            $message->source_id,
-            ['automation_step.automation.email_service.type']
-        )) {
-            throw new Exception('Unable to resolve automation schedule for message id=' . $message->id);
+        if (! $automations = $this->automationsRepository->find($message->workspace_id, $message->source_id, ['email_service'])) {
+            throw new Exception('Unable to resolve automations for message id=' . $message->id);
         }
 
-        if (!$emailService = $automationSchedule->automation_step->automation->email_service) {
+        if (! $emailService = $automations->email_service) {
             throw new Exception('Unable to resolve email service for message id=' . $message->id);
         }
 

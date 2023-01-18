@@ -84,8 +84,8 @@ class EmailWebhookService
 
         // @todo not sure that this give much value? We can just derive the count/ from the messages table.
         if ($message->isAutomation()) {
-            $automationStep = $this->resolveAutomationStepFromMessage($message);
-            DB::table('sendportal_automation_steps')->where('id', $automationStep->id)->increment('click_count');
+            //$automationStep = $this->resolveAutomationStepFromMessage($message);
+            //DB::table('sendportal_automation_steps')->where('id', $automationStep->id)->increment('click_count');
         }
 
         $messageUrlHash = $this->generateMessageUrlHash($message, $url);

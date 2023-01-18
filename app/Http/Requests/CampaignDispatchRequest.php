@@ -7,13 +7,15 @@ use Illuminate\Validation\Rule;
 
 use App\Repositories\TagRepository;
 
+use App\Facades\MailSystem;
+
 class CampaignDispatchRequest extends FormRequest
 {
     public function rules(): array
     {
         /** @var TagRepository $tags */
         $tags = app(TagRepository::class)->pluck(
-            0,
+            MailSystem::currentWorkspaceId(),
             'id'
         );
 

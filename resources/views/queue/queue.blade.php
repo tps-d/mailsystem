@@ -10,16 +10,16 @@
 
     <ul class="nav nav-pills mb-4">
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('automations.queue.dispatch') ? 'active'  : '' }}"
-               href="{{ route('automations.queue.dispatch') }}">发送队列</a>
+            <a class="nav-link {{ request()->routeIs('queue.dispatch') ? 'active'  : '' }}"
+               href="{{ route('queue.dispatch') }}">发送队列</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('automations.webhook') ? 'active'  : '' }}"
-               href="{{ route('automations.queue.webhook') }}">Webhook队列</a>
+            <a class="nav-link {{ request()->routeIs('queue.webhook') ? 'active'  : '' }}"
+               href="{{ route('queue.webhook') }}">Webhook队列</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('automations.queue.failed') ? 'active'  : '' }}"
-               href="{{ route('automations.queue.failed') }}">执行失败</a>
+            <a class="nav-link {{ request()->routeIs('queue.failed') ? 'active'  : '' }}"
+               href="{{ route('queue.failed') }}">执行失败</a>
         </li>
     </ul>
 
@@ -28,11 +28,12 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>{{ __('id') }}</th>             
-                    <th>{{ __('queue') }}</th>
+                    <th>{{ __('id') }}</th>
                     <th>{{ __('payload') }}</th>
-                    <th>{{ __('exception') }}</th>
-                    <th>{{ __('failed_at') }}</th>
+                    <th>{{ __('attempts') }}</th>
+                    <th>{{ __('reserved_at') }}</th>
+                    <th>{{ __('available_at') }}</th>
+                    <th>{{ __('created_at') }}</th>
                     <th>{{ __('Actions') }}</th>
                 </tr>
                 </thead>
@@ -41,12 +42,18 @@
                     <tr>
                         <td><span >{{ $job->id }}</span></td>
                         <td>
-                            <span >{{ $job->queue }}</span>
+                            <p class="text-break">{{ $job->payload }}</p>
                         </td>
                         <td><span >{{ $job->attempts }}</span></td>
-                        <td><p class="text-break">{{ $job->payload }}</p></td>
-                        <td><span >{{ $job->exception }}</span></td>
-                        <td><span >{{ $job->failed_at->diffForHumans() }}</span></td>
+                        <td>
+                            <span >
+                            @if ( !empty($job->reserved_at) )
+                                {{  $job->reserved_at->diffForHumans() }} 
+                            @endif
+                            </span>
+                        </td>
+                        <td><span >{{ $job->available_at->diffForHumans() }}</span></td>
+                        <td><span >{{ $job->created_at->diffForHumans() }}</span></td>
                         <td>
                             <div class="dropdown">
                                 <button class="btn btn-light btn-sm btn-wide" type="button" id="dropdownMenuButton"
@@ -54,10 +61,8 @@
                                     <i class="fas fa-ellipsis-h"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a href="javascript:;" class="dropdown-item">
-                                            {{ __('Retry') }}
-                                        </a>
-                                        <a href="javascript:;" class="dropdown-item">
+                                        <a href="javascript:;"
+                                           class="dropdown-item">
                                             {{ __('Delete') }}
                                         </a>
                                 </div>
@@ -68,7 +73,11 @@
                     <tr>
                         <td colspan="100%">
                             <p class="empty-table-text">
-                                {{ __('You do not have any failed jobs.') }}
+                                @if (request()->routeIs('automations.dispatch'))
+                                    {{ __('You do not have any dispatch jobs.') }}
+                                @else
+                                    {{ __('You do not have any webhook jobs.') }}
+                                @endif
                             </p>
                         </td>
                     </tr>
