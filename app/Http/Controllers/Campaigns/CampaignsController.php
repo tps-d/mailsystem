@@ -91,6 +91,21 @@ class CampaignsController extends Controller
     /**
      * @throws Exception
      */
+    public function listen(): ViewContract
+    {
+        $workspaceId = MailSystem::currentWorkspaceId();
+        $params = ['repeat' => true];
+        $campaigns = $this->campaigns->paginate($workspaceId, 'created_atDesc', ['status'], 25, $params);
+
+        return view('campaigns.index', [
+            'campaigns' => $campaigns,
+            'campaignStats' => $this->campaignStatisticsService->getForPaginator($campaigns, $workspaceId),
+        ]);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function create(): ViewContract
     {
         $workspaceId = MailSystem::currentWorkspaceId();

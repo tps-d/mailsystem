@@ -114,6 +114,7 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
         $appRouter->resource('campaigns', 'Campaigns\CampaignsController')->except(['show', 'destroy']);
         $appRouter->name('campaigns.')->prefix('campaigns')->namespace('Campaigns')->group(static function ( Router $campaignRouter ) {
             $campaignRouter->get('sent', 'CampaignsController@sent')->name('sent');
+            $campaignRouter->get('listen', 'CampaignsController@listen')->name('listen');
             $campaignRouter->get('{id}', 'CampaignsController@show')->name('show');
             $campaignRouter->get('{id}/preview', 'CampaignsController@preview')->name('preview');
             $campaignRouter->put('{id}/send', 'CampaignDispatchController@send')->name('send');
@@ -124,6 +125,9 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
             $campaignRouter->delete('', 'CampaignDeleteController@destroy')->name('destroy');
 
             $campaignRouter->get('{id}/duplicate', 'CampaignDuplicateController@duplicate')->name('duplicate');
+
+            $campaignRouter->get('{id}/repeat-cancel', 'CampaignRepeatController@confirm')->name('confirm-repeat');
+            $campaignRouter->post('{id}/repeat', 'CampaignRepeatController@repeat')->name('repeat');
 
             $campaignRouter->get('{id}/confirm-cancel', 'CampaignCancellationController@confirm')->name('confirm-cancel');
             $campaignRouter->post('{id}/cancel', 'CampaignCancellationController@cancel')->name('cancel');

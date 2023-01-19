@@ -8,16 +8,7 @@
 
 @section('content')
 
-    <ul class="nav nav-pills mb-4">
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('campaigns.index') ? 'active'  : '' }}"
-               href="{{ route('campaigns.index') }}">{{ __('Draft') }}</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('campaigns.sent') ? 'active'  : '' }}"
-               href="{{ route('campaigns.sent') }}">{{ __('Sent') }}</a>
-        </li>
-    </ul>
+    @include('campaigns.partials.nav')
 
     @component('layouts.partials.actions')
         @slot('right')
@@ -33,7 +24,7 @@
                 <thead>
                 <tr>
                     <th>{{ __('Name') }}</th>
-                    @if (request()->routeIs('campaigns.sent'))
+                    @if (request()->routeIs('campaigns.sent') || request()->routeIs('campaigns.listen'))
                         <th>{{ __('Sent') }}</th>
                         <th>{{ __('Opened') }}</th>
                         <th>{{ __('Clicked') }}</th>
@@ -49,13 +40,13 @@
                         <td>
                             @if ($campaign->draft)
                                 <a href="{{ route('campaigns.edit', $campaign->id) }}">{{ $campaign->name }}</a>
-                            @elseif($campaign->sent)
+                            @elseif($campaign->sent || $campaign->repeated)
                                 <a href="{{ route('campaigns.reports.index', $campaign->id) }}">{{ $campaign->name }}</a>
                             @else
                                 <a href="{{ route('campaigns.status', $campaign->id) }}">{{ $campaign->name }}</a>
                             @endif
                         </td>
-                        @if (request()->routeIs('campaigns.sent'))
+                        @if (request()->routeIs('campaigns.sent') || request()->routeIs('campaigns.listen'))
                             <td>{{ $campaignStats[$campaign->id]['counts']['sent'] }}</td>
                             <td>{{ number_format($campaignStats[$campaign->id]['ratios']['open'] * 100, 1) . '%' }}</td>
                             <td>
@@ -74,6 +65,8 @@
                                 <span class="badge badge-success">{{ $campaign->status->name }}</span>
                             @elseif($campaign->cancelled)
                                 <span class="badge badge-danger">{{ $campaign->status->name }}</span>
+                            @elseif($campaign->repeated)
+                                <span class="badge badge-warning">{{ $campaign->status->name }}</span>
                             @endif
 
                         </td>
@@ -84,10 +77,22 @@
                                     <i class="fas fa-ellipsis-h"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    @if ($campaign->repeated)
+                                        <a href="{{ route('campaigns.edit', $campaign->id) }}"
+                                           class="dropdown-item">
+                                            {{ __('Edit') }}
+                                        </a>
+                                    @endif
+
                                     @if ($campaign->draft)
                                         <a href="{{ route('campaigns.edit', $campaign->id) }}"
                                            class="dropdown-item">
                                             {{ __('Edit') }}
+                                        </a>
+
+                                        <a href="{{ route('campaigns.confirm-repeat', $campaign->id) }}"
+                                           class="dropdown-item">
+                                            {{ __('Repeat') }}
                                         </a>
                                     @else
                                         <a href="{{ route('campaigns.reports.index', $campaign->id) }}"
@@ -95,6 +100,7 @@
                                             {{ __('View Report') }}
                                         </a>
                                     @endif
+
 
                                     <a href="{{ route('campaigns.duplicate', $campaign->id) }}"
                                        class="dropdown-item">
@@ -109,7 +115,7 @@
                                         </a>
                                     @endif
 
-                                    @if ($campaign->draft)
+                                    @if ($campaign->draft || $campaign->repeated)
                                         <div class="dropdown-divider"></div>
                                         <a href="{{ route('campaigns.destroy.confirm', $campaign->id) }}"
                                            class="dropdown-item">

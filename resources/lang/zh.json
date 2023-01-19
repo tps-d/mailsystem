@@ -1,13 +1,19 @@
 {
 	"Dashboard" : "首页",
 	"Campaigns" : "发信计划",
+	"New Campaign" : "新建计划",
+	"Create Campaign" : "创建计划",
+	"Campaign Name" : "计划名称",
 	"Automations" : "自动发信",
 	"Email Templates" : "邮件模版",
 	"Subscribers" : "收件人",
 	"Messages" : "发送日志",
 	"Email_Services" : "发信服务器",
 	"Manage_Users" : "用户管理",
-	"Draft" : "未发送",
-	"Sent" : "已发送",
+	"Draft" : "未完成",
+	"Sent" : "已完成",
+	"Repeat" : "重复执行",
+
+	"Duplicate" : "复制计划",
 	"Workspaces" : "工作组"
 }

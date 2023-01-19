@@ -16,4 +16,5 @@ class CampaignStatus extends BaseModel
     public const STATUS_SENDING = 3;
     public const STATUS_SENT = 4;
     public const STATUS_CANCELLED = 5;
+    public const STATUS_LISTENING = 6;
 }

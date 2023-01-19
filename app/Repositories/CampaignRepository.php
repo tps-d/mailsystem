@@ -59,6 +59,15 @@ class CampaignRepository extends BaseRepository
         return $counts->flatten()->keyBy('campaign_id')->toArray();
     }
 
+    public function setRepeat(Campaign $campaign): bool
+    {
+        $this->deleteDraftMessages($campaign);
+
+        return $campaign->update([
+            'status_id' => CampaignStatus::STATUS_LISTENING,
+        ]);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -105,6 +114,12 @@ class CampaignRepository extends BaseRepository
             $sentStatuses = [
                 CampaignStatus::STATUS_SENT,
                 CampaignStatus::STATUS_CANCELLED,
+            ];
+
+            $instance->whereIn('status_id', $sentStatuses);
+        } elseif (Arr::get($filters, 'repeat')) {
+            $sentStatuses = [
+                CampaignStatus::STATUS_LISTENING,
             ];
 
             $instance->whereIn('status_id', $sentStatuses);

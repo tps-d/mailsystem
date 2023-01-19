@@ -301,6 +301,11 @@ class Campaign extends BaseModel
         return $this->status_id === CampaignStatus::STATUS_CANCELLED;
     }
 
+    public function getRepeatedAttribute(): bool
+    {
+        return $this->status_id === CampaignStatus::STATUS_LISTENING;
+    }
+
     /**
      * Get the number of unique opens for the campaign.
      */
@@ -384,5 +389,10 @@ class Campaign extends BaseModel
         }
 
         return $this->active_subscriber_count === $this->messages()->count();
+    }
+
+    public function canBeRepeat(): bool
+    {
+        return in_array($this->status_id, [CampaignStatus::STATUS_DRAFT, CampaignStatus::STATUS_SENT, CampaignStatus::STATUS_CANCELLED], true);
     }
 }
