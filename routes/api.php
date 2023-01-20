@@ -24,7 +24,7 @@ Route::prefix('v1')->namespace('\App\Http\Controllers\Api')->group( function () 
 
     Route::apiResource('templates', 'TemplatesController');
 
-    Route::post('message/send', 'MessageDispatchController@send')->name('message.send');
+    Route::post('message/{id}/send', 'MessageDispatchController@send')->name('message.send');
 });
 
 // Non-auth'd API routes.
@@ -38,3 +38,9 @@ Route::prefix('v1/webhooks')->namespace('\App\Http\Controllers\Api\Webhooks')->g
 });
 
 Route::get('v1/ping', '\App\Http\Controllers\Api\PingController@index');
+
+Route::post('v1/test', function(){
+    return \Response([
+        'value' => 'aaa'
+    ]);
+});

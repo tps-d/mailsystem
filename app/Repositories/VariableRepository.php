@@ -96,7 +96,7 @@ class VariableRepository extends BaseRepository
                 }
 
                 $_post_data = ['name' => $recipient_email];
-                $result = Helper::httpFetchJson($value_from,'POST',$_post_data);
+                $result = Helper::httpFetch($value_from,'POST',$_post_data);
                 $json_res = json_decode($result,true);
                 if(!$json_res || !isset($json_res['value'])){
                     throw new Exception('"'.$value_from.'" get unknow result: '.$result);
