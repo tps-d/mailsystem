@@ -14,6 +14,7 @@ use App\Traits\NormalizeTags;
 use Sendportal\Pro\Repositories\AutomationScheduleRepository;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
+use App\Facades\Helper;
 use App\Services\PlatformService;
 
 class MergeContentService
@@ -211,7 +212,7 @@ class MergeContentService
                 list($tname,$workspace_name,$postage_id,$type_day,$exp) = $tag_p;
                 $remark = "自动发信生成";
 
-                $expire_data = now()->addDays($exp);
+                $expire_data = now()->addDays($exp)->toDateTimeString();
                 $expire_time = strtotime($expire_data);
                 $res = $this->platformService->setPlatform($workspace_name)->createApiCryptCard($postage_id,1,$type_day,1,$expire_time,$remark);
 
