@@ -208,7 +208,7 @@ class MergeContentService
                     continue;
                 }
 
-                list($tname,$workspace_name,$postage_id,$type_day,(int)$exp) = $tag_p;
+                list($tname,$workspace_name,$postage_id,$type_day,$exp) = $tag_p;
                 $remark = "自动发信生成";
 
                 $expire_data = now()->addDays($exp);
