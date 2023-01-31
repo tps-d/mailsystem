@@ -14,6 +14,8 @@ use App\Traits\NormalizeTags;
 use Sendportal\Pro\Repositories\AutomationScheduleRepository;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
+use App\Services\PlatformService;
+
 class MergeContentService
 {
     use NormalizeTags;
@@ -30,16 +32,21 @@ class MergeContentService
     /** @var CssToInlineStyles */
     protected $cssProcessor;
 
+    protected $platformService;
+
     public function __construct(
         CampaignRepository $campaignRepo,
         AutomationsRepository $automationsRepo,
         VariableRepository $variableRepo,
-        CssToInlineStyles $cssProcessor
+        CssToInlineStyles $cssProcessor,
+        PlatformService $platformService
+
     ) {
         $this->campaignRepo = $campaignRepo;
         $this->automationsRepo = $automationsRepo;
         $this->variableRepo = $variableRepo;
         $this->cssProcessor = $cssProcessor;
+        $this->platformService = $platformService;
     }
 
     /**
@@ -114,6 +121,7 @@ class MergeContentService
         $content = $this->mergeSubscriberTags($content, $message);
         $content = $this->mergeUnsubscribeLink($content, $message);
         $content = $this->mergeWebviewLink($content, $message);
+        $content = $this->mergeSystemTags($content, $message);
         $content = $this->mergeUserTags($content, $message);
 
         return $content;
@@ -168,6 +176,55 @@ class MergeContentService
         $webviewLink = $this->generateWebviewLink($message);
 
         return str_ireplace('{{webview_url}}', $webviewLink, $content);
+    }
+
+    protected function mergeSystemTags(string $content, Message $message): string
+    {
+        preg_match_all("/(?:\{)(.*)(?:\})/iU",$content, $result);
+        
+        $org = $result[0];
+        $res = $result[1];
+        foreach($res as $index => $tag){
+            if(Helper::str_starts_with($tag,'CAPTCHACODE')){
+                $tag_p = explode('_', $tag);
+                if(count($tag_p) != 3){
+                    continue;
+                }
+
+                list($tname,$workspace_name,$type) = $tag_p;
+
+                $res = $this->platformService->setPlatform($workspace_name)->getApiCaptcha($message->recipient_email,$type);
+
+                if(!isset($res['code']) || $res['code'] != 200){
+                    throw new Exception('Failed getApiCaptcha with '.$message->recipient_email.' for message id= ' . $message->id .': '.json_encode($res));
+                }
+
+                $variableContent = $res['data']["captcha"];
+                $content = str_ireplace($org[$index], $variableContent ,$content);
+
+            }else if(Helper::str_starts_with($tag,'EXCHANGECODE')){
+                $tag_p = explode('_', $tag);
+                if(count($tag_p) != 5){
+                    continue;
+                }
+
+                list($tname,$workspace_name,$postage_id,$type_day,(int)$exp) = $tag_p;
+                $remark = "自动发信生成";
+
+                $expire_data = now()->addDays($exp);
+                $expire_time = strtotime($expire_data);
+                $res = $this->platformService->setPlatform($workspace_name)->createApiCryptCard($postage_id,1,$type_day,1,$expire_time,$remark);
+
+                if(!isset($res['code']) || $res['code'] != 200){
+                    throw new Exception('Failed createApiCryptCard with '.$message->recipient_email.' for message id= ' . $message->id .': '.json_encode($res));
+                }
+
+                $variableContent = $res['data']["code"][0];
+                $content = str_ireplace($org[$index], $variableContent ,$content);
+            }
+        }
+
+        return $content;
     }
 
     protected function mergeUserTags(string $content, Message $message): string

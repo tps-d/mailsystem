@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Middleware\OwnsRequestedWorkspace;
+//use App\Http\Middleware\OwnsRequestedWorkspace;
 use App\Http\Requests\Workspaces\WorkspaceStoreRequest;
 use App\Http\Requests\Workspaces\WorkspaceUpdateRequest;
 use App\Models\Workspace;
@@ -28,11 +28,12 @@ class WorkspacesController extends Controller
     {
         $this->workspaces = $workspaces;
         $this->createWorkspace = $createWorkspace;
-
+/*
         $this->middleware(OwnsRequestedWorkspace::class)->only([
             'edit',
             'update'
         ]);
+        */
     }
 
     public function index(Request $request): ViewContract

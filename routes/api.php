@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Facades\Helper;
 
 Route::prefix('v1')->namespace('\App\Http\Controllers\Api')->group( function () {//
     Route::apiResource('campaigns', 'CampaignsController');
@@ -25,6 +26,7 @@ Route::prefix('v1')->namespace('\App\Http\Controllers\Api')->group( function () 
     Route::apiResource('templates', 'TemplatesController');
 
     Route::post('message/{id}/send', 'MessageDispatchController@send')->name('message.send');
+
 });
 
 // Non-auth'd API routes.
@@ -39,8 +41,14 @@ Route::prefix('v1/webhooks')->namespace('\App\Http\Controllers\Api\Webhooks')->g
 
 Route::get('v1/ping', '\App\Http\Controllers\Api\PingController@index');
 
-Route::post('v1/test', function(){
-    return \Response([
-        'value' => 'aaa'
-    ]);
+Route::get('v1/test', function(){
+    
+    $expire_time = now()->addDays(3);
+    echo strtotime($expire_time);
+
 });
+
+Route::post('v1/platform/{platform}/captcha/fetch', '\App\Http\Controllers\Api\PlatformController@captcha_fetch');
+
+Route::post('v1/platform/{platform}/card/fetch', '\App\Http\Controllers\Api\PlatformController@card_fetch');
+Route::get('v1/platform/{platform}/test', '\App\Http\Controllers\Api\PlatformController@test');

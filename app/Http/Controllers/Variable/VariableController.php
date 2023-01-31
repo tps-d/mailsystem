@@ -83,7 +83,7 @@ class VariableController extends Controller
     {
         $this->variableRepository->destroy(MailSystem::currentWorkspaceId(), $id);
 
-        $this->variableRepository->rebuildCache();
+        $this->variableRepository->rebuildCache(MailSystem::currentWorkspaceId());
 
         return redirect()->route('variable.index');
     }

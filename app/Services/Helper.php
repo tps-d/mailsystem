@@ -23,6 +23,10 @@ class Helper
         return Carbon::parse($date)->copy()->setTimezone($timezone);
     }
 
+    public function str_starts_with($str, $start) {
+        return (@substr_compare($str, $start, 0, strlen($start))==0);
+    }
+
     public static function convertString2Num($card) {
         $card = strtoupper($card);
         $vc_len = 2;
@@ -119,5 +123,40 @@ class Helper
         );
 
         return file_get_contents($url, false, stream_context_create($opts));
+    }
+
+    public function http_post_fetch_json($url,$data = [],$headers = [])
+    {
+        $client = new \GuzzleHttp\Client();
+
+        $headers = array_merge([ 'Content-Type' => 'application/x-www-form-urlencoded'],$headers);
+        $request = new \GuzzleHttp\Psr7\Request('POST', $url);
+        $response = $client->send($request, [
+            'verify' => false,
+            'allow_redirects' => false,
+            'debug' => false,
+            'headers' => $headers,
+            'form_params' => $data
+        ]);
+
+        return \GuzzleHttp\json_decode($response->getbody()->getContents(), true);
+        
+    }
+
+    public function http_get_fetch_json($url,$data = [],$headers = [])
+    {
+        $client = new \GuzzleHttp\Client();
+
+        $request = new \GuzzleHttp\Psr7\Request('GET', $url);
+        $response = $client->send($request, [
+            'verify' => false,
+            'allow_redirects' => false,
+            'debug' => false,
+            'headers' => $headers,
+            'query' => $data
+        ]);
+
+        return \GuzzleHttp\json_decode($response->getbody()->getContents(), true);
+        
     }
 }

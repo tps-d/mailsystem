@@ -226,6 +226,8 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
             $automationsRouter->get('/queue/webhook', 'QueueController@webhook_jobs')->name('webhook');
             $automationsRouter->get('/queue/failed', 'QueueController@failed_jobs')->name('failed');
         });
+
+        $appRouter->get('/platform/card/list', '\App\Http\Controllers\Api\PlatformController@card_list');
     });
 });
 
