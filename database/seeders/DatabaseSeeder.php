@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+use App\Models\User;
+use App\Models\Workspace;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -28,6 +31,14 @@ class DatabaseSeeder extends Seeder
         DB::table('workspaces')->insert([
                    'owner_id' => 1,
                     'name' => 'default',
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+        DB::table('workspace_users')->insert([
+                   'owner_id' => 1,
+                   'user_id' => 1,
+                    'role' => 'owner',
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);

@@ -37,7 +37,7 @@ class VariableRepository extends BaseRepository
 
     public function getCache($workspaceId){
         $cache_json = Cache::get('template_variables_'.$workspaceId);
-        return json_decode($cache_json,true);
+        return $cache_json ? json_decode($cache_json,true) : [];
     }
 
     public function rebuildCache($workspaceId){
