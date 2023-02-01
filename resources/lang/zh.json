@@ -15,5 +15,14 @@
 	"Repeat" : "重复执行",
 
 	"Duplicate" : "复制计划",
-	"Workspaces" : "工作组"
+	"Workspaces" : "工作组",
+
+	"RECIPIENTS" : "收件人",
+	"SCHEDULE" : "发信时间",
+	"SENDING BEHAVIOUR" : "发送行为",
+	"Dispatch now" : "立即发送",
+	"Dispatch at a specific time" : "指定发送时间",
+
+	"Queue draft" : "放入草稿队列",
+	"Send automatically" : "自动发送"
 }

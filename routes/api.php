@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Facades\Helper;
 
 Route::prefix('v1')->namespace('\App\Http\Controllers\Api')->group( function () {//
@@ -45,6 +47,15 @@ Route::get('v1/test', function(){
     
     $expire_time = now()->addDays(3);
     echo strtotime($expire_time);
+
+});
+
+Route::post('receive/message', function(Request $request){
+    
+        Log::build([
+          'driver' => 'single',
+          'path' => storage_path('logs/receive_message.log'),
+        ])->info($request->all());
 
 });
 
