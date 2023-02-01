@@ -48,7 +48,7 @@ class QueueController extends Controller
     public function failed_jobs(): ViewContract
     {
         $query = (new FailedJobs())->newQuery();
-        $jobs = $query->orderBy('created_at', 'desc')->paginate(25);
+        $jobs = $query->orderBy('failed_at', 'desc')->paginate(25);
 
         return view('queue.failed_jobs', [
             'jobs' => $jobs
