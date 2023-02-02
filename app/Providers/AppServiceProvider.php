@@ -64,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('mailsystem.resolver', function () {
             return new ResolverService();
         });
- 
+
     }
 
     public function boot(): void

@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -51,12 +54,15 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-         return parent::render($request, $exception);
-        if ($exception instanceof ModelNotFoundException || $this->isApiRoute($request)) {
+        // return parent::render($request, $exception);
+        if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
             return response()->json([
-                'message' => 'Invalid entity ID specified.',
-            ], 404);
+                'message' => $exception->getMessage(),
+            ]);
         }
+
+        //echo $exception->getMessage();
+        //exit();
 
         return parent::render($request, $exception);
     }

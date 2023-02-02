@@ -15,6 +15,12 @@ Route::get('/test', function(){
 
 });
 
+Route::fallback( function () {
+    abort( 404 );
+} );
+
+Route::post('/receiving/notify', '\App\Http\Controllers\ReceivingController@notify');
+
 Auth::routes(
     [
         'verify' => config('mailsystem.auth.register', false),
