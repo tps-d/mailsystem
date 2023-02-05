@@ -55,6 +55,9 @@
                     <a class="dropdown-item px-3" href="{{ route('profile.show') }}"><i
                                 class="fas fa-user mr-2 color-gray-300"></i>{{ __('My Profile') }}</a>
 
+                    <a class="dropdown-item px-3" href="{{ route('profile.password_reset') }}"><i
+                                class="fas fa-user mr-2 color-gray-300"></i>{{ __('Reset Password') }}</a>
+
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item px-3" href="{{ route('logout') }}"
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i

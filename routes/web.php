@@ -45,6 +45,9 @@ Route::middleware('auth')->namespace('Auth')->group(
                 $profileRouter->get('/', 'ProfileController@show')->name('show');
                 $profileRouter->get('/edit', 'ProfileController@edit')->name('edit');
                 $profileRouter->put('/', 'ProfileController@update')->name('update');
+
+                $profileRouter->get('/password/reset', 'ProfileController@password_reset')->name('password_reset');
+                $profileRouter->put('/password', 'ProfileController@password_update')->name('password_update');
             }
         );
 
