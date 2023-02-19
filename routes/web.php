@@ -5,14 +5,35 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RequireWorkspace;
-
+use Illuminate\Support\Facades\Hash;
 use App\Repositories\VariableRepository;
 use App\Facades\Helper;
 
+
 Route::get('/test', function(){
- 
+    $response = Telegram::getMe();
 
+    $botId = $response->getId();
+    $firstName = $response->getFirstName();
+    $username = $response->getUsername();
 
+    print_r([
+        'botId' => $botId,
+        'firstName' => $firstName,
+        'username' => $username
+    ]);
+
+    //$response = Telegram::getUpdates();
+
+    //print_r($response);
+    $message =  [
+      'chat_id' => '1318456779', 
+      'text' => 'Hello World'
+    ];
+    $response = Telegram::sendMessage($message);
+
+    $messageId = $response->getMessageId();
+    
 });
 
 Route::fallback( function () {
@@ -191,9 +212,12 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
         // Variable.
         $appRouter->resource('variable', 'Variable\VariableController')->except(['show']);
 
+        // Socialapp
+        $appRouter->resource('socialapp', 'Automations\AutomationsController')->except(['show', 'destroy']);
+
         // Automations
-        $appRouter->resource('automations', 'Automations\AutomationsController')->except(['show', 'destroy']);
-        $appRouter->name('automations.')->prefix('automations')->namespace('Automations')->group(static function ( Router $automationsRouter ) {
+        $appRouter->resource('autobot', 'Automations\AutomationsController')->except(['show', 'destroy']);
+        $appRouter->name('autobot.')->prefix('automations')->namespace('Automations')->group(static function ( Router $automationsRouter ) {
 
             $automationsRouter->get('sent', 'AutomationsController@sent')->name('sent');
             $automationsRouter->get('{id}', 'AutomationsController@show')->name('show');

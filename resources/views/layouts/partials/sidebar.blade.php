@@ -37,6 +37,36 @@
               </li>
             </ul>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:;" role="button"  >
+                <i class="fa-fw fas fa-paper-plane mr-2"></i><span>Telegram管理</span>
+            </a>
+            <ul>
+              <li class="nav-item {{ request()->is('*socialapp*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('socialapp.index') }}">Telegram服务</a>
+              </li>            
+              <li class="nav-item {{ request()->is('*email-services*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('email_services.index') }}">
+                    <span>Telegram用户列表</span>
+                </a>
+              </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:;" role="button"  >
+                <i class="fa-fw fas fa-paper-plane mr-2"></i><span>机器人管理</span>
+            </a>
+            <ul>
+              <li class="nav-item {{ request()->is('*autobot*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('autobot.index') }}">自动发送规则</a>
+              </li>            
+              <li class="nav-item {{ request()->is('*email-services*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('email_services.index') }}">
+                    <span>自动回复规则</span>
+                </a>
+              </li>
+            </ul>
+        </li>
         <!--
         <li class="nav-item">
             <a class="nav-link" href="javascript:;">

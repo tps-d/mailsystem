@@ -6,10 +6,12 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Facades\MailSystem;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
 use App\Repositories\CampaignRepository;
+
 
 class MessageDispatchRequest extends FormRequest
 {
@@ -35,6 +37,7 @@ class MessageDispatchRequest extends FormRequest
         });
     }
 
+
     /**
      * @param array $relations
      * @return Campaign
@@ -57,6 +60,15 @@ class MessageDispatchRequest extends FormRequest
     {
         return [
             'valid_status' => __('The campaign must have a status of draft to be dispatched'),
+            'email.required' => '邮箱格式不正确',
+            'email.email' => '邮箱格式不正确'
         ];
+    }
+
+    protected function failedValidation( \Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw (new HttpResponseException(response()->json([
+            'error' => $validator->errors()->first(),
+        ], 200)));
     }
 }

@@ -55,9 +55,9 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         // return parent::render($request, $exception);
-        if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+        if ($request->ajax() || $request->wantsJson() || $request->expectsJson() || $this->isApiRoute($request)) {
             return response()->json([
-                'message' => $exception->getMessage(),
+                'error' => $exception->getMessage(),
             ]);
         }
 

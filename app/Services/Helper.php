@@ -4,6 +4,8 @@ namespace App\Services;
 
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Log;
+
 class Helper
 {
 
@@ -139,7 +141,14 @@ class Helper
             'form_params' => $data
         ]);
 
-        return \GuzzleHttp\json_decode($response->getbody()->getContents(), true);
+        $response_content = $response->getbody()->getContents();
+        
+        Log::build([
+          'driver' => 'single',
+          'path' => storage_path('logs/platform_request.log'),
+        ])->info("POST ".$url.', data: '.json_encode($data) .", response:\n".$response_content);
+
+        return \GuzzleHttp\json_decode($response_content, true);
         
     }
 
