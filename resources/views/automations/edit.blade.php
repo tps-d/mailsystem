@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __('Edit Campaign'))
+@section('title', __('Edit Automations'))
 
 @section('heading')
-    {{ __('Edit Campaign') }}
+    {{ __('Automations') }}
 @stop
 
 @section('content')
@@ -12,30 +12,39 @@
         <div class="col-lg-8 offset-lg-2">
             <div class="card">
                 <div class="card-header">
-                    {{ __('Edit Campaign') }}
+                    {{ __('Edit Automations') }}
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('campaigns.update', $campaign->id) }}" method="POST" class="form-horizontal">
+                    <form action="{{ route('automations.update', $task->id) }}" method="POST" class="form-horizontal">
                         @csrf
                         @method('PUT')
-                        <x-sendportal.text-field name="name" :label="__('Campaign Name')" :value="$campaign->name ?? old('name')" />
-                        <x-sendportal.text-field name="subject" :label="__('Email Subject')" :value="$campaign->subject ?? old('subject')" />
-                        <x-sendportal.text-field name="from_name" :label="__('From Name')" :value="$campaign->from_name ?? old('from_name')" />
-                        <x-sendportal.text-field name="from_email" :label="__('From Email')" type="email" :value="$campaign->from_email ?? old('from_email')" />
+                        <x-sendportal.select-field name="campaign_id" :label="__('Campaign')" :options="$campaigns" :value="$task->campaign_id ?? old('campaign_id')" />
 
-                        <x-sendportal.select-field name="template_id" :label="__('Template')" :options="$templates" :value="$campaign->template_id ?? old('template_id')" />
+                        <div class="form-group row form-group-auto_label">
+                            <label for="id-field-auto_label" class="control-label col-sm-3">Type</label>
+                            <div class="col-sm-9">
+                                <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="type_id" id="type_timeat" value="1" @if($task->type_id == 1) checked @endif>
+                                  <label class="form-check-label" for="type_timeat">
+                                    定时执行
+                                  </label>
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="type_id" id="type_exp" value="2" @if($task->type_id == 2) checked @endif>
+                                  <label class="form-check-label" for="type_exp">
+                                    重复执行
+                                  </label>
+                                </div>
+                            </div>
+                        </div>
 
-                        <x-sendportal.select-field name="email_service_id" :label="__('Email Service')" :options="$emailServices->pluck('formatted_name', 'id')" :value="$campaign->email_service_id ?? old('email_service_id')" />
+                        <x-sendportal.text-field name="expression" :label="__('CRON EXPRESSION')" :value="$task->expression ?? old('expression')" />
 
-                        <x-sendportal.checkbox-field name="is_open_tracking" :label="__('Track Opens')" value="1" :checked="$campaign->is_open_tracking ?? true" />
-                        <x-sendportal.checkbox-field name="is_click_tracking" :label="__('Track Clicks')" value="1" :checked="$campaign->is_click_tracking ?? true" />
-
-                        <x-sendportal.textarea-field name="content" :label="__('Content')">{{ $campaign->content ?? old('content') }}</x-sendportal.textarea-field>
 
                         <div class="form-group row">
                             <div class="offset-sm-3 col-sm-9">
-                                <a href="{{ route('campaigns.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
-                                <button type="submit" class="btn btn-primary">{{ __('Save and continue') }}</button>
+                                <a href="{{ route('automations.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
+                                <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
                             </div>
                         </div>
 
@@ -44,35 +53,7 @@
                         @push('js')
                             <script>
 
-                                $(function () {
-                                    const smtp = {{
-                                        $emailServices->filter(function ($service) {
-                                            return $service->type_id === \App\Models\EmailServiceType::SMTP;
-                                        })
-                                        ->pluck('id')
-                                    }};
 
-                                    let service_id = $('select[name="email_service_id"]').val();
-
-                                    toggleTracking(smtp.includes(parseInt(service_id, 10)));
-
-                                    $('select[name="email_service_id"]').on('change', function () {
-                                      toggleTracking(smtp.includes(parseInt(this.value, 10)));
-                                    });
-                                });
-
-                                function toggleTracking(disable) {
-                                    let $open = $('input[name="is_open_tracking"]');
-                                    let $click = $('input[name="is_click_tracking"]');
-
-                                    if (disable) {
-                                        $open.attr('disabled', 'disabled');
-                                        $click.attr('disabled', 'disabled');
-                                    } else {
-                                        $open.removeAttr('disabled');
-                                        $click.removeAttr('disabled');
-                                    }
-                                }
 
                             </script>
                         @endpush

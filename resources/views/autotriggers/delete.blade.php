@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
-@section('title', __('Delete Automations'))
+@section('title', __('Delete Autotrigger'))
 
 @section('heading')
-    @lang('Delete Automations') - {{ $automations->name }}
+    @lang('Delete Autotrigger') - {{ $autotrigger->name }}
 @endsection
 
 @section('content')
+
 
     <div class="card">
         <div class="card-header card-header-accent">
@@ -16,13 +17,13 @@
         </div>
         <div class="card-body">
             <p>
-                {!! __('Are you sure that you want to delete the <b>:name</b> automation?', ['name' => $automations->name]) !!}
+                {!! __('Are you sure that you want to delete the <b>:name</b> autotrigger?', ['name' => $autotrigger->name]) !!}
             </p>
-            <form action="{{ route('automations.destroy', $automations->id) }}" method="post">
+            <form action="{{ route('autotrigger.destroy', $autotrigger->id) }}" method="post">
                 @csrf
                 @method('DELETE')
-                <input type="hidden" name="id" value="{{ $automations->id }}">
-                <a href="{{ route('automations.index') }}" class="btn btn-md btn-light">{{ __('Cancel') }}</a>
+                <input type="hidden" name="id" value="{{ $autotrigger->id }}">
+                <a href="{{ route('autotrigger.index',['type'=>$autotrigger->from_type]) }}" class="btn btn-md btn-light">{{ __('Cancel') }}</a>
                 <button type="submit" class="btn btn-md btn-danger">{{ __('DELETE') }}</button>
             </form>
         </div>

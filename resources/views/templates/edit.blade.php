@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __("Templates"))
+@section('title', __("Content Templates"))
 
 @section('heading')
-
+    {{ __('Content Templates') }}
 @stop
 
 @section('content')

@@ -11,61 +11,47 @@ use App\Facades\MailSystem;
 
 class AutomationsStoreRequest extends FormRequest
 {
-    public function rules(): array
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
     {
-        return $this->getRules();
+        return [
+            'type_id'                    => 'required',
+            'campaign_id'                    => 'required',
+            'expression'                 => 'required_if:type_id,expression',
+            //'frequencies'                => 'required_if:type,frequency|array'
+        ];
     }
 
     /**
+     * Get custom messages for validator errors.
+     *
      * @return array
      */
-    protected function getRules(): array
+    public function messages()
     {
         return [
-            'name' => [
-                'required',
-                'max:255'
-            ],
-            'auto_label' => [
-                'required',
-                'max:255',
-                Rule::unique('sendportal_automations')->where(function ($query) {
-                    return $query->where('auto_label',$this->auto_label)->where('workspace_id',  MailSystem::currentWorkspaceId());
-                }),
-            ],
-            'from_name' => [
-                'required',
-                'max:255',
-            ],
-            'from_email' => [
-                'required',
-                'max:255',
-                'email',
-            ],
-            'email_service_id' => [
-                'required',
-                'integer',
-                'exists:sendportal_email_services,id',
-            ],
-            'template_id' => [
-                'nullable',
-                'exists:sendportal_templates,id',
-            ],
-            'is_open_tracking' => [
-                'boolean',
-                'nullable'
-            ],
-            'is_click_tracking' => [
-                'boolean',
-                'nullable'
-            ],
+            'name.required'                            => 'Task name is required',
+            'campaign_id.required'                                => 'Please select a campaign',
+            'expression.required_if'                          => 'Cron Expression is required if task type is expression',
         ];
     }
 
-    public function messages(): array
+    /**
+     * Get data to be validated from the request.
+     *
+     * @return array
+     */
+    public function validationData()
     {
-        return [
-            'email_service_id.required' => __('Please select an email service.'),
-        ];
+        if ($this->input('type_id') == 'frequency') {
+            $this->merge(['expression' => null]);
+        }
+
+        return $this->all();
     }
 }

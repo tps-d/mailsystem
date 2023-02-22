@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __('Email Templates'))
+@section('title', __('Content Templates'))
 
 @section('heading')
-    {{ __('Email Templates') }}
+    {{ __('Content Templates') }}
 @endsection
 
 @section('content')

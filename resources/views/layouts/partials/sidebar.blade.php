@@ -8,24 +8,30 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="javascript:;" role="button"  >
-                <i class="fa-fw fas fa-paper-plane mr-2"></i><span>收发管理</span>
+                <i class="fa-fw fas fa-envelope mr-2"></i><span>收发管理</span>
             </a>
             <ul>
               <li class="nav-item {{ request()->is('*campaigns*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('campaigns.index') }}">{{ __('Campaigns') }}</a>
               </li>
-                <li class="nav-item {{ request()->is('*messages*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('messages.index') }}">{{ __('Messages') }}</a></li>              
-              <li class="nav-item {{ request()->is('*email-services*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('*messages*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('messages.index') }}">{{ __('Messages') }}</a>
+                </li>             
+              <li class="nav-item {{ request()->is('*email-services*') || request()->is('*social-services*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('email_services.index') }}">
-                    <span>{{ __('Email_Services') }}</span>
+                    <span>发件服务器</span>
                 </a>
               </li>
               <li class="nav-item {{ request()->is('*templates*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('templates.index') }}">
-                    <span>{{ __('Email Templates') }}</span>
+                    <span>{{ __('Content Templates') }}</span>
                 </a>
               </li>
-                <li class="nav-item {{ request()->is('*subscribers*') ? 'active' : '' }}">
+              <li class="nav-item {{ request()->is('*variable*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('variable.index') }}">
+                    <span>{{ __('Variable') }}</span>
+                </a>
+              </li>
+                <li class="nav-item {{ request()->is('*subscribers*') || request()->is('*socialusers*')  ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('subscribers.index') }}">
                         <span>{{ __('Subscribers') }}</span>
                     </a>
@@ -36,33 +42,20 @@
                 </a>
               </li>
             </ul>
-        </li>
+        </li>     
         <li class="nav-item">
             <a class="nav-link" href="javascript:;" role="button"  >
-                <i class="fa-fw fas fa-paper-plane mr-2"></i><span>Telegram管理</span>
+                <i class="fa-fw fas fa-clipboard-list mr-2"></i><span>机器人管理</span>
             </a>
             <ul>
-              <li class="nav-item {{ request()->is('*socialapp*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('socialapp.index') }}">Telegram服务</a>
-              </li>            
-              <li class="nav-item {{ request()->is('*email-services*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('email_services.index') }}">
-                    <span>Telegram用户列表</span>
+              <li class="nav-item {{ request()->is('*automations*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('automations.index') }}">
+                    <span>{{ __('Automations') }}</span>
                 </a>
               </li>
-            </ul>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="javascript:;" role="button"  >
-                <i class="fa-fw fas fa-paper-plane mr-2"></i><span>机器人管理</span>
-            </a>
-            <ul>
-              <li class="nav-item {{ request()->is('*autobot*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('autobot.index') }}">自动发送规则</a>
-              </li>            
-              <li class="nav-item {{ request()->is('*email-services*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('email_services.index') }}">
-                    <span>自动回复规则</span>
+              <li class="nav-item {{ request()->is('*autotrigger*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('autotrigger.index',['type'=>'email']) }}">
+                    <span>{{ __('Autotrigger') }}</span>
                 </a>
               </li>
             </ul>

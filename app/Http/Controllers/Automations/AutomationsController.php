@@ -7,55 +7,28 @@ namespace App\Http\Controllers\Automations;
 use Exception;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AutomationsStoreRequest;
-use App\Models\EmailService;
 use App\Repositories\AutomationsRepository;
-use App\Repositories\EmailServiceRepository;
-use App\Repositories\SubscriberRepository;
-use App\Repositories\TagRepository;
-use App\Repositories\TemplateRepository;
-use App\Services\Campaigns\CampaignStatisticsService;
-
 use App\Facades\MailSystem;
+
+use App\Models\Campaign;
+use App\Models\CampaignStatus;
+use App\Models\AutoTask;
 
 class AutomationsController extends Controller
 {
     /** @var AutomationsRepository */
     protected $automations;
 
-    /** @var TemplateRepository */
-    protected $templates;
-
-    /** @var TagRepository */
-    protected $tags;
-
-    /** @var EmailServiceRepository */
-    protected $emailServices;
-
-    /** @var SubscriberRepository */
-    protected $subscribers;
-
-    /**
-     * @var CampaignStatisticsService
-     */
-    protected $campaignStatisticsService;
 
     public function __construct(
-        AutomationsRepository $automations,
-        TemplateRepository $templates,
-        TagRepository $tags,
-        EmailServiceRepository $emailServices,
-        SubscriberRepository $subscribers,
-        CampaignStatisticsService $campaignStatisticsService
+        AutomationsRepository $automations
     ) {
         $this->automations = $automations;
-        $this->templates = $templates;
-        $this->tags = $tags;
-        $this->emailServices = $emailServices;
-        $this->subscribers = $subscribers;
-        $this->campaignStatisticsService = $campaignStatisticsService;
     }
 
     /**
@@ -64,11 +37,11 @@ class AutomationsController extends Controller
     public function index(): ViewContract
     {
         $workspaceId = MailSystem::currentWorkspaceId();
-        $params = ['draft' => true];
-        $campaigns = $this->automations->paginate($workspaceId, 'created_atDesc', ['status'], 25, $params);
+
+        $automations = $this->automations->paginate($workspaceId,'created_atDesc',['campaign']);
 
         return view('automations.index', [
-            'automations' => $campaigns,
+            'automations' => $automations,
             //'campaignStats' => $this->campaignStatisticsService->getForPaginator($campaigns, $workspaceId),
         ]);
     }
@@ -79,18 +52,9 @@ class AutomationsController extends Controller
     public function create(): ViewContract
     {
         $workspaceId = MailSystem::currentWorkspaceId();
-        $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
-        $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
-            ->map(static function (EmailService $emailService) {
-                $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
-                return $emailService;
-            });
+        $campaigns = Campaign::where('workspace_id',$workspaceId)->where('status_id', CampaignStatus::STATUS_DRAFT)->pluck('name', 'id')->all();
 
-        $subscriberCount = $this->subscribers->countActive($workspaceId);
-
-        $tags = $this->tags->all($workspaceId, 'name');
-
-        return view('automations.create', compact('templates', 'emailServices', 'tags', 'subscriberCount'));
+        return view('automations.create', compact('campaigns'));
     }
 
     /**
@@ -99,19 +63,13 @@ class AutomationsController extends Controller
     public function store(AutomationsStoreRequest $request): RedirectResponse
     {
         $workspaceId = MailSystem::currentWorkspaceId();
-        $campaign = $this->automations->store($workspaceId, $this->handleCheckboxes($request->validated()));
+        $campaign = $this->automations->store($workspaceId, [
+            'campaign_id' => $request->campaign_id,
+            'type_id' => $request->type_id,
+            'expression' => $request->expression
+        ]);
 
-        return redirect()->route('automations.preview', $campaign->id);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function show(int $id): ViewContract
-    {
-        $campaign = $this->automations->find(MailSystem::currentWorkspaceId(), $id);
-
-        return view('automations.show', compact('campaign'));
+        return redirect()->route('automations.index');
     }
 
     /**
@@ -120,87 +78,91 @@ class AutomationsController extends Controller
     public function edit(int $id): ViewContract
     {
         $workspaceId = MailSystem::currentWorkspaceId();
-        $campaign = $this->automations->find($workspaceId, $id);
-        $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
-            ->map(static function (EmailService $emailService) {
-                $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
-                return $emailService;
-            });
-        $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
-
-        return view('automations.edit', compact('campaign', 'emailServices', 'templates'));
+        $task = $this->automations->find($workspaceId, $id);
+        $campaigns = Campaign::where('workspace_id',$workspaceId)->where('status_id', CampaignStatus::STATUS_DRAFT)->pluck('name', 'id')->all();
+        return view('automations.edit', compact('task', 'campaigns'));
     }
 
     /**
      * @throws Exception
      */
-    public function update(int $campaignId, AutomationsStoreRequest $request): RedirectResponse
+    public function update(int $taskId, AutomationsStoreRequest $request): RedirectResponse
     {
         $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->automations->update(
             $workspaceId,
-            $campaignId,
-            $this->handleCheckboxes($request->validated())
+            $taskId,
+             [
+                'campaign_id' => $request->campaign_id,
+                'type_id' => $request->type_id,
+                'expression' => $request->expression
+            ]
         );
 
-        return redirect()->route('automations.preview', $campaign->id);
+        return redirect()->route('automations.index', $campaign->id);
     }
 
-    /**
-     * @return RedirectResponse|ViewContract
-     * @throws Exception
-     */
-    public function preview(int $id)
-    {
-        $campaign = $this->automations->find(MailSystem::currentWorkspaceId(), $id);
-        $subscriberCount = $this->subscribers->countActive(MailSystem::currentWorkspaceId());
 
-        if (!$campaign->draft) {
-            return redirect()->route('automations.status', $id);
+    public function stop(int $id)
+    {
+        $automations = $this->automations->find(MailSystem::currentWorkspaceId(), $id);
+
+
+        if ($automations->status_id !== AutoTask::STATUS_RUNING) {
+            throw ValidationException::withMessages([
+                'campaignStatus' => "{$automations->status_title} task cannot be cancelled.",
+            ])->redirectTo(route('automations.index'));
         }
 
-        $tags = $this->tags->all(MailSystem::currentWorkspaceId(), 'name');
+        $this->automations->stopAutomation($automations);
 
-        return view('automations.preview', compact('campaign', 'tags', 'subscriberCount'));
-    }
-
-    /**
-     * @return RedirectResponse|ViewContract
-     * @throws Exception
-     */
-    public function status(int $id)
-    {
-        $workspaceId = MailSystem::currentWorkspaceId();
-        $campaign = $this->automations->find($workspaceId, $id, ['status']);
-
-        if ($campaign->sent) {
-            return redirect()->route('automations.reports.index', $id);
-        }
-
-        return view('automations.status', [
-            'campaign' => $campaign,
-            'campaignStats' => $this->campaignStatisticsService->getForCampaign($campaign, $workspaceId),
+        return redirect()->route('automations.index')->with([
+            'success' => 'The trigger was cancelled successfully.',
         ]);
     }
 
-    /**
-     * Handle checkbox fields.
-     *
-     * NOTE(david): this is here because the Campaign model is marked as being unable to use boolean fields.
-     */
-    private function handleCheckboxes(array $input): array
+    public function start(int $id)
     {
-        $checkboxFields = [
-            'is_open_tracking',
-            'is_click_tracking'
-        ];
+        $automations = $this->automations->find(MailSystem::currentWorkspaceId(), $id);
 
-        foreach ($checkboxFields as $checkboxField) {
-            if (!isset($input[$checkboxField])) {
-                $input[$checkboxField] = false;
-            }
+        if ($automations->status_id != AutoTask::STATUS_STOP) {
+            throw ValidationException::withMessages([
+                'campaignStatus' => "{$automations->status_title} task cannot be start.",
+            ])->redirectTo(route('automations.index'));
         }
 
-        return $input;
+        $this->automations->startAutomation($automations);
+
+        return redirect()->route('automations.index')->with([
+            'success' => 'The task was actived successfully.',
+        ]);
     }
+
+    public function confirm(int $id)
+    {
+        $automations = $this->automations->find(MailSystem::currentWorkspaceId(), $id);
+
+        if ($automations->status == AutoTask::STATUS_RUNING) {
+            return redirect()->route('automations.index')
+                ->withErrors(__('Unable to delete a task that is not in cancel status'));
+        }
+
+        return view('automations.delete', compact('automations'));
+    }
+
+    public function destroy(Request $request): RedirectResponse
+    {
+        $automations = $this->automations->find(MailSystem::currentWorkspaceId(), $request->get('id'));
+
+        if ($automations->status == AutoTask::STATUS_RUNING) {
+            return redirect()->route('automations.index')
+                ->withErrors(__('Unable to delete a task that is not in cancel status'));
+        }
+
+        $this->automations->destroy(MailSystem::currentWorkspaceId(), $request->get('id'));
+
+        return redirect()->route('automations.index',['type'=>$automations->from_type])
+            ->with('success', __('The task has been successfully deleted'));
+    }
+
 }

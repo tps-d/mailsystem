@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Email_Services'))
+@section('title', 'Telegram服务')
 
 @section('heading')
     发件服务器
@@ -21,8 +21,8 @@
 
     @component('layouts.partials.actions')
         @slot('right')
-            <a class="btn btn-primary btn-md btn-flat" href="{{ route('email_services.create') }}">
-                <i class="fa fa-plus mr-1"></i> {{ __('Add Email Service') }}
+            <a class="btn btn-primary btn-md btn-flat" href="{{ route('social_services.create') }}">
+                <i class="fa fa-plus mr-1"></i> 添加Telegram服务
             </a>
         @endslot
     @endcomponent
@@ -39,18 +39,20 @@
                 </tr>
                 </thead>
                 <tbody>
-                @forelse($emailServices as $service)
+                @forelse($socialServices as $service)
                     <tr>
                         <td>{{ $service->name }}</td>
-                        <td>{{ $service->from_name }}  {{ "<".$service->from_email.">" }}</td>
+                        <td><a href="https://t.me/{{ $service->bot_username }}" target="_blank">{{ '@'.$service->bot_username }}</a> {{ '('.$service->bot_id.')' }}</td>
                         <td>{{ $service->type->name }}</td>
                         <td>
-                            <a href="{{ route('email_services.test.create', $service->id) }}" class="btn btn-sm btn-light">
+                            <!--
+                            <a href="{{ route('social_services.test', $service->id) }}" class="btn btn-sm btn-light">
                                 {{ __('Test') }}
                             </a>
+                        -->
                             <a class="btn btn-sm btn-light"
-                               href="{{ route('email_services.edit', $service->id) }}">{{ __('Edit') }}</a>
-                            <form action="{{ route('email_services.delete', $service->id) }}" method="POST"
+                               href="{{ route('social_services.edit', $service->id) }}">{{ __('Edit') }}</a>
+                            <form action="{{ route('social_services.delete', $service->id) }}" method="POST"
                                   style="display: inline">
                                 @csrf
                                 @method('DELETE')
@@ -61,7 +63,7 @@
                 @empty
                     <tr>
                         <td colspan="100%">
-                            <p class="empty-table-text">{{ __('You have not configured any email service.') }}</p>
+                            <p class="empty-table-text">{{ __('You have not configured any social service.') }}</p>
                         </td>
                     </tr>
                 @endforelse

@@ -22,12 +22,9 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>{{ __('Name') }}</th>
-                    @if (request()->routeIs('automations.sent'))
-                        <th>{{ __('Sent') }}</th>
-                        <th>{{ __('Opened') }}</th>
-                        <th>{{ __('Clicked') }}</th>
-                    @endif
+                    <th>{{ __('Campaign') }}</th>
+                    <th>{{ __('LAST RUN') }}</th>
+                    <th>{{ __('NEXT RUN') }}</th>
                     <th>{{ __('Created') }}</th>
                     <th>{{ __('Status') }}</th>
                     <th>{{ __('Actions') }}</th>
@@ -37,33 +34,23 @@
                 @forelse($automations as $automation)
                     <tr>
                         <td>
-                            @if ($automation->draft)
-                                <a href="{{ route('automations.edit', $automation->id) }}">{{ $automation->name }}</a>
-                            @elseif($automation->sent)
-                                <a href="{{ route('automations.reports.index', $automation->id) }}">{{ $automation->name }}</a>
-                            @else
-                                <a href="{{ route('automations.status', $automation->id) }}">{{ $automation->name }}</a>
-                            @endif
+                            <a href="{{ route('campaigns.edit', $automation->campaign_id) }}">{{ $automation->campaign->name }}</a>
                         </td>
-                        @if (request()->routeIs('automations.sent'))
-                            <td>{{ $automationstats[$automation->id]['counts']['sent'] }}</td>
-                            <td>{{ number_format($automationstats[$automation->id]['ratios']['open'] * 100, 1) . '%' }}</td>
-                            <td>
-                                {{ number_format($automationstats[$automation->id]['ratios']['click'] * 100, 1) . '%' }}
-                            </td>
-                        @endif
+                        <td>2023-02-21 05:12:12 </td>
+                        <td>
+                           {{ $automation->upcoming }}
+                        </td>
+
                         <td><span title="{{ $automation->created_at }}">{{ $automation->created_at->diffForHumans() }}</span></td>
                         <td>
-                            @if($automation->draft)
-                                <span class="badge badge-light">{{ $automation->status->name }}</span>
-                            @elseif($automation->queued)
-                                <span class="badge badge-warning">{{ $automation->status->name }}</span>
-                            @elseif($automation->sending)
-                                <span class="badge badge-warning">{{ $automation->status->name }}</span>
-                            @elseif($automation->sent)
-                                <span class="badge badge-success">{{ $automation->status->name }}</span>
-                            @elseif($automation->cancelled)
-                                <span class="badge badge-danger">{{ $automation->status->name }}</span>
+                            @if($automation->status_id == 2)
+                                <span class="badge badge-light">{{ $automation->status_title }}</span>
+                            @elseif($automation->status_id == 3)
+                                <span class="badge badge-warning">{{ $automation->status_title }}</span>
+                            @elseif($automation->status_id == 1)
+                                <span class="badge badge-success">{{ $automation->status_title }}</span>
+                            @elseif($automation->status_id == 4)
+                                <span class="badge badge-danger">{{ $automation->status_title }}</span>
                             @endif
 
                         </td>
@@ -74,38 +61,35 @@
                                     <i class="fas fa-ellipsis-h"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    @if ($automation->draft)
-                                        <a href="{{ route('automations.edit', $automation->id) }}"
-                                           class="dropdown-item">
-                                            {{ __('Edit') }}
-                                        </a>
-                                    @else
-                                        <a href="{{ route('automations.reports.index', $automation->id) }}"
-                                           class="dropdown-item">
-                                            {{ __('View Report') }}
-                                        </a>
-                                    @endif
 
-                                    <a href="{{ route('automations.duplicate', $automation->id) }}"
+                                    <a href="{{ route('automations.edit', $automation->id) }}"
                                        class="dropdown-item">
-                                        {{ __('Duplicate') }}
+                                        {{ __('Edit') }}
                                     </a>
 
-                                    @if($automation->canBeCancelled())
-                                        <div class="dropdown-divider"></div>
-                                        <a href="{{ route('automations.confirm-cancel', $automation->id) }}"
-                                           class="dropdown-item">
-                                            {{ __('Cancel') }}
-                                        </a>
+                                    @if($automation->canBeStop())
+                                    <form action="{{ route('automations.stop', $automation->id) }}" method="post">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            {{ __('Stop') }}
+                                        </button>
+                                    </form>
                                     @endif
 
-                                    @if ($automation->draft)
-                                        <div class="dropdown-divider"></div>
-                                        <a href="{{ route('automations.destroy.confirm', $automation->id) }}"
-                                           class="dropdown-item">
-                                            {{ __('Delete') }}
-                                        </a>
+                                    @if($automation->canBeStart())
+                                    <form action="{{ route('automations.start', $automation->id) }}" method="post">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            {{ __('Start') }}
+                                        </button>
+                                    </form>
                                     @endif
+
+                                    <div class="dropdown-divider"></div>
+                                    <a href="{{ route('automations.destroy.confirm', $automation->id) }}"
+                                       class="dropdown-item">
+                                        {{ __('Delete') }}
+                                    </a>
                                 </div>
                             </div>
                         </td>

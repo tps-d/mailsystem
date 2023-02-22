@@ -11,6 +11,7 @@ use App\Facades\Helper;
 
 
 Route::get('/test', function(){
+/*
     $response = Telegram::getMe();
 
     $botId = $response->getId();
@@ -22,10 +23,11 @@ Route::get('/test', function(){
         'firstName' => $firstName,
         'username' => $username
     ]);
-
-    //$response = Telegram::getUpdates();
-
-    //print_r($response);
+*/
+    $response = Telegram::getUpdates();
+    print_r($response);
+/*
+    
     $message =  [
       'chat_id' => '1318456779', 
       'text' => 'Hello World'
@@ -33,7 +35,7 @@ Route::get('/test', function(){
     $response = Telegram::sendMessage($message);
 
     $messageId = $response->getMessageId();
-    
+    */
 });
 
 Route::fallback( function () {
@@ -213,44 +215,46 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
         $appRouter->resource('variable', 'Variable\VariableController')->except(['show']);
 
         // Socialapp
-        $appRouter->resource('socialapp', 'Automations\AutomationsController')->except(['show', 'destroy']);
+        $appRouter->name('social_services.')->prefix('social-services')->namespace('SocialServices')->group(static function ( Router $servicesRouter ) {
+            $servicesRouter->get('/', 'SocialServicesController@index')->name('index');
+            $servicesRouter->get('create', 'SocialServicesController@create')->name('create');
+            $servicesRouter->get('type/{id}', 'SocialServicesController@socialServicesTypeAjax')->name('ajax');
+            $servicesRouter->post('/', 'SocialServicesController@store')->name('store');
+            $servicesRouter->get('{id}/edit', 'SocialServicesController@edit')->name('edit');
+            $servicesRouter->put('{id}', 'SocialServicesController@update')->name('update');
+            $servicesRouter->delete('{id}', 'SocialServicesController@delete')->name('delete');
+
+            $servicesRouter->get('{id}/test', 'SocialServicesController@test')->name('test');
+        });
+
+        // Socialusers
+        $appRouter->resource('socialusers', 'SocialUsers\SocialUserController');
 
         // Automations
-        $appRouter->resource('autobot', 'Automations\AutomationsController')->except(['show', 'destroy']);
-        $appRouter->name('autobot.')->prefix('automations')->namespace('Automations')->group(static function ( Router $automationsRouter ) {
+        $appRouter->resource('automations', 'Automations\AutomationsController')->except(['show', 'destroy']);
+        $appRouter->name('automations.')->prefix('automations')->namespace('Automations')->group(static function ( Router $automationsRouter ) {
 
-            $automationsRouter->get('sent', 'AutomationsController@sent')->name('sent');
-            $automationsRouter->get('{id}', 'AutomationsController@show')->name('show');
-            $automationsRouter->get('{id}/preview', 'AutomationsController@preview')->name('preview');
-            $automationsRouter->put('{id}/send', 'AutomationsDispatchController@send')->name('send');
             $automationsRouter->get('{id}/status', 'AutomationsController@status')->name('status');
-            $automationsRouter->post('{id}/test', 'AutomationsTestController@handle')->name('test');
+            $automationsRouter->post('{id}/start', 'AutomationsController@start')->name('start');
+            $automationsRouter->post('{id}/stop', 'AutomationsController@stop')->name('stop');
 
-            $automationsRouter->get(
-                '{id}/confirm-delete',
-                'CampaignDeleteController@confirm'
-            )->name('destroy.confirm');
-            $automationsRouter->delete('', 'CampaignDeleteController@destroy')->name('destroy');
+            $automationsRouter->get( '{id}/confirm-delete', 'AutomationsController@confirm' )->name('destroy.confirm');
+            $automationsRouter->delete('', 'AutomationsController@destroy')->name('destroy');
 
-            $automationsRouter->get('{id}/duplicate', 'CampaignDuplicateController@duplicate')->name('duplicate');
+        });
 
-            $automationsRouter->get('{id}/confirm-cancel', 'CampaignCancellationController@confirm')->name('confirm-cancel');
-            $automationsRouter->post('{id}/cancel', 'CampaignCancellationController@cancel')->name('cancel');
+        // Autotrigger
+        $appRouter->resource('autotrigger', 'Automations\AutotriggerController')->except(['index','create','show', 'destroy']);
+        $appRouter->name('autotrigger.')->prefix('autotrigger')->namespace('Automations')->group(static function ( Router $automationsRouter ) {
+            $automationsRouter->get('{type}/index', 'AutotriggerController@index')->name('index');
+            $automationsRouter->get('{type}/create', 'AutotriggerController@create')->name('create');
+            $automationsRouter->get('{id}/status', 'AutotriggerController@status')->name('status');
+            $automationsRouter->post('{id}/active', 'AutotriggerController@active')->name('active');
+            $automationsRouter->post('{id}/cancel', 'AutotriggerController@cancel')->name('cancel');
 
-            $automationsRouter->get('{id}/report', 'CampaignReportsController@index')->name('reports.index');
-            $automationsRouter->get('{id}/report/recipients', 'CampaignReportsController@recipients')
-                ->name('reports.recipients');
-            $automationsRouter->get('{id}/report/opens', 'CampaignReportsController@opens')->name('reports.opens');
-            $automationsRouter->get(
-                '{id}/report/clicks',
-                'CampaignReportsController@clicks'
-            )->name('reports.clicks');
-            $automationsRouter->get('{id}/report/unsubscribes', 'CampaignReportsController@unsubscribes')
-                ->name('reports.unsubscribes');
-            $automationsRouter->get(
-                '{id}/report/bounces',
-                'CampaignReportsController@bounces'
-            )->name('reports.bounces');
+            $automationsRouter->get( '{id}/confirm-delete', 'AutotriggerController@confirm' )->name('destroy.confirm');
+            $automationsRouter->delete('', 'AutotriggerController@destroy')->name('destroy');
+
         });
 
         // Queue

@@ -176,7 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FormServiceProvider::class,
         
-        Telegram\Bot\Laravel\TelegramServiceProvider::class
+        Telegram\Bot\Laravel\TelegramServiceProvider::class,
     ],
 
     /*

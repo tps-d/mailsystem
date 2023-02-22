@@ -25,7 +25,9 @@ class EmailServiceRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => ['required']
+            'name' => ['required'],
+            'from_name' => ['required'],
+            'from_email' => ['required','email']
         ];
 
         if (!$this->route('id')) {
@@ -42,6 +44,7 @@ class EmailServiceRequest extends FormRequest
      */
     public function messages()
     {
+
         switch ((int) $this->input('type_id')) {
             case EmailServiceType::SES:
                 return [

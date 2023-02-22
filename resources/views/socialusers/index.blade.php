@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Subscribers'))
+@section('title', 'Telegram用户')
 
 @section('heading')
     {{ __('Subscribers') }}
@@ -23,7 +23,7 @@
     @component('layouts.partials.actions')
 
         @slot('left')
-            <form action="{{ route('subscribers.index') }}" method="GET" class="form-inline mb-3 mb-md-0">
+            <form action="{{ route('socialusers.index') }}" method="GET" class="form-inline mb-3 mb-md-0">
                 <input class="form-control form-control-sm" name="name" type="text" value="{{ request('name') }}"
                        placeholder="{{ __('Search...') }}">
 
@@ -37,44 +37,33 @@
                     </select>
                 </div>
 
-                @if(count($tags))
-                    <div id="tagFilterSelector" class="mr-2">
-                        <select multiple="" class="selectpicker form-control form-control-sm" name="tags[]" data-width="auto">
-                            @foreach($tags as $tagId => $tagName)
-                                <option value="{{ $tagId }}" @if(in_array($tagId, request()->get('tags') ?? [])) selected @endif>{{ $tagName }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
-
                 <button type="submit" class="btn btn-light btn-md">{{ __('Search') }}</button>
 
                 @if(request()->anyFilled(['name', 'status']))
-                    <a href="{{ route('subscribers.index') }}"
+                    <a href="{{ route('socialusers.index') }}"
                        class="btn btn-md btn-light">{{ __('Clear') }}</a>
                 @endif
             </form>
         @endslot
 
         @slot('right')
+        <!--
             <div class="btn-group mr-2">
                 <button class="btn btn-md btn-default dropdown-toggle" type="button" data-toggle="dropdown">
                     <i class="fa fa-bars color-gray-400"></i>
                 </button>
                 <div class="dropdown-menu">
-                    <a href="{{ route('subscribers.import') }}" class="dropdown-item">
+                    <a href="" class="dropdown-item">
                         <i class="fa fa-upload color-gray-400 mr-2"></i> {{ __('Import Subscribers') }}
                     </a>
-                    <a href="{{ route('subscribers.export') }}" class="dropdown-item">
+                    <a href="" class="dropdown-item">
                         <i class="fa fa-download color-gray-400 mr-2"></i> {{ __('Export Subscribers') }}
                     </a>
 
                 </div>
             </div>
-            <a class="btn btn-light btn-md mr-2" href="{{ route('tags.index') }}">
-                <i class="fa fa-tag color-gray-400 mr-1"></i> {{ __('Tags') }}
-            </a>
-            <a class="btn btn-primary btn-md btn-flat" href="{{ route('subscribers.create') }}">
+        -->
+            <a class="btn btn-primary btn-md btn-flat" href="{{ route('socialusers.create') }}">
                 <i class="fa fa-plus mr-1"></i> {{ __('New Subscriber') }}
             </a>
         @endslot
@@ -85,29 +74,22 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>{{ __('Email') }}</th>
+                    <th>{{ __('Chat ID') }}</th>
                     <th>{{ __('Name') }}</th>
-                    <th>{{ __('Tags') }}</th>
                     <th>{{ __('Created') }}</th>
                     <th>{{ __('Status') }}</th>
                     <th>{{ __('Actions') }}</th>
                 </tr>
                 </thead>
                 <tbody>
-                @forelse($subscribers as $subscriber)
+                @forelse($socialUsers as $subscriber)
                     <tr>
                         <td>
-                            <a href="{{ route('subscribers.show', $subscriber->id) }}">
-                                {{ $subscriber->email }}
+                            <a href="{{ route('socialusers.show', $subscriber->id) }}">
+                                {{ $subscriber->chat_id }}
                             </a>
                         </td>
-                        <td>{{ $subscriber->full_name }}</td>
-                        <td>
-                            @forelse($subscriber->tags as $tag)
-                                <span class="badge badge-light">{{ $tag->name }}</span>
-                            @empty
-                                -
-                            @endforelse
+                        <td>{{ $subscriber->username }}</td>
                         <td><span
                                 title="{{ $subscriber->created_at }}">{{ $subscriber->created_at->diffForHumans() }}</span>
                         </td>
@@ -119,10 +101,10 @@
                             @endif
                         </td>
                         <td>
-                            <form action="{{ route('subscribers.destroy', $subscriber->id) }}" method="POST">
+                            <form action="{{ route('socialusers.destroy', $subscriber->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <a href="{{ route('subscribers.edit', $subscriber->id) }}"
+                                <a href="{{ route('socialusers.edit', $subscriber->id) }}"
                                    class="btn btn-xs btn-light">{{ __('Edit') }}</a>
                                 <button type="submit"
                                         class="btn btn-xs btn-light delete-subscriber">{{ __('Delete') }}</button>
@@ -141,7 +123,7 @@
         </div>
     </div>
 
-    @include('layouts.partials.pagination', ['records' => $subscribers])
+    @include('layouts.partials.pagination', ['records' => $socialUsers])
 
     <script>
         let subscribers = document.getElementsByClassName('delete-subscriber');

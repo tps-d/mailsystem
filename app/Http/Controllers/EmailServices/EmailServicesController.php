@@ -53,6 +53,8 @@ class EmailServicesController extends Controller
 
         $this->emailServices->store(MailSystem::currentWorkspaceId(), [
             'name' => $request->name,
+            'from_name' => $request->from_name,
+            'from_email' => $request->from_email,
             'type_id' => $emailServiceType->id,
             'settings' => $settings,
         ]);
@@ -82,6 +84,8 @@ class EmailServicesController extends Controller
         $settings = $request->get('settings');
 
         $emailService->name = $request->name;
+        $emailService->from_name = $request->from_name;
+        $emailService->from_email = $request->from_email;
         $emailService->settings = $settings;
         $emailService->save();
 

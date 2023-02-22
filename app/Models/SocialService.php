@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\Carbon;
-use Database\Factories\EmailServiceFactory;
+
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,25 +25,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @method static EmailServiceFactory factory
  */
-class EmailService extends BaseModel
+class SocialService extends BaseModel
 {
-    use HasFactory;
 
-    // NOTE(david): we require this because of namespace issues when resolving factories from models
-    // not in the default `App\Models` namespace.
-    protected static function newFactory()
-    {
-        return EmailServiceFactory::new();
-    }
 
     /** @var string */
-    protected $table = 'sendportal_email_services';
+    protected $table = 'social_services';
 
     /** @var array */
     protected $fillable = [
         'name',
-        'from_name',
-        'from_email',
         'type_id',
         'settings',
     ];
@@ -60,7 +51,7 @@ class EmailService extends BaseModel
      */
     public function type(): BelongsTo
     {
-        return $this->belongsTo(EmailServiceType::class, 'type_id');
+        return $this->belongsTo(SocialServiceType::class, 'type_id');
     }
 
     /**
@@ -71,13 +62,6 @@ class EmailService extends BaseModel
         return $this->hasMany(Campaign::class, 'email_service_id');
     }
 
-    /**
-     * Automations using this email service.
-     */
-    public function automations(): HasMany
-    {
-        return $this->hasMany(Automation::class, 'email_service_id');
-    }
 
     public function setSettingsAttribute(array $data): void
     {
