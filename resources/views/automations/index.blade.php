@@ -36,9 +36,13 @@
                         <td>
                             <a href="{{ route('campaigns.edit', $automation->campaign_id) }}">{{ $automation->campaign->name }}</a>
                         </td>
-                        <td>2023-02-21 05:12:12 </td>
+                        <td></td>
                         <td>
-                           {{ $automation->upcoming }}
+                            @if($automation->type_id == 2)
+                                 {{ $automation->upcoming }}
+                            @else
+                                 {{ $automation->scheduled_at }}
+                            @endif
                         </td>
 
                         <td><span title="{{ $automation->created_at }}">{{ $automation->created_at->diffForHumans() }}</span></td>

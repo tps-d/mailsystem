@@ -88,7 +88,7 @@ class DispatchTestMessage
      */
     protected function resolveCampaign(int $workspaceId, int $campaignId): ?Campaign
     {
-        return $this->campaignTenant->find($workspaceId, $campaignId);
+        return $this->campaignTenant->find($workspaceId, $campaignId,['email_service']);
     }
 
     /**
@@ -134,8 +134,8 @@ class DispatchTestMessage
             'source_id' => $campaign->id,
             'recipient_email' => $recipientEmail,
             'subject' => '[Test] ' . $campaign->subject,
-            'from_name' => $campaign->from_name,
-            'from_email' => $campaign->from_email,
+            'from_name' => $campaign->email_service->from_name,
+            'from_email' => $campaign->email_service->from_email,
             'hash' => 'abc123',
         ]);
     }

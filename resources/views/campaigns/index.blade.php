@@ -39,9 +39,7 @@
                     <tr>
                         <td>
                             @if ($campaign->draft)
-                                <a href="{{ route('campaigns.edit', $campaign->id) }}">{{ $campaign->name }}</a>
-                            @elseif($campaign->sent || $campaign->repeated)
-                                <a href="{{ route('campaigns.reports.index', $campaign->id) }}">{{ $campaign->name }}</a>
+                                <a href="{{ route('campaigns.preview', $campaign->id) }}">{{ $campaign->name }}</a>
                             @else
                                 <a href="{{ route('campaigns.status', $campaign->id) }}">{{ $campaign->name }}</a>
                             @endif

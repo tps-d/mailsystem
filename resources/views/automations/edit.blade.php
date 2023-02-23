@@ -23,24 +23,29 @@
                         <div class="form-group row form-group-auto_label">
                             <label for="id-field-auto_label" class="control-label col-sm-3">Type</label>
                             <div class="col-sm-9">
-                                <div class="form-check">
-                                  <input class="form-check-input" type="radio" name="type_id" id="type_timeat" value="1" @if($task->type_id == 1) checked @endif>
-                                  <label class="form-check-label" for="type_timeat">
-                                    定时执行
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="radio" name="type_id" id="type_exp" value="2" @if($task->type_id == 2) checked @endif>
-                                  <label class="form-check-label" for="type_exp">
-                                    重复执行
-                                  </label>
-                                </div>
+                                @if($task->type_id == 1)
+                               
+                                  <input class="form-check-input" type="hidden" name="type_id" value="1" >
+                                  <p>定时执行</p>
+                                
+                                @else
+                                  <input class="form-check-input" type="hidden" name="type_id" value="2" >
+                                  <p>重复执行</p>
+                                @endif
                             </div>
                         </div>
-
-                        <x-sendportal.text-field name="expression" :label="__('CRON EXPRESSION')" :value="$task->expression ?? old('expression')" />
-
-
+                        @if($task->type_id == 1)
+                            <div class="form-group row" id="input-scheduled_at" >
+                                <label for="id-field-scheduled_at" class="control-label col-sm-3">Scheduled at</label>
+                                <div class="col-sm-9">
+                                    <input id="input-field-scheduled_at" class="form-control mb-3" name="scheduled_at" type="text" value="{{ $task->scheduled_at ?? now() }}">
+                                </div>
+                            </div>
+                          @else
+                            <div id="input-expression">
+                                <x-sendportal.text-field name="expression" :label="__('Cron expression')" :value="$task->expression ?? old('expression')" />
+                            </div>
+                            @endif
                         <div class="form-group row">
                             <div class="offset-sm-3 col-sm-9">
                                 <a href="{{ route('automations.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
@@ -50,13 +55,36 @@
 
                         @include('layouts.partials.summernote')
 
-                        @push('js')
-                            <script>
+                            @push('css')
+                                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                            @endpush
+                            
+                            @push('js')
+                                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                                <script>
 
+                                    $(function () {
 
+                                        $('input[name=type_id]').change(function() {
+                                            if (this.value == '1') {
+                                                $('#input-scheduled_at').removeClass('hide');
+                                                $('#input-expression').addClass('hide');
+                                            } else {
+                                                $('#input-scheduled_at').addClass('hide');
+                                                $('#input-expression').removeClass('hide');
+                                            }
+                                        });
 
-                            </script>
-                        @endpush
+                                        $('#input-field-scheduled_at').flatpickr({
+                                            enableTime: true,
+                                            time_24hr: true,
+                                            dateFormat: "Y-m-d H:i",
+                                        });
+                                        
+                                    });
+                                </script>
+                            @endpush
+
 
                     </form>
                 </div>

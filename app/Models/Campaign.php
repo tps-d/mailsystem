@@ -89,10 +89,13 @@ class Campaign extends BaseModel
 
     /** @var array */
     protected $casts = [
+        'is_send_social' => 'int',
+        'is_send_mail' => 'int',
         'status_id' => 'int',
         'workspace_id' => 'int',
         'template_id' => 'int',
         'email_service_id' => 'int',
+        'social_service_id' => 'int',
         'is_open_tracking' => 'bool',
         'is_click_tracking' => 'bool',
         'scheduled_at' => 'datetime',
@@ -129,6 +132,11 @@ class Campaign extends BaseModel
     public function email_service(): BelongsTo
     {
         return $this->belongsTo(EmailService::class);
+    }
+
+    public function social_service(): BelongsTo
+    {
+        return $this->belongsTo(SocialService::class);
     }
 
     /**

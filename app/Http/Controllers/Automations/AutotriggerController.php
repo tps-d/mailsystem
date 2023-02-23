@@ -64,7 +64,7 @@ class AutotriggerController extends Controller
         $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
         $fromOptions = [null => '- None -'] + $this->emailServices->all($workspaceId, 'id', ['type'])
             ->map(static function (EmailService $emailService) {
-                $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
+                $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
                 return $emailService;
             })->pluck('formatted_name', 'id')->all();
 
@@ -93,7 +93,7 @@ class AutotriggerController extends Controller
         $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
         $fromOptions = [null => '- None -'] + $this->emailServices->all($workspaceId, 'id', ['type'])
             ->map(static function (EmailService $emailService) {
-                $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
+                $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
                 return $emailService;
             })->pluck('formatted_name', 'id')->all();
 

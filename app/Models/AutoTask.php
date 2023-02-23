@@ -39,6 +39,7 @@ class AutoTask extends BaseModel
         'id',
         'type_id',
         'campaign_id',
+        'scheduled_at',
         'expression',
         'status_id'
     ];

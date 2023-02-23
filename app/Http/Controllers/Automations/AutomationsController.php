@@ -66,6 +66,7 @@ class AutomationsController extends Controller
         $campaign = $this->automations->store($workspaceId, [
             'campaign_id' => $request->campaign_id,
             'type_id' => $request->type_id,
+            'scheduled_at' => $request->scheduled_at,
             'expression' => $request->expression
         ]);
 
@@ -95,6 +96,7 @@ class AutomationsController extends Controller
              [
                 'campaign_id' => $request->campaign_id,
                 'type_id' => $request->type_id,
+                'scheduled_at' => $request->scheduled_at,
                 'expression' => $request->expression
             ]
         );

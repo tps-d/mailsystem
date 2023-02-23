@@ -47,28 +47,28 @@ class CampaignDispatchController extends Controller
             return redirect()->route('campaigns.status', $id);
         }
 
-        if (!$campaign->email_service_id) {
+        if ($campaign->is_send_mail && !$campaign->email_service_id) {
             return redirect()->route('campaigns.edit', $id)
                 ->withErrors(__('Please select an Email Service'));
         }
 
-        $campaign->update([
-            'send_to_all' => $request->get('recipients') === 'send_to_all',
-        ]);
+        if ($campaign->is_send_social && !$campaign->social_service_id) {
+            return redirect()->route('campaigns.edit', $id)
+                ->withErrors(__('Please select an Social Service'));
+        }
 
-        $campaign->tags()->sync($request->get('tags'));
 
+/*
         if ($this->quotaService->exceedsQuota($campaign->email_service, $campaign->unsent_count)) {
             return redirect()->route('campaigns.edit', $id)
                 ->withErrors(__('The number of subscribers for this campaign exceeds your SES quota'));
         }
-
-        $scheduledAt = $request->get('schedule') === 'scheduled' ? Carbon::parse($request->get('scheduled_at')) : now();
+*/
 
         $campaign->update([
-            'scheduled_at' => $scheduledAt,
+            'scheduled_at' => now(),
             'status_id' => CampaignStatus::STATUS_QUEUED,
-            'save_as_draft' => $request->get('behaviour') === 'draft',
+            'save_as_draft' => false,
         ]);
 
         return redirect()->route('campaigns.status', $id);

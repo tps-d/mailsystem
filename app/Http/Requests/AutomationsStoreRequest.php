@@ -20,10 +20,11 @@ class AutomationsStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'type_id'                    => 'required',
-            'campaign_id'                    => 'required',
-            'expression'                 => 'required_if:type_id,expression',
-            //'frequencies'                => 'required_if:type,frequency|array'
+            'type_id'              => 'required',
+            'campaign_id'          => 'required',
+            'scheduled_at'         => 'required|date',
+            'expression'           => 'required_if:type_id,2',
+            
         ];
     }
 
@@ -48,7 +49,7 @@ class AutomationsStoreRequest extends FormRequest
      */
     public function validationData()
     {
-        if ($this->input('type_id') == 'frequency') {
+        if ($this->input('type_id') == 2) {
             $this->merge(['expression' => null]);
         }
 
