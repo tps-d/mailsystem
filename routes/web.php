@@ -151,7 +151,8 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
             $campaignRouter->get('{id}/preview', 'CampaignsController@preview')->name('preview');
             $campaignRouter->put('{id}/send', 'CampaignDispatchController@send')->name('send');
             $campaignRouter->get('{id}/status', 'CampaignsController@status')->name('status');
-            $campaignRouter->post('{id}/test', 'CampaignTestController@handle')->name('test');
+            $campaignRouter->post('{id}/test/email', 'CampaignTestController@handle_mail')->name('test_mail');
+            $campaignRouter->post('{id}/test/social', 'CampaignTestController@handle_social')->name('test_social');
 
             $campaignRouter->get('{id}/confirm-delete','CampaignDeleteController@confirm')->name('destroy.confirm');
             $campaignRouter->delete('', 'CampaignDeleteController@destroy')->name('destroy');

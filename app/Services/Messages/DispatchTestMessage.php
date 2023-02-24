@@ -64,6 +64,7 @@ class DispatchTestMessage
         return $this->dispatch($message, $emailService, $trackingOptions, $mergedContent);
     }
 
+
     /**
      * @throws Exception
      */
@@ -111,7 +112,7 @@ class DispatchTestMessage
             ->setSubject($message->subject)
             ->setTrackingOptions($trackingOptions);
 
-        $messageId = $this->relayMessage->handle($mergedContent, $messageOptions, $emailService);
+        $messageId = $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
 
         Log::info('Message has been dispatched.', ['message_id' => $messageId]);
 

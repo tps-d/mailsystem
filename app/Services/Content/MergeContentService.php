@@ -11,7 +11,6 @@ use App\Repositories\CampaignRepository;
 use App\Repositories\VariableRepository;
 use App\Repositories\AutomationsRepository;
 use App\Traits\NormalizeTags;
-use Sendportal\Pro\Repositories\AutomationScheduleRepository;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 use App\Facades\Helper;
@@ -24,9 +23,6 @@ class MergeContentService
     /** @var CampaignRepository */
     protected $campaignRepo;
 
-    /** @var AutomationsRepository */
-    protected $automationsRepo;
-
     /** @var VariableRepository */
     protected $variableRepo;
 
@@ -37,14 +33,12 @@ class MergeContentService
 
     public function __construct(
         CampaignRepository $campaignRepo,
-        AutomationsRepository $automationsRepo,
         VariableRepository $variableRepo,
         CssToInlineStyles $cssProcessor,
         PlatformService $platformService
 
     ) {
         $this->campaignRepo = $campaignRepo;
-        $this->automationsRepo = $automationsRepo;
         $this->variableRepo = $variableRepo;
         $this->cssProcessor = $cssProcessor;
         $this->platformService = $platformService;
@@ -66,8 +60,6 @@ class MergeContentService
 
         if ($message->isCampaign()) {
             $mergedContent = $this->mergeCampaignContent($message);
-        } elseif ($message->isAutomation()) {
-            $mergedContent = $this->mergeAutomationContent($message);
         } else {
             throw new Exception('Invalid message source type for message id=' . $message->id);
         }
@@ -90,24 +82,6 @@ class MergeContentService
         return $campaign->template
             ? $this->mergeContent($campaign->content, $campaign->template->content)
             : $campaign->content;
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected function mergeAutomationContent(Message $message): string
-    {
-        $automations = $this->automationsRepo->find($message->workspace_id, $message->source_id, ['template']);
-
-        if (!$automations) {
-            throw new Exception('Unable to resolve automations step for message id= ' . $message->id);
-        }
-
-        return $automations->template
-            ? $this->mergeContent($automations->content, $automations->template->content)
-            : $automations->content;
-
-        return $this->mergeContent($content, $template->content);
     }
 
     protected function mergeContent(?string $customContent, string $templateContent): string
@@ -148,7 +122,7 @@ class MergeContentService
     protected function mergeSubscriberTags(string $content, Message $message): string
     {
         $tags = [
-            'email' => $message->recipient_email,
+            'email' => $message->recipient_email ?? '',
             'first_name' => optional($message->subscriber)->first_name ?? '',
             'last_name' => optional($message->subscriber)->last_name ?? ''
         ];

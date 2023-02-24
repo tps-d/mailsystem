@@ -6,10 +6,10 @@ namespace App\Listeners;
 
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Events\MessageDispatchEvent;
+use App\Events\MessageEmailDispatchEvent;
 use App\Services\Messages\DispatchMessage;
 
-class MessageDispatchHandler implements ShouldQueue
+class MessageEmailDispatchHandler implements ShouldQueue
 {
     /** @var string */
     public $queue = 'message-dispatch';
@@ -25,7 +25,7 @@ class MessageDispatchHandler implements ShouldQueue
     /**
      * @throws Exception
      */
-    public function handle(MessageDispatchEvent $event): void
+    public function handle(MessageEmailDispatchEvent $event): void
     {
         $this->dispatchMessage->handle($event->message);
     }

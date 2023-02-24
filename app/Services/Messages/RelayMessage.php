@@ -8,14 +8,21 @@ use Exception;
 use App\Factories\MailAdapterFactory;
 use App\Models\EmailService;
 
+use App\Factories\SocialAdapterFactory;
+use App\Models\SocialService;
+
 class RelayMessage
 {
     /** @var MailAdapterFactory */
     protected $mailAdapter;
 
-    public function __construct(MailAdapterFactory $mailAdapter)
+    /** @var SocialAdapterFactory */
+    protected $socialAdapter;
+
+    public function __construct(MailAdapterFactory $mailAdapter,SocialAdapterFactory $socialAdapter)
     {
         $this->mailAdapter = $mailAdapter;
+        $this->socialAdapter = $socialAdapter;
     }
 
     /**
@@ -23,7 +30,7 @@ class RelayMessage
      *
      * @throws Exception
      */
-    public function handle(string $mergedContent, MessageOptions $messageOptions, EmailService $emailService): string
+    public function handle_mail(string $mergedContent, MessageOptions $messageOptions, EmailService $emailService): string
     {
         return $this->mailAdapter->adapter($emailService)
             ->send(
@@ -32,6 +39,15 @@ class RelayMessage
                 $messageOptions->getTo(),
                 $messageOptions->getSubject(),
                 $messageOptions->getTrackingOptions(),
+                $mergedContent
+            );
+    }
+
+    public function handle_social(string $mergedContent, MessageOptions $messageOptions, SocialService $socialService): string
+    {
+        return $this->socialAdapter->adapter($socialService)
+            ->send(
+                $messageOptions->getTo(),
                 $mergedContent
             );
     }

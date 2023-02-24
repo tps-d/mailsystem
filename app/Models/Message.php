@@ -119,12 +119,12 @@ class Message extends BaseModel
         return $this->morphTo();
     }
 
-    /**
-     * Determine if this message is for an automation.
-     *
-     * @return bool
-     */
-    public function isAutomation(): bool
+    public function isSocialMessage(): bool
+    {
+        return $this->source_type === Automations::class;
+    }
+
+    public function isMailMessage(): bool
     {
         return $this->source_type === Automations::class;
     }

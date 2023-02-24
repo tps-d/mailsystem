@@ -59,7 +59,7 @@
             </div>
              @if($campaign->is_send_mail)
             <div class="card-body border-top" >
-                <form action="{{ route('campaigns.test', $campaign->id) }}" method="POST">
+                <form action="{{ route('campaigns.test_mail', $campaign->id) }}" method="POST">
                     @csrf
                     <div class="pb-2"><b>{{ __('EMAIL RECIPIENT') }}</b></div>
                     <div class="form-group row form-group-schedule">
@@ -76,12 +76,12 @@
             @endif
             @if($campaign->is_send_social)
             <div class="card-body border-top" >
-                <form action="{{ route('campaigns.test', $campaign->id) }}" method="POST">
+                <form action="{{ route('campaigns.test_social', $campaign->id) }}" method="POST">
                     @csrf
                     <div class="pb-2"><b>{{ __('SOCIAL RECIPIENT') }}</b></div>
                     <div class="form-group row form-group-schedule">
                         <div class="col-sm-12">
-                            <input name="recipient_email" type="text" class="form-control" placeholder="{{ __('Recipient chat id') }}">
+                            <input name="recipient_chat_id" type="text" class="form-control" placeholder="{{ __('Recipient chat id') }}">
                         </div>
                     </div>
 

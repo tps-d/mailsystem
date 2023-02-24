@@ -7,7 +7,8 @@ namespace App\Providers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use App\Events\MessageDispatchEvent;
+use App\Events\MessageEmailDispatchEvent;
+use App\Events\MessageSocialDispatchEvent;
 use App\Events\SubscriberAddedEvent;
 use App\Events\Webhooks\MailgunWebhookReceived;
 use App\Events\Webhooks\MailjetWebhookReceived;
@@ -15,7 +16,8 @@ use App\Events\Webhooks\PostmarkWebhookReceived;
 use App\Events\Webhooks\SendgridWebhookReceived;
 use App\Events\Webhooks\SesWebhookReceived;
 use App\Events\Webhooks\PostalWebhookReceived;
-use App\Listeners\MessageDispatchHandler;
+use App\Listeners\MessageEmailDispatchHandler;
+use App\Listeners\MessageSocialDispatchHandler;
 use App\Listeners\Webhooks\HandleMailgunWebhook;
 use App\Listeners\Webhooks\HandleMailjetWebhook;
 use App\Listeners\Webhooks\HandlePostmarkWebhook;
@@ -37,8 +39,11 @@ class EventServiceProvider extends ServiceProvider
         MailgunWebhookReceived::class => [
             HandleMailgunWebhook::class,
         ],
-        MessageDispatchEvent::class => [
-            MessageDispatchHandler::class,
+        MessageEmailDispatchEvent::class => [
+            MessageEmailDispatchHandler::class,
+        ],
+        MessageSocialDispatchEvent::class => [
+            MessageSocialDispatchHandler::class,
         ],
         PostmarkWebhookReceived::class => [
             HandlePostmarkWebhook::class,

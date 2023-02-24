@@ -8,12 +8,12 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
-use App\Models\EmailService;
+use App\Models\SocialService;
 use App\Models\Message;
 use App\Services\Content\MergeContentService;
 use App\Services\Content\MergeSubjectService;
 
-class DispatchMessage
+class DispatchSocial
 {
     /** @var ResolveService */
     protected $resolveService;
@@ -25,21 +25,21 @@ class DispatchMessage
     protected $mergeContentService;
 
     /** @var MergeSubjectService */
-    protected $mergeSubjectService;
+    //protected $mergeSubjectService;
 
     /** @var MarkAsSent */
     protected $markAsSent;
 
     public function __construct(
         MergeContentService $mergeContentService,
-        MergeSubjectService $mergeSubjectService,
-        ResolveEmailService $resolveEmailService,
+       // MergeSubjectService $mergeSubjectService,
+        ResolveSocialService $resolveSocialService,
         RelayMessage $relayMessage,
         MarkAsSent $markAsSent
     ) {
         $this->mergeContentService = $mergeContentService;
         $this->mergeSubjectService = $mergeSubjectService;
-        $this->resolveEmailService = $resolveEmailService;
+       // $this->resolveSocialService = $resolveSocialService;
         $this->relayMessage = $relayMessage;
         $this->markAsSent = $markAsSent;
     }
@@ -55,15 +55,13 @@ class DispatchMessage
             return null;
         }
 
-        $message = $this->mergeSubject($message);
+       // $message = $this->mergeSubject($message);
 
         $mergedContent = $this->getMergedContent($message);
 
-        $emailService = $this->getEmailService($message);
+        $socialService = $this->getSocialService($message);
 
-        $trackingOptions = MessageTrackingOptions::fromMessage($message);
-
-        $messageId = $this->dispatch($message, $emailService, $trackingOptions, $mergedContent);
+        $messageId = $this->dispatch($message, $emailService, $mergedContent);
 
         $this->markSent($message, $messageId);
 
@@ -94,16 +92,12 @@ class DispatchMessage
     /**
      * @throws Exception
      */
-    protected function dispatch(Message $message, EmailService $emailService, MessageTrackingOptions $trackingOptions, string $mergedContent): ?string
+    protected function dispatch(Message $message, SocialService $socialService,string $mergedContent): ?string
     {
         $messageOptions = (new MessageOptions)
-            ->setTo($message->recipient_email)
-            ->setFromEmail($message->from_email)
-            ->setFromName($message->from_name)
-            ->setSubject($message->subject)
-            ->setTrackingOptions($trackingOptions);
+            ->setTo($message->recipient_chat_id)
 
-        $messageId = $this->relayMessage->handle($mergedContent, $messageOptions, $emailService);
+        $messageId = $this->relayMessage->handle($mergedContent, $messageOptions, $socialService);
 
         Log::info('Message has been dispatched.', ['message_id' => $messageId]);
 
@@ -113,9 +107,9 @@ class DispatchMessage
     /**
      * @throws Exception
      */
-    protected function getEmailService(Message $message): EmailService
+    protected function getSocialService(Message $message): EmailService
     {
-        return $this->resolveEmailService->handle($message);
+        return $this->resolveSocialService->handle($message);
     }
 
     protected function markSent(Message $message, string $messageId): Message

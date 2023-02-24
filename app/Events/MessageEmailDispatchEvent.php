@@ -8,7 +8,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Message;
 
-class MessageDispatchEvent
+class MessageEmailDispatchEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
