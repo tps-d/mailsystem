@@ -88,13 +88,8 @@
                         <td>
                             @if($message->isCampaign())
                                 <i class="fas fa-envelope color-gray-300"></i>
-                                <a href="{{ route('campaigns.reports.index', $message->source_id) }}">
+                                <a href="{{ route('campaigns.preview', $message->source_id) }}">
                                     {{ $message->source->name }}
-                                </a>
-                            @elseif($message->isAutomation())
-                                <i class="fas fa-sync-alt color-gray-300"></i>
-                                <a href="{{ route('automations.show', $message->source->automation_step->automation_id) }}">
-                                    {{ $message->source->automation_step->automation->name }}
                                 </a>
                             @endif
                         </td>

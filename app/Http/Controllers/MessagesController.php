@@ -13,6 +13,7 @@ use App\Repositories\MessageRepository;
 use App\Services\Content\MergeContentService;
 use App\Services\Content\MergeSubjectService;
 use App\Services\Messages\DispatchMessage;
+use App\Services\Messages\DispatchSocial;
 use App\Facades\MailSystem;
 
 class MessagesController extends Controller
@@ -23,6 +24,9 @@ class MessagesController extends Controller
     /** @var DispatchMessage */
     protected $dispatchMessage;
 
+    /** @var DispatchSocial */
+    protected $dispatchSocial;
+
     /** @var MergeContentService */
     protected $mergeContentService;
 
@@ -32,11 +36,13 @@ class MessagesController extends Controller
     public function __construct(
         MessageRepository $messageRepo,
         DispatchMessage $dispatchMessage,
+        DispatchSocial $dispatchSocial,
         MergeContentService $mergeContentService,
         MergeSubjectService $mergeSubjectService
     ) {
         $this->messageRepo = $messageRepo;
         $this->dispatchMessage = $dispatchMessage;
+        $this->dispatchSocial = $dispatchSocial;
         $this->mergeContentService = $mergeContentService;
         $this->mergeSubjectService = $mergeSubjectService;
     }
@@ -48,7 +54,7 @@ class MessagesController extends Controller
      */
     public function index(): View
     {
-        $params = request()->only(['search', 'status']);
+        $params = request()->only(['search', 'status','source_id']);
         $params['sent'] = true;
 
         $messages = $this->messageRepo->paginateWithSource(
@@ -69,12 +75,15 @@ class MessagesController extends Controller
      */
     public function draft(): View
     {
+        $params = request()->only(['source_id']);
+        $params['draft'] = true;
+
         $messages = $this->messageRepo->paginateWithSource(
             MailSystem::currentWorkspaceId(),
             'created_atDesc',
             [],
             50,
-            ['draft' => true]
+            $params
         );
 
         return view('messages.index', compact('messages'));
@@ -102,6 +111,7 @@ class MessagesController extends Controller
      */
     public function send(): RedirectResponse
     {
+
         if (!$message = $this->messageRepo->find(
             MailSystem::currentWorkspaceId(),
             request('id'),
@@ -114,9 +124,13 @@ class MessagesController extends Controller
             return redirect()->back()->withErrors(__('The selected message has already been sent'));
         }
 
-        $this->dispatchMessage->handle($message);
-
-        return redirect()->route('messages.draft')->with(
+        if($message->is_send_mail){
+            $this->dispatchMessage->handle($message);
+        }else{
+            $this->dispatchSocial->handle($message);
+        }
+        
+        return redirect()->back()->with(
             'success',
             __('The message was sent successfully.')
         );
@@ -145,7 +159,7 @@ class MessagesController extends Controller
             $message->id
         );
 
-        return redirect()->route('messages.draft')->with(
+        return redirect()->back()->with(
             'success',
             __('The message was deleted')
         );

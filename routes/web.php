@@ -157,10 +157,7 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
             $campaignRouter->get('{id}/confirm-delete','CampaignDeleteController@confirm')->name('destroy.confirm');
             $campaignRouter->delete('', 'CampaignDeleteController@destroy')->name('destroy');
 
-            $campaignRouter->get('{id}/duplicate', 'CampaignDuplicateController@duplicate')->name('duplicate');
-
-            $campaignRouter->get('{id}/repeat-cancel', 'CampaignRepeatController@confirm')->name('confirm-repeat');
-            $campaignRouter->post('{id}/repeat', 'CampaignRepeatController@repeat')->name('repeat');
+           // $campaignRouter->get('{id}/duplicate', 'CampaignDuplicateController@duplicate')->name('duplicate');
 
             $campaignRouter->get('{id}/confirm-cancel', 'CampaignCancellationController@confirm')->name('confirm-cancel');
             $campaignRouter->post('{id}/cancel', 'CampaignCancellationController@cancel')->name('cancel');
@@ -263,6 +260,9 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
             $automationsRouter->get('/queue/dispatch', 'QueueController@dispatch_jobs')->name('dispatch');
             $automationsRouter->get('/queue/webhook', 'QueueController@webhook_jobs')->name('webhook');
             $automationsRouter->get('/queue/failed', 'QueueController@failed_jobs')->name('failed');
+
+            $automationsRouter->post('/queue/failed/{id}/retry', 'QueueController@retry')->name('failed.retry');
+            $automationsRouter->post('/queue/failed/{id}/delete', 'QueueController@delete')->name('failed.delete');
         });
 
         $appRouter->get('/platform/card/list', '\App\Http\Controllers\Api\PlatformController@card_list');

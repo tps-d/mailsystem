@@ -49,13 +49,7 @@
                         @forelse($completedCampaigns as $campaign)
                             <tr>
                                 <td>
-                                    @if ($campaign->draft)
-                                        <a href="{{ route('campaigns.edit', $campaign->id) }}">{{ $campaign->name }}</a>
-                                    @elseif($campaign->sent)
-                                        <a href="{{ route('campaigns.reports.index', $campaign->id) }}">{{ $campaign->name }}</a>
-                                    @else
-                                        <a href="{{ route('campaigns.status', $campaign->id) }}">{{ $campaign->name }}</a>
-                                    @endif
+                                    <a href="{{ route('campaigns.preview', $campaign->id) }}">{{ $campaign->name }}</a>
                                 </td>
                                 <td>{{ $campaignStats[$campaign->id]['counts']['sent'] }}</td>
                                 <td>{{ number_format($campaignStats[$campaign->id]['ratios']['open'] * 100, 1) . '%' }}</td>
@@ -90,15 +84,11 @@
                                                     {{ __('Edit') }}
                                                 </a>
                                             @else
-                                                <a href="{{ route('campaigns.reports.index', $campaign->id) }}"
+                                                <a href="{{ route('campaigns.status', $campaign->id) }}"
                                                    class="dropdown-item">
                                                     {{ __('View Report') }}
                                                 </a>
                                             @endif
-                                            <a href="{{ route('campaigns.duplicate', $campaign->id) }}"
-                                               class="dropdown-item">
-                                                {{ __('Duplicate') }}
-                                            </a>
                                             @if ($campaign->draft)
                                                 <div class="dropdown-divider"></div>
                                                 <a href="{{ route('campaigns.destroy.confirm', $campaign->id) }}"

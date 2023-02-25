@@ -24,10 +24,8 @@
                 <thead>
                 <tr>
                     <th>{{ __('Name') }}</th>
-                    @if (request()->routeIs('campaigns.sent') || request()->routeIs('campaigns.listen'))
+                    @if (request()->routeIs('campaigns.sent'))
                         <th>{{ __('Sent') }}</th>
-                        <th>{{ __('Opened') }}</th>
-                        <th>{{ __('Clicked') }}</th>
                     @endif
                     <th>{{ __('Created') }}</th>
                     <th>{{ __('Status') }}</th>
@@ -38,18 +36,10 @@
                 @forelse($campaigns as $campaign)
                     <tr>
                         <td>
-                            @if ($campaign->draft)
-                                <a href="{{ route('campaigns.preview', $campaign->id) }}">{{ $campaign->name }}</a>
-                            @else
-                                <a href="{{ route('campaigns.status', $campaign->id) }}">{{ $campaign->name }}</a>
-                            @endif
+                            <a href="{{ route('campaigns.preview', $campaign->id) }}">{{ $campaign->name }}</a>
                         </td>
                         @if (request()->routeIs('campaigns.sent') || request()->routeIs('campaigns.listen'))
                             <td>{{ $campaignStats[$campaign->id]['counts']['sent'] }}</td>
-                            <td>{{ number_format($campaignStats[$campaign->id]['ratios']['open'] * 100, 1) . '%' }}</td>
-                            <td>
-                                {{ number_format($campaignStats[$campaign->id]['ratios']['click'] * 100, 1) . '%' }}
-                            </td>
                         @endif
                         <td><span title="{{ $campaign->created_at }}">{{ $campaign->created_at->diffForHumans() }}</span></td>
                         <td>
@@ -88,22 +78,13 @@
                                             {{ __('Edit') }}
                                         </a>
 
-                                        <a href="{{ route('campaigns.confirm-repeat', $campaign->id) }}"
-                                           class="dropdown-item">
-                                            {{ __('Repeat') }}
-                                        </a>
                                     @else
-                                        <a href="{{ route('campaigns.reports.index', $campaign->id) }}"
+                                        <a href="{{ route('campaigns.preview', $campaign->id) }}"
                                            class="dropdown-item">
-                                            {{ __('View Report') }}
+                                            {{ __('View') }}
                                         </a>
                                     @endif
 
-
-                                    <a href="{{ route('campaigns.duplicate', $campaign->id) }}"
-                                       class="dropdown-item">
-                                        {{ __('Duplicate') }}
-                                    </a>
 
                                     @if($campaign->canBeCancelled())
                                         <div class="dropdown-divider"></div>
@@ -113,7 +94,7 @@
                                         </a>
                                     @endif
 
-                                    @if ($campaign->draft || $campaign->repeated)
+                                    @if ($campaign->draft)
                                         <div class="dropdown-divider"></div>
                                         <a href="{{ route('campaigns.destroy.confirm', $campaign->id) }}"
                                            class="dropdown-item">

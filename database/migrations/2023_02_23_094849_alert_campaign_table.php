@@ -22,8 +22,12 @@ class AlertCampaignTable extends Migration
         });
 
         Schema::table('sendportal_messages', function ($table) {
-            $table->string('subscriber_type')->after('workspace_id')->index();
+            $table->boolean('is_send_mail')->after('workspace_id')->default(false);
+            $table->boolean('is_send_social')->after('is_send_mail')->default(false);
+            //$table->string('campaigns_type')->after('workspace_id')->index();
+            $table->string('subscriber_type')->after('is_send_social')->index();
             $table->unsignedInteger('recipient_chat_id')->after('source_id')->default(0);
+            $table->string('from_social')->after('from_email')->nullable();
         });
     }
 
@@ -36,10 +40,12 @@ class AlertCampaignTable extends Migration
     {
         Schema::table('sendportal_campaigns', function ($table) {
             $table->dropColumn(['is_send_mail', 'is_send_social','social_service_id']);
+
+          //  $table->foreign('email_service_id')->references('id')->on('sendportal_email_services');
         });
 
         Schema::table('sendportal_messages', function ($table) {
-            $table->dropColumn(['subscriber_type', 'recipient_chat_id']);
+            $table->dropColumn(['is_send_mail', 'is_send_social','subscriber_type', 'recipient_chat_id','from_social']);
         });
     }
 }

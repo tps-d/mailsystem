@@ -68,7 +68,7 @@ class CampaignDispatchController extends Controller
         $campaign->update([
             'scheduled_at' => now(),
             'status_id' => CampaignStatus::STATUS_QUEUED,
-            'save_as_draft' => false,
+            'save_as_draft' => true,
         ]);
 
         return redirect()->route('campaigns.status', $id);

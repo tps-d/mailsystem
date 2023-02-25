@@ -44,7 +44,7 @@
                             <label class="col-sm-2 col-form-label">{{ __('Social From') }}:</label>
                             <div class="col-sm-10">
                                 <b>
-                                    <span class="form-control-plaintext">@ {{ $campaign->social_service->bot_username }}</span>
+                                    <span class="form-control-plaintext"> {{ '@'.$campaign->social_service->bot_username }} ( {{$campaign->social_service->type->name}} )</span>
                                 </b>
                             </div>
                         </div>
@@ -92,16 +92,28 @@
             </div>
              @endif
         </div>
+        @if($campaign->draft)
         <form action="{{ route('campaigns.send', $campaign->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div>
-                        <a href="{{ route('campaigns.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
-                        <a href="{{ route('campaigns.edit', $campaign->id) }}" class="btn btn-light">{{ __('Edit') }}</a>
-                        <button type="submit" class="btn btn-primary">{{ __('Send campaign') }}</button>
-                    </div>
+            @csrf
+            @method('PUT')
+            <div>
+                <a href="{{ route('campaigns.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
+                <a href="{{ route('campaigns.edit', $campaign->id) }}" class="btn btn-light">{{ __('Edit') }}</a>
+                <button type="submit" class="btn btn-primary">{{ __('Send campaign') }}</button>
+            </div>
 
-                </form>
+        </form>
+        @elseif($campaign->sent)
+            <div>
+                <a href="{{ route('campaigns.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
+                <a href="{{ route('messages.index',['source_id'=>$campaign->id]) }}" class="btn btn-light">{{ __('Message Log') }}</a>
+            </div>
+        @else
+            <div>
+                <a href="{{ route('campaigns.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
+                <a href="{{ route('campaigns.status', $campaign->id) }}" class="btn btn-light">{{ __('Status') }}</a>
+            </div>
+         @endif
     </div>
 
     <div class="col-md-4">

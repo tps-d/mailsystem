@@ -50,13 +50,13 @@ class CampaignCancellationController extends Controller
                 'campaignStatus' => "{$campaign->status->name} campaigns cannot be cancelled.",
             ])->redirectTo(route('campaigns.index'));
         }
-
+/*
         if ($campaign->save_as_draft && !$campaign->allDraftsCreated()) {
             throw ValidationException::withMessages([
                 'messagesPendingDraft' => __('Campaigns that save draft messages cannot be cancelled until all drafts have been created.'),
             ])->redirectTo(route('campaigns.index'));
         }
-
+*/
         $this->campaignRepository->cancelCampaign($campaign);
 
         return redirect()->route('campaigns.index')->with([

@@ -11,6 +11,7 @@ use Illuminate\View\View;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\CampaignRepository;
+use App\Repositories\AutomationsRepository;
 
 use App\Facades\MailSystem;
 
@@ -19,9 +20,13 @@ class CampaignDeleteController extends Controller
     /** @var CampaignRepository */
     protected $campaigns;
 
-    public function __construct(CampaignRepository $campaigns)
+    /** @var AutomationsRepository */
+    protected $automations;
+
+    public function __construct(CampaignRepository $campaigns, AutomationsRepository $automations)
     {
         $this->campaigns = $campaigns;
+        $this->automations = $automations;
     }
 
     /**
@@ -52,8 +57,14 @@ class CampaignDeleteController extends Controller
         $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $request->get('id'));
 
         if (!$campaign->draft) {
-            return redirect()->route('campaigns.index')
+            return redirect()->route('campaigns.destroy.confirm',$campaign->id)
                 ->withErrors(__('Unable to delete a campaign that is not in draft status'));
+        }
+
+        $automation = $this->automations->getBy(MailSystem::currentWorkspaceId(), ['campaign_id' => $campaign->id]);
+        if ($automation) {
+            return redirect()->route('campaigns.destroy.confirm',$campaign->id)
+                ->withErrors(__('You cannot delete this campaign that is currently used by a automation task'));
         }
 
         $this->campaigns->destroy(MailSystem::currentWorkspaceId(), $request->get('id'));

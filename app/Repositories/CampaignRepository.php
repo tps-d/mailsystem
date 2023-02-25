@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\Campaign;
 use App\Models\CampaignStatus;
+use App\Models\CampaignTag;
 use App\Repositories\BaseRepository;
 use App\Traits\SecondsToHms;
 
@@ -82,11 +83,18 @@ class CampaignRepository extends BaseRepository
 
     private function deleteDraftMessages(Campaign $campaign): void
     {
-        if (! $campaign->save_as_draft) {
-            return;
-        }
+        //if (! $campaign->save_as_draft) {
+        //    return;
+        //}
 
         $campaign->messages()->whereNull('sent_at')->delete();
+    }
+
+    public function destroy($workspaceId, $id)
+    {
+        $instance = $this->find($workspaceId, $id);
+        CampaignTag::where('campaign_id',$id)->delete();
+        return $instance->delete();
     }
 
     /**

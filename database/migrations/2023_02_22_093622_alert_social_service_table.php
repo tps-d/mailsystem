@@ -26,6 +26,8 @@ class AlertSocialServiceTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('social_services', function ($table) {
+            $table->dropColumn(['bot_id','bot_username']);
+        });
     }
 }

@@ -65,8 +65,8 @@ class CreateMessages
     {
         SocialUser::where('workspace_id', $campaign->workspace_id)
             ->whereNull('unsubscribed_at')
-            ->chunkById(1000, function ($subscribers) use ($campaign) {
-                $this->dispatchToSocialUser($campaign, $subscribers);
+            ->chunkById(1000, function ($socialusers) use ($campaign) {
+                $this->dispatchToSocialUser($campaign, $socialusers);
             }, 'id');
     }
 
@@ -114,20 +114,20 @@ class CreateMessages
                 continue;
             }
 
-            $this->dispatch($campaign, $subscriber);
+            $this->dispatch('mail',$campaign, $subscriber);
         }
     }
 
-    protected function dispatchToSocialUser(Campaign $campaign, $subscribers)
+    protected function dispatchToSocialUser(Campaign $campaign, $socialusers)
     {
-        \Log::info('- Number of subscribers in this chunk: ' . count($subscribers));
+        \Log::info('- Number of socialusers in this chunk: ' . count($socialusers));
 
-        foreach ($subscribers as $subscriber) {
-            if (! $this->canSendToSubscriber('social',$campaign->id, $subscriber->id)) {
+        foreach ($socialusers as $socialuser) {
+            if (! $this->canSendToSubscriber('social',$campaign->id, $socialuser->id)) {
                 continue;
             }
 
-            $this->dispatch($campaign, $subscriber);
+            $this->dispatch('social',$campaign, $socialuser);
         }
     }
 
@@ -172,15 +172,16 @@ class CreateMessages
      * @param Campaign $campaign
      * @param Subscriber $subscriber
      */
+    /*
     protected function dispatch(Campaign $campaign, $subscriber): void
     {
-        if ($campaign->save_as_draft) {
-            $this->saveAsDraft($campaign, $subscriber);
-        } else {
+        //if ($campaign->save_as_draft) {
+        //    $this->saveAsDraft($campaign, $subscriber);
+        //} else {
             $this->dispatchNow($campaign, $subscriber);
-        }
+        //}
     }
-
+*/
     /**
      * Dispatch a message now
      *
@@ -188,33 +189,37 @@ class CreateMessages
      * @param Subscriber $subscriber
      * @return Message
      */
-    protected function dispatchNow(Campaign $campaign, $subscriber): Message
+    protected function dispatch($type, Campaign $campaign, $subscriber): Message
     {
         // If a message already exists, then we're going to assume that
         // it has already been dispatched. This makes the dispatch fault-tolerant
         // and prevent dispatching the same message to the same subscriber
         // more than once
+        /*
         if ($message = $this->findMessage($campaign, $subscriber)) {
             \Log::info('Message has previously been created campaign=' . $campaign->id . ' subscriber=' . $subscriber->id);
 
             return $message;
-        }
+        }*/
 
-        if($campaign->is_send_social){
+        if($type == 'social'){
             // the message doesn't exist, so we'll create and dispatch
-            \Log::info('Saving empty email message type=social campaign=' . $campaign->id . ' subscriber=' . $subscriber->id);
+            \Log::info('Saving empty social message type=social campaign=' . $campaign->id . ' subscriber=' . $subscriber->id);
             $attributes = [
                 'workspace_id' => $campaign->workspace_id,
+                'is_send_mail' => false,
+                'is_send_social' => true,
                 'subscriber_type' => 'social',
                 'subscriber_id' => $subscriber->id,
                 'source_type' => Campaign::class,
                 'source_id' => $campaign->id,
                 'recipient_chat_id' => $subscriber->chat_id,
-                'recipient_email' => null,
-                'subject' => null,
-                'from_name' => null,
-                'from_email' => null,
-                'queued_at' => null,
+                'recipient_email' => '',
+                'subject' => '',
+                'from_name' => '',
+                'from_email' => '',
+                'from_social' => $campaign->social_service->bot_username,
+                'queued_at' => now(),
                 'sent_at' => null,
             ];
 
@@ -222,20 +227,24 @@ class CreateMessages
             $message->save();
 
             event(new MessageSocialDispatchEvent($message));  
-        }else{
+        }else if($type == 'mail'){
             // the message doesn't exist, so we'll create and dispatch
             \Log::info('Saving empty email message type=email campaign=' . $campaign->id . ' subscriber=' . $subscriber->id);
             $attributes = [
                 'workspace_id' => $campaign->workspace_id,
+                'is_send_mail' => true,
+                'is_send_social' => false,
                 'subscriber_type' => 'email',
                 'subscriber_id' => $subscriber->id,
                 'source_type' => Campaign::class,
                 'source_id' => $campaign->id,
                 'recipient_email' => $subscriber->email,
+                'recipient_chat_id' => 0,
                 'subject' => $campaign->subject,
                 'from_name' => $campaign->email_service->from_name,
                 'from_email' => $campaign->email_service->from_email,
-                'queued_at' => null,
+                'from_social' => null,
+                'queued_at' => now(),
                 'sent_at' => null,
             ];
 
@@ -282,6 +291,8 @@ class CreateMessages
     {
         return Message::where('workspace_id', $campaign->workspace_id)
             ->where('subscriber_id', $subscriber->id)
+            ->where('is_send_mail', $campaign->is_send_mail)
+            ->where('is_send_social', $campaign->is_send_social)
             ->where('source_type', Campaign::class)
             ->where('source_id', $campaign->id)
             ->first();

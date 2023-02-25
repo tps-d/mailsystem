@@ -171,6 +171,10 @@ class MessageRepository extends BaseRepository
                     ->orWhere('sendportal_messages.subject', 'like', $searchString);
             });
         }
+
+        if ($source_id = Arr::get($filters, 'source_id')) {
+            $instance->where('source_id',$source_id);
+        }
     }
 
     /**

@@ -21,8 +21,15 @@
             Your campaign is queued and will be sent out soon.
         @elseif ($campaign->cancelled)
             Your campaign was cancelled.
+        @elseif ($campaign->sent)
+            <p>
+                <i class="fas fa-check-square"></i>
+                {{ $campaignStats[$campaign->id]['counts']['sent'] }} out of {{ $campaignStats[$campaign->id]['counts']['total'] }} messages sent.
+            <p>
+
+            <a href="{{ route('messages.index',['source_id'=>$campaign->id]) }}" class="btn btn-light">{{ __('Message Log') }}</a>
         @else
-            <i class="fas fa-cog fa-spin"></i>
+            <i class="fas fa-spinner fa-spin"></i>
             {{ $campaignStats[$campaign->id]['counts']['sent'] }} out of {{ $campaignStats[$campaign->id]['counts']['total'] }} messages sent.
         @endif
     </div>

@@ -26,6 +26,8 @@ class AlertEmailServiceTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('sendportal_email_services', function ($table) {
+            $table->dropColumn(['from_name','from_email']);
+        });
     }
 }

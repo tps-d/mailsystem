@@ -103,7 +103,7 @@ class DispatchMessage
             ->setSubject($message->subject)
             ->setTrackingOptions($trackingOptions);
 
-        $messageId = $this->relayMessage->handle($mergedContent, $messageOptions, $emailService);
+        $messageId = $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
 
         Log::info('Message has been dispatched.', ['message_id' => $messageId]);
 

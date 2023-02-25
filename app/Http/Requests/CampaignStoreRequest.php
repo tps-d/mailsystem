@@ -74,7 +74,9 @@ class CampaignStoreRequest extends FormRequest
             ]);
 
 
-        }else if($this->input('is_send_social') == 1){
+        }
+
+        if($this->input('is_send_social') == 1){
             $rules = array_merge($rules,[
                 'social_service_id' => [
                     'required',

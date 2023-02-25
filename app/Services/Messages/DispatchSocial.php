@@ -38,8 +38,8 @@ class DispatchSocial
         MarkAsSent $markAsSent
     ) {
         $this->mergeContentService = $mergeContentService;
-        $this->mergeSubjectService = $mergeSubjectService;
-       // $this->resolveSocialService = $resolveSocialService;
+       // $this->mergeSubjectService = $mergeSubjectService;
+        $this->resolveSocialService = $resolveSocialService;
         $this->relayMessage = $relayMessage;
         $this->markAsSent = $markAsSent;
     }
@@ -61,7 +61,7 @@ class DispatchSocial
 
         $socialService = $this->getSocialService($message);
 
-        $messageId = $this->dispatch($message, $emailService, $mergedContent);
+        $messageId = $this->dispatch($message, $socialService, $mergedContent);
 
         $this->markSent($message, $messageId);
 
@@ -95,9 +95,9 @@ class DispatchSocial
     protected function dispatch(Message $message, SocialService $socialService,string $mergedContent): ?string
     {
         $messageOptions = (new MessageOptions)
-            ->setTo($message->recipient_chat_id)
+            ->setTo((string)$message->recipient_chat_id);
 
-        $messageId = $this->relayMessage->handle($mergedContent, $messageOptions, $socialService);
+        $messageId = $this->relayMessage->handle_social($mergedContent, $messageOptions, $socialService);
 
         Log::info('Message has been dispatched.', ['message_id' => $messageId]);
 
@@ -107,7 +107,7 @@ class DispatchSocial
     /**
      * @throws Exception
      */
-    protected function getSocialService(Message $message): EmailService
+    protected function getSocialService(Message $message): SocialService
     {
         return $this->resolveSocialService->handle($message);
     }

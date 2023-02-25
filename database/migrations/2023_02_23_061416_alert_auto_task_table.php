@@ -25,6 +25,8 @@ class AlertAutoTaskTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('auto_tasks', function ($table) {
+            $table->dropColumn(['scheduled_at']);
+        });
     }
 }

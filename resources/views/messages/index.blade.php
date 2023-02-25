@@ -17,6 +17,7 @@
                 </div>
 
                 @if(request()->route()->named('messages.index'))
+                <!--
                     <div class="mr-2">
                         <select name="status" class="form-control">
                             <option
@@ -35,6 +36,7 @@
                                 value="bounced" {{ request('status') == 'bounced' ? 'selected' : '' }}>{{ __('Bounced') }}</option>
                         </select>
                     </div>
+                -->
                 @endif
 
                 <button type="submit" class="btn btn-light">{{ __('Search') }}</button>
@@ -52,8 +54,8 @@
                 <thead>
                 <tr>
                     <th>{{ __('Date') }}</th>
-                    <th>{{ __('Subject') }}</th>
                     <th>{{ __('Source') }}</th>
+                    <th>{{ __('From') }}</th>
                     <th>{{ __('Recipient') }}</th>
                     <th>{{ __('Status') }}</th>
                     @if(request()->route()->named('messages.draft'))
@@ -74,21 +76,21 @@
                             <td>
                                 {{ $message->sent_at ?? $message->created_at }}
                             </td>
-                            <td>{{ $message->subject }}</td>
                             <td>
                                 @if($message->isCampaign())
                                     <i class="fas fa-envelope color-gray-300"></i>
-                                    <a href="{{ route('campaigns.reports.index', $message->source_id) }}">
+                                    <a href="{{ route('campaigns.preview', $message->source_id) }}">
                                         {{ $message->source->name }}
-                                    </a>
-                                @elseif($message->isAutomation())
-                                    <i class="fas fa-sync-alt color-gray-300"></i>
-                                    <a href="{{ route('automations.show', $message->source->automation_step->automation_id) }}">
-                                        {{ $message->source->automation_step->automation->name }}
                                     </a>
                                 @endif
                             </td>
+                            @if($message->is_send_social)
+                            <td>{{ $message->from_social }}</td>
+                            <td><a href="{{ route('socialusers.show', $message->subscriber_id) }}">{{ $message->recipient_chat_id }}</a></td>
+                            @else
+                            <td>{{ $message->from_email }}</td>
                             <td><a href="{{ route('subscribers.show', $message->subscriber_id) }}">{{ $message->recipient_email }}</a></td>
+                            @endif
                             <td>
                                 @include('messages.partials.status-row')
                             </td>

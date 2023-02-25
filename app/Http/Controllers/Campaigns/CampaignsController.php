@@ -230,6 +230,7 @@ class CampaignsController extends Controller
             $input['is_send_social'] = false;
             $input['social_service_id'] = 0;
         }
+
         unset($input['tags']);
 
         $campaign = $this->campaigns->update(
@@ -249,12 +250,12 @@ class CampaignsController extends Controller
      */
     public function preview(int $id)
     {
-        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $id);
+        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $id, ['email_service','social_service']);
         $subscriberCount = $this->subscribers->countActive(MailSystem::currentWorkspaceId());
 
-        if (!$campaign->draft) {
-            return redirect()->route('campaigns.status', $id);
-        }
+        //if (!$campaign->draft) {
+        //    return redirect()->route('campaigns.status', $id);
+        //}
 
         return view('campaigns.preview', compact('campaign'));
     }
@@ -268,9 +269,9 @@ class CampaignsController extends Controller
         $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->campaigns->find($workspaceId, $id, ['status']);
 
-        if ($campaign->sent) {
-            return redirect()->route('campaigns.reports.index', $id);
-        }
+        //if ($campaign->sent) {
+        //    return redirect()->route('campaigns.reports.index', $id);
+        //}
 
         return view('campaigns.status', [
             'campaign' => $campaign,

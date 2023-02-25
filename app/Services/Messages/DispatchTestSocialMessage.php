@@ -121,6 +121,9 @@ class DispatchTestSocialMessage
     {
         return new Message([
             'workspace_id' => $campaign->workspace_id,
+            'is_send_mail' => false,
+            'is_send_social' => true,
+            'subscriber_type' => 'social',
             'source_type' => Campaign::class,
             'source_id' => $campaign->id,
             'recipient_chat_id' => $recipientChatId,

@@ -54,12 +54,18 @@
                                     <i class="fas fa-ellipsis-h"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a href="javascript:;" class="dropdown-item">
+                                    <form action="{{ route('queue.failed.retry', $job->id) }}" method="post">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
                                             {{ __('Retry') }}
-                                        </a>
-                                        <a href="javascript:;" class="dropdown-item">
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('queue.failed.delete', $job->id) }}" method="post">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
                                             {{ __('Delete') }}
-                                        </a>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </td>

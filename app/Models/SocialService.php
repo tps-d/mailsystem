@@ -59,7 +59,7 @@ class SocialService extends BaseModel
      */
     public function campaigns(): HasMany
     {
-        return $this->hasMany(Campaign::class, 'email_service_id');
+        return $this->hasMany(Campaign::class, 'social_service_id');
     }
 
 
