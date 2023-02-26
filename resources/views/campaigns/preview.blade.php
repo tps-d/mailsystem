@@ -99,7 +99,8 @@
             <div>
                 <a href="{{ route('campaigns.index') }}" class="btn btn-light">{{ __('Cancel') }}</a>
                 <a href="{{ route('campaigns.edit', $campaign->id) }}" class="btn btn-light">{{ __('Edit') }}</a>
-                <button type="submit" class="btn btn-primary">{{ __('Send campaign') }}</button>
+                <a href="{{ route('automations.create', ['campaign_id'=>$campaign->id]) }}" class="btn btn-primary">{{ __('Create Task') }}</a>
+                <button type="submit" class="btn btn-primary">{{ __('Send Now') }}</button>
             </div>
 
         </form>

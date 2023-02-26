@@ -30,13 +30,13 @@
                                 <label for="id-field-auto_label" class="control-label col-sm-3">Type</label>
                                 <div class="col-sm-9">
                                     <div class="form-check">
-                                      <input class="form-check-input" type="radio" name="type_id" id="type_timeat" value="1" checked>
+                                      <input class="form-check-input" type="radio" name="type_id" id="type_timeat" value="1" @if( old('type_id') == 1 )checked @endif>
                                       <label class="form-check-label" for="type_timeat">
                                         定时执行
                                       </label>
                                     </div>
                                     <div class="form-check">
-                                      <input class="form-check-input" type="radio" name="type_id" id="type_exp" value="2">
+                                      <input class="form-check-input" type="radio" name="type_id" id="type_exp" value="2"  @if( old('type_id') == 2 )checked @endif>
                                       <label class="form-check-label" for="type_exp">
                                         重复执行
                                       </label>
@@ -70,14 +70,23 @@
 
                                     $(function () {
 
-                                        $('input[name=type_id]').change(function() {
-                                            if (this.value == '1') {
+                                        var type_id = $('input[name=type_id]:checked').val();
+                                        if(!type_id){
+                                            $('input[name=type_id][value=1]').prop('checked',true);
+                                        }
+
+                                        function toggleType(type_id){
+                                            if (type_id == '1') {
                                                 $('#input-scheduled_at').removeClass('hide');
                                                 $('#input-expression').addClass('hide');
                                             } else {
                                                 $('#input-scheduled_at').addClass('hide');
                                                 $('#input-expression').removeClass('hide');
                                             }
+                                        }
+
+                                        $('input[name=type_id]').change(function() {
+                                            toggleType(this.value);
                                         });
 
                                         $('#input-field-scheduled_at').flatpickr({

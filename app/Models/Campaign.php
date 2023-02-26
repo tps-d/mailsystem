@@ -309,6 +309,11 @@ class Campaign extends BaseModel
         return $this->status_id === CampaignStatus::STATUS_CANCELLED;
     }
 
+    public function getDelayedAttribute(): bool
+    {
+        return $this->status_id === CampaignStatus::STATUS_DELAYED;
+    }
+
     public function getRepeatedAttribute(): bool
     {
         return $this->status_id === CampaignStatus::STATUS_LISTENING;

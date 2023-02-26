@@ -53,6 +53,8 @@
                                 <span class="badge badge-success">{{ $campaign->status->name }}</span>
                             @elseif($campaign->cancelled)
                                 <span class="badge badge-danger">{{ $campaign->status->name }}</span>
+                            @elseif($campaign->delayed)
+                                <span class="badge badge-warning">{{ $campaign->status->name }}</span>
                             @elseif($campaign->repeated)
                                 <span class="badge badge-warning">{{ $campaign->status->name }}</span>
                             @endif
@@ -65,12 +67,6 @@
                                     <i class="fas fa-ellipsis-h"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    @if ($campaign->repeated)
-                                        <a href="{{ route('campaigns.edit', $campaign->id) }}"
-                                           class="dropdown-item">
-                                            {{ __('Edit') }}
-                                        </a>
-                                    @endif
 
                                     @if ($campaign->draft)
                                         <a href="{{ route('campaigns.edit', $campaign->id) }}"

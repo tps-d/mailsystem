@@ -34,7 +34,7 @@
                 @forelse($automations as $automation)
                     <tr>
                         <td>
-                            <a href="{{ route('campaigns.edit', $automation->campaign_id) }}">{{ $automation->campaign->name }}</a>
+                            <a href="{{ route('campaigns.preview', $automation->campaign_id) }}">{{ $automation->campaign->name }}</a>
                         </td>
                         <td></td>
                         <td>
@@ -66,10 +66,12 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
+                                    @if($automation->status_id != 3)
                                     <a href="{{ route('automations.edit', $automation->id) }}"
                                        class="dropdown-item">
                                         {{ __('Edit') }}
                                     </a>
+                                    @endif
 
                                     @if($automation->canBeStop())
                                     <form action="{{ route('automations.stop', $automation->id) }}" method="post">

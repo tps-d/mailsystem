@@ -60,18 +60,6 @@ class CampaignRepository extends BaseRepository
         return $counts->flatten()->keyBy('campaign_id')->toArray();
     }
 
-    public function setRepeat(Campaign $campaign): bool
-    {
-        $this->deleteDraftMessages($campaign);
-
-        return $campaign->update([
-            'status_id' => CampaignStatus::STATUS_LISTENING,
-        ]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function cancelCampaign(Campaign $campaign): bool
     {
         $this->deleteDraftMessages($campaign);
@@ -115,6 +103,8 @@ class CampaignRepository extends BaseRepository
                 CampaignStatus::STATUS_DRAFT,
                 CampaignStatus::STATUS_QUEUED,
                 CampaignStatus::STATUS_SENDING,
+                CampaignStatus::STATUS_DELAYED,
+                CampaignStatus::STATUS_LISTENING
             ];
 
             $instance->whereIn('status_id', $draftStatuses);
@@ -125,13 +115,19 @@ class CampaignRepository extends BaseRepository
             ];
 
             $instance->whereIn('status_id', $sentStatuses);
-        } elseif (Arr::get($filters, 'repeat')) {
+        } /*elseif (Arr::get($filters, 'repeat')) {
             $sentStatuses = [
                 CampaignStatus::STATUS_LISTENING,
             ];
 
             $instance->whereIn('status_id', $sentStatuses);
-        }
+        } elseif (Arr::get($filters, 'delayed')) {
+            $sentStatuses = [
+                CampaignStatus::STATUS_DELAYED,
+            ];
+
+            $instance->whereIn('status_id', $sentStatuses);
+        }*/
     }
 
     /**

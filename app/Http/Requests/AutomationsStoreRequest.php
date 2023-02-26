@@ -6,7 +6,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
+use Cron\CronExpression;
 
+use InvalidArgumentException;
 use App\Facades\MailSystem;
 
 class AutomationsStoreRequest extends FormRequest
@@ -22,7 +25,7 @@ class AutomationsStoreRequest extends FormRequest
         return [
             'type_id'              => 'required',
             'campaign_id'          => 'required',
-            'scheduled_at'         => 'required|date',
+            'scheduled_at'         => 'required_if:type_id,1|date',
             'expression'           => 'required_if:type_id,2',
             
         ];
@@ -42,17 +45,20 @@ class AutomationsStoreRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get data to be validated from the request.
-     *
-     * @return array
-     */
-    public function validationData()
+    public function withValidator(Validator $validator): void
     {
-        if ($this->input('type_id') == 2) {
-            $this->merge(['expression' => null]);
-        }
-
-        return $this->all();
+        $validator->after(function (Validator $validator) {
+            
+            if($this->type_id == 2 && $this->expression){
+                try{
+                    CronExpression::factory($this->expression);
+                    
+                }catch(InvalidArgumentException $e){
+                    $validator->errors()->add('expression', 'Cron Expression  is not a valid position');
+                }
+            }
+           
+        });
     }
+
 }

@@ -147,6 +147,7 @@ Route::middleware(['auth', 'verified','locale'])->group(function (){
         $appRouter->name('campaigns.')->prefix('campaigns')->namespace('Campaigns')->group(static function ( Router $campaignRouter ) {
             $campaignRouter->get('sent', 'CampaignsController@sent')->name('sent');
             $campaignRouter->get('listen', 'CampaignsController@listen')->name('listen');
+            $campaignRouter->get('delayed', 'CampaignsController@delayed')->name('delayed');
             $campaignRouter->get('{id}', 'CampaignsController@show')->name('show');
             $campaignRouter->get('{id}/preview', 'CampaignsController@preview')->name('preview');
             $campaignRouter->put('{id}/send', 'CampaignDispatchController@send')->name('send');

@@ -18,7 +18,14 @@
                     <form action="{{ route('automations.update', $task->id) }}" method="POST" class="form-horizontal">
                         @csrf
                         @method('PUT')
-                        <x-sendportal.select-field name="campaign_id" :label="__('Campaign')" :options="$campaigns" :value="$task->campaign_id ?? old('campaign_id')" />
+  
+                        <div class="form-group row ">
+                            <label class="control-label col-sm-3">Campaign</label>
+                            <div class="col-sm-9">
+                                <a href="{{ route('campaigns.preview',$task->campaign_id) }}">{{ $task->campaign->name }}</a>
+                                <input type="hidden" name="campaign_id" value="{{ $task->campaign_id }}" >
+                            </div>
+                        </div>
 
                         <div class="form-group row form-group-auto_label">
                             <label for="id-field-auto_label" class="control-label col-sm-3">Type</label>
