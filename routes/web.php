@@ -11,31 +11,7 @@ use App\Facades\Helper;
 
 
 Route::get('/test', function(){
-/*
-    $response = Telegram::getMe();
 
-    $botId = $response->getId();
-    $firstName = $response->getFirstName();
-    $username = $response->getUsername();
-
-    print_r([
-        'botId' => $botId,
-        'firstName' => $firstName,
-        'username' => $username
-    ]);
-*/
-    $response = Telegram::getUpdates();
-    print_r($response);
-/*
-    
-    $message =  [
-      'chat_id' => '1318456779', 
-      'text' => 'Hello World'
-    ];
-    $response = Telegram::sendMessage($message);
-
-    $messageId = $response->getMessageId();
-    */
 });
 
 Route::fallback( function () {
@@ -43,6 +19,7 @@ Route::fallback( function () {
 } );
 
 Route::post('/receiving/notify', '\App\Http\Controllers\ReceivingController@notify');
+Route::post('/tg/webhook', '\App\Http\Controllers\ReceivingController@telegram_notify');
 
 Auth::routes(
     [
