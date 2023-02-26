@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
         $this->app->register(FormServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
-
+        $this->app->register(ConsoleServiceProvider::class);
 
         $this->app->bind('mailsystem', static function (Application $app) {
             $mailSystem = $app->make(MailSystem::class);

@@ -13,13 +13,13 @@ use App\Models\AutoTask;
 
 use App\Services\Campaigns\CampaignDispatchService;
 
-class CampaignTaskCommand extends Command
+class DelayedTaskCommand extends Command
 {
     /** @var string */
-    protected $signature = 'sp:campaigns:task';
+    protected $signature = 'sp:task:delayed';
 
     /** @var string */
-    protected $description = 'Dispatch all campaigns task';
+    protected $description = 'Dispatch all campaigns from delayed task';
 
     /** @var CampaignDispatchService */
     protected $campaignService;
