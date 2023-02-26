@@ -9,15 +9,19 @@ use Illuminate\Support\Facades\Log;
 
 use App\Http\Requests\ReceivingNotifyRequest;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Http\Request;
 //use App\Facades\Mailbox;
 
 class ReceivingController extends Controller
 {
 
-    public function notify(ReceivingNotifyRequest $request)
+    public function notify(Request $request)
     {
        // Mailbox::callMailboxes($request->email());
+        Log::build([
+          'driver' => 'single',
+          'path' => storage_path('logs/receive_message.log'),
+        ])->info($request->all());
     }
 
 
@@ -29,7 +33,7 @@ class ReceivingController extends Controller
           'driver' => 'single',
           'path' => storage_path('logs/tg.log'),
         ])->info($update);
-        
+
         // Commands handler method returns an Update object.
         // So you can further process $update object
         // to however you want.

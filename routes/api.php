@@ -43,21 +43,6 @@ Route::prefix('v1/webhooks')->namespace('\App\Http\Controllers\Api\Webhooks')->g
 
 Route::get('v1/ping', '\App\Http\Controllers\Api\PingController@index');
 
-Route::get('v1/test', function(){
-    
-    $expire_time = now()->addDays(3);
-    echo strtotime($expire_time);
-
-});
-
-Route::post('receive/message', function(Request $request){
-    
-        Log::build([
-          'driver' => 'single',
-          'path' => storage_path('logs/receive_message.log'),
-        ])->info($request->all());
-
-});
 
 Route::post('v1/platform/{platform}/captcha/fetch', '\App\Http\Controllers\Api\PlatformController@captcha_fetch');
 
