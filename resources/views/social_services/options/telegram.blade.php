@@ -1,1 +1,3 @@
 <x-sendportal.text-field name="settings[token]" :label="__('API TOKEN')" :value="Arr::get($settings ?? [], 'token')" autocomplete="off" />
+<x-sendportal.text-field name="settings[webhook_url]" :label="__('Web Hook Url')" :value="Arr::get($settings ?? [], 'webhook_url')" autocomplete="off" />
+<x-sendportal.textarea-field name="settings[certificate]" :label="__('Certificate')">{{ Arr::get($settings ?? [], 'certificate') }}</x-sendportal.textarea-field>

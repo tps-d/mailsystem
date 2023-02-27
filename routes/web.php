@@ -8,7 +8,7 @@ use App\Http\Middleware\RequireWorkspace;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\VariableRepository;
 use App\Facades\Helper;
-
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/test', function(){
 

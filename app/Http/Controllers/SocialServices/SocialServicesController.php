@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SocialServiceRequest;
@@ -16,6 +17,7 @@ use App\Repositories\SocialServiceRepository;
 use App\Facades\MailSystem;
 
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class SocialServicesController extends Controller
 {
@@ -61,6 +63,36 @@ class SocialServicesController extends Controller
             'settings' => $settings,
         ]);
 
+        $token = $settings['token'];
+        $webhook_url = $settings['webhook_url'] ?? null;
+        $certificate = $settings['certificate'] ?? null;
+
+        try{
+            $telegram = new Api($token);
+
+            $params = [
+                'url' => $webhook_url
+            ];
+
+            if($certificate){
+                $filename = '/certificate/'.$token;
+  
+                if (! Storage::disk('local')->put($filename,$certificate)){
+                    throw new TelegramSDKException('Failed to write Webhook certificate path '.$filename);
+                }
+
+                $params['certificate_path'] = storage_path('app').$filename;
+            }
+
+            $response = $telegram->setWebhook($params);
+            if(!$response){
+                throw new TelegramSDKException('Webhook could not be set!');
+            }
+
+        }catch(TelegramSDKException $e){
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+
         return redirect()->route('social_services.index');
     }
 
@@ -90,6 +122,36 @@ class SocialServicesController extends Controller
         $sociaService->bot_username = $request->bot_username;
         $sociaService->settings = $settings;
         $sociaService->save();
+
+        $token = $settings['token'];
+        $webhook_url = $settings['webhook_url'] ?? null;
+        $certificate = $settings['certificate'] ?? null;
+
+        try{
+            $telegram = new Api($token);
+
+            $params = [
+                'url' => $webhook_url
+            ];
+
+            if($certificate){
+                $filename = '/certificate/'.$token;
+  
+                if (! Storage::disk('local')->put($filename,$certificate)){
+                    throw new TelegramSDKException('Failed to write Webhook certificate path '.$filename);
+                }
+
+                $params['certificate_path'] = storage_path('app').$filename;
+            }
+
+            $response = $telegram->setWebhook($params);
+            if(!$response){
+                throw new TelegramSDKException('Webhook could not be set!');
+            }
+
+        }catch(TelegramSDKException $e){
+            return redirect()->back()->withErrors($e->getMessage());
+        }
 
         return redirect()->route('social_services.index');
     }

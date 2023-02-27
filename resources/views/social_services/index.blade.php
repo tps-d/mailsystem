@@ -52,6 +52,7 @@
                         -->
                             <a class="btn btn-sm btn-light"
                                href="{{ route('social_services.edit', $service->id) }}">{{ __('Edit') }}</a>
+                               
                             <form action="{{ route('social_services.delete', $service->id) }}" method="POST"
                                   style="display: inline">
                                 @csrf
