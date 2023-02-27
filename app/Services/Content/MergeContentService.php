@@ -9,7 +9,7 @@ use App\Models\Campaign;
 use App\Models\Message;
 use App\Repositories\CampaignRepository;
 use App\Repositories\VariableRepository;
-use App\Repositories\AutomationsRepository;
+use App\Repositories\AutotriggerRepository;
 use App\Traits\NormalizeTags;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
@@ -23,6 +23,9 @@ class MergeContentService
     /** @var CampaignRepository */
     protected $campaignRepo;
 
+    /** @var AutotriggerRepository */
+    protected $autotriggerRepo;
+
     /** @var VariableRepository */
     protected $variableRepo;
 
@@ -33,12 +36,14 @@ class MergeContentService
 
     public function __construct(
         CampaignRepository $campaignRepo,
+        AutotriggerRepository $autotriggerRepo,
         VariableRepository $variableRepo,
         CssToInlineStyles $cssProcessor,
         PlatformService $platformService
 
     ) {
         $this->campaignRepo = $campaignRepo;
+        $this->autotriggerRepo = $autotriggerRepo;
         $this->variableRepo = $variableRepo;
         $this->cssProcessor = $cssProcessor;
         $this->platformService = $platformService;
@@ -60,6 +65,8 @@ class MergeContentService
 
         if ($message->isCampaign()) {
             $mergedContent = $this->mergeCampaignContent($message);
+        } else if($message->isAutoTrigger()){
+            $mergedContent = $this->mergeAutoTriggerContent($message);
         } else {
             throw new Exception('Invalid message source type for message id=' . $message->id);
         }
@@ -82,6 +89,20 @@ class MergeContentService
         return $campaign->template
             ? $this->mergeContent($campaign->content, $campaign->template->content)
             : $campaign->content;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function mergeAutoTriggerContent(Message $message): string
+    {
+        $autotrigger = $this->autotriggerRepo->find($message->workspace_id, $message->source_id, ['template']);
+
+        if (!$autotrigger) {
+            throw new Exception('Unable to resolve autotrigger step for message id= ' . $message->id);
+        }
+
+        return $autotrigger->template->content;
     }
 
     protected function mergeContent(?string $customContent, string $templateContent): string

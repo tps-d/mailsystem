@@ -64,7 +64,6 @@ class DispatchTestMessage
         return $this->dispatch($message, $emailService, $trackingOptions, $mergedContent);
     }
 
-
     /**
      * @throws Exception
      */

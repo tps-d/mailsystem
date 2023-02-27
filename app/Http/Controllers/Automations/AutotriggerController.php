@@ -12,9 +12,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AutotriggerStoreRequest;
 use App\Models\EmailService;
+use App\Models\SocialService;
 use App\Models\AutoTrigger;
 use App\Repositories\AutotriggerRepository;
 use App\Repositories\EmailServiceRepository;
+use App\Repositories\SocialServiceRepository;
 use App\Repositories\TemplateRepository;
 use App\Facades\MailSystem;
 
@@ -29,15 +31,19 @@ class AutotriggerController extends Controller
     /** @var EmailServiceRepository */
     protected $emailServices;
 
+    /** @var SocialServiceRepository */
+    protected $socialServices;
 
     public function __construct(
         AutotriggerRepository $autotrigger,
         TemplateRepository $templates,
-        EmailServiceRepository $emailServices
+        EmailServiceRepository $emailServices,
+        SocialServiceRepository $socialServices
     ) {
         $this->autotrigger = $autotrigger;
         $this->templates = $templates;
         $this->emailServices = $emailServices;
+        $this->socialServices = $socialServices;
     }
 
     /**
@@ -62,11 +68,21 @@ class AutotriggerController extends Controller
     {
         $workspaceId = MailSystem::currentWorkspaceId();
         $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
-        $fromOptions = [null => '- None -'] + $this->emailServices->all($workspaceId, 'id', ['type'])
-            ->map(static function (EmailService $emailService) {
-                $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
-                return $emailService;
-            })->pluck('formatted_name', 'id')->all();
+
+        if($type == 'social'){
+            $fromOptions = [null => '- None -'] + $this->socialServices->all($workspaceId, 'id', ['type'])
+                ->map(static function (SocialService $socialServices) {
+                    $socialServices->formatted_name = "@{$socialServices->bot_username} ({$socialServices->type->name})";
+                    return $socialServices;
+                })->pluck('formatted_name', 'id')->all();
+        }else{
+            $fromOptions = [null => '- None -'] + $this->emailServices->all($workspaceId, 'id', ['type'])
+                ->map(static function (EmailService $emailService) {
+                    $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
+                    return $emailService;
+                })->pluck('formatted_name', 'id')->all();
+        }
+
 
         return view('autotriggers.create', compact('templates', 'fromOptions', 'type'));
     }
@@ -91,11 +107,20 @@ class AutotriggerController extends Controller
         $workspaceId = MailSystem::currentWorkspaceId();
         $autotrigger = $this->autotrigger->find($workspaceId, $id);
         $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
-        $fromOptions = [null => '- None -'] + $this->emailServices->all($workspaceId, 'id', ['type'])
-            ->map(static function (EmailService $emailService) {
-                $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
-                return $emailService;
-            })->pluck('formatted_name', 'id')->all();
+        if($autotrigger->from_type == 'social'){
+            $fromOptions = [null => '- None -'] + $this->socialServices->all($workspaceId, 'id', ['type'])
+                ->map(static function (SocialService $socialServices) {
+                    $socialServices->formatted_name = "@{$socialServices->bot_username} ({$socialServices->type->name})";
+                    return $socialServices;
+                })->pluck('formatted_name', 'id')->all();
+        }else{
+            $fromOptions = [null => '- None -'] + $this->emailServices->all($workspaceId, 'id', ['type'])
+                ->map(static function (EmailService $emailService) {
+                    $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
+                    return $emailService;
+                })->pluck('formatted_name', 'id')->all();
+        }
+
 
         return view('autotriggers.edit', compact('autotrigger', 'fromOptions', 'templates'));
     }

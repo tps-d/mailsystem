@@ -129,6 +129,11 @@ class Message extends BaseModel
         return $this->source_type === Campaign::class;
     }
 
+    public function isAutoTrigger(): bool
+    {
+        return $this->source_type === AutoTrigger::class;
+    }
+    
     /**
      * Return the string for the source_type.
      *
