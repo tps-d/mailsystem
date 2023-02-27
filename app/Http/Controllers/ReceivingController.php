@@ -28,8 +28,8 @@ use App\Facades\MailSystem;
 use App\Repositories\SocialUsersRepository;
 use App\Repositories\SubscriberRepository;
 
-use Telegram\Bot\Api;
-use Telegram\Bot\Exceptions\TelegramSDKException;
+use \Telegram\Bot\Api;
+use \Telegram\Bot\Exceptions\TelegramSDKException;
 
 class ReceivingController extends Controller
 {
