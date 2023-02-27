@@ -13,6 +13,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'tg/*'
-        'receiving/notify'
+        'receiving/*'
     ];
 }
