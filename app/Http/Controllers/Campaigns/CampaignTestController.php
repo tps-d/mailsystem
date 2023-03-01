@@ -13,6 +13,8 @@ use App\Http\Requests\CampaignTestSocialRequest;
 use App\Services\Messages\DispatchTestMessage;
 use App\Services\Messages\DispatchTestSocialMessage;
 
+use Telegram\Bot\Exceptions\TelegramResponseException;
+
 class CampaignTestController extends Controller
 {
     /** @var DispatchTestMessage */
@@ -47,7 +49,15 @@ class CampaignTestController extends Controller
 
     public function handle_social(CampaignTestSocialRequest $request, int $campaignId): RedirectResponse
     {
-        $messageId = $this->dispatchTestSocialMessage->handle(0, $campaignId, $request->get('recipient_chat_id'));
+        try{
+            $messageId = $this->dispatchTestSocialMessage->handle(0, $campaignId, $request->get('recipient_chat_id'));
+        }catch(TelegramResponseException $e){
+       
+            return redirect()->route('campaigns.preview', $campaignId)
+                ->withErrors($e->getMessage());
+   
+        }
+        
 
         if (!$messageId) {
             return redirect()->route('campaigns.preview', $campaignId)

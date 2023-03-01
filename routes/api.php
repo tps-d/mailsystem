@@ -29,6 +29,7 @@ Route::prefix('v1')->namespace('\App\Http\Controllers\Api')->group( function () 
 
     Route::post('message/{id}/send', 'MessageDispatchController@send')->name('message.send');
 
+    Route::get('message/captcha/send', 'Messages\CaptchaDispatchController@send')->name('messages.send_captcha');
 });
 
 // Non-auth'd API routes.

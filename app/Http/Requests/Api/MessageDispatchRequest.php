@@ -8,58 +8,21 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Facades\MailSystem;
-use App\Models\Campaign;
-use App\Models\CampaignStatus;
-use App\Repositories\CampaignRepository;
 
 
 class MessageDispatchRequest extends FormRequest
 {
 
-    /**
-     * @var CampaignRepository
-     */
-    protected $campaigns;
-
-    /**
-     * @var Campaign
-     */
-    protected $campaign;
-
-    public function __construct(CampaignRepository $campaigns)
-    {
-        parent::__construct();
-
-        $this->campaigns = $campaigns;
-
-        Validator::extendImplicit('valid_status', function ($attribute, $value, $parameters, $validator) {
-            return $this->getCampaign()->status_id === CampaignStatus::STATUS_LISTENING;
-        });
-    }
-
-
-    /**
-     * @param array $relations
-     * @return Campaign
-     * @throws \Exception
-     */
-    public function getCampaign(array $relations = []): Campaign
-    {
-        return $this->campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $this->id, $relations);
-    }
-
     public function rules()
     {
         return [
-            'status_id' => 'valid_status',
-            'email' => ['required', 'email'],
+          //  'email' => ['required', 'email'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'valid_status' => __('The campaign must have a status of draft to be dispatched'),
             'email.required' => '邮箱格式不正确',
             'email.email' => '邮箱格式不正确'
         ];

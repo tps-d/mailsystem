@@ -63,12 +63,16 @@ class MergeContentService
     protected function resolveContent(Message $message): string
     {
 
-        if ($message->isCampaign()) {
-            $mergedContent = $this->mergeCampaignContent($message);
-        } else if($message->isAutoTrigger()){
-            $mergedContent = $this->mergeAutoTriggerContent($message);
-        } else {
-            throw new Exception('Invalid message source type for message id=' . $message->id);
+        if(isset($message->template_content)){
+            $mergedContent = $message->template_content;
+        }else{
+            if ($message->isCampaign()) {
+                $mergedContent = $this->mergeCampaignContent($message);
+            } else if($message->isAutoTrigger()){
+                $mergedContent = $this->mergeAutoTriggerContent($message);
+            } else {
+                throw new Exception('Invalid message source type for message id=' . $message->id);
+            }
         }
 
         return $this->mergeTags($mergedContent, $message);
