@@ -11,13 +11,13 @@ return [
 
 		],
 		'rusuo' => [
-			'api' => 'https://api.fssxsd.com',
+			'api_url' => 'https://api.fssxsd.com',
 			'admin_url' => 'https://rusuo02.kfdd.cc',
 			'username' => 'goodjob',
 			'password' => 'sszz1220'
 		],
 		'xiangshu' => [
-			'api' => 'https://api.tongdanz.com',
+			'api_url' => 'https://api.tongdanz.com',
 			'admin_url' => 'https://xiangshu02.kfdd.cc',
 			'username' => 'goodjob',
 			'password' => 'xs12345'
