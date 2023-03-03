@@ -128,6 +128,6 @@ class CaptchaDispatchController extends Controller
             ->setSubject($message->subject)
             ->setTrackingOptions($trackingOptions);
 
-       // return $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
+        return $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
     }
 }
