@@ -9,7 +9,7 @@ use Illuminate\View\View;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-use App\Models\ApiToken;
+use App\Models\Workspace;
 use App\Models\Message;
 use App\Models\Subscriber;
 use App\Models\EmailService;
@@ -24,7 +24,7 @@ use App\Repositories\SubscriberRepository;
 use App\Facades\MailSystem;
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Api\MessageDispatchRequest;
+use App\Http\Requests\Api\CaptchaDispatchRequest;
 use App\Http\Resources\MessageDispatch as MessageDispatchResource;
 
 class CaptchaDispatchController extends Controller
@@ -35,7 +35,7 @@ class CaptchaDispatchController extends Controller
 
     protected $mergeContent;
 
-    public function $type_titles = [
+    public $type_titles = [
         0 => '注册',
         1 => '密码找回'
     ];
@@ -55,19 +55,22 @@ class CaptchaDispatchController extends Controller
     }
 
     public function template_content($workspace, $type = 0){
-        $tag = "{CAPTCHACODE_".$workspace->name."_".$type."}"
+
+        $tag = "{CAPTCHACODE_".$workspace->name."_".$type."}";
         return "尊敬的用户您好：\r\n\r\n 本次您请求的验证码是".$tag."，有效期10分钟（请勿泄露）。祝您使用愉快！";
     }
 
-    public function send(MessageDispatchRequest $request)
+    public function send(CaptchaDispatchRequest $request)
     {
-
         $recipient_email = $request->get('email');
         $type = $request->get('type');
 
         $workspace_id = MailSystem::currentWorkspaceId();
 
-        $workspace = ApiToken::where('id', $workspace_id)->first();
+        $workspace = Workspace::where('id', $workspace_id)->first();
+        if(!$workspace){
+           throw (new HttpResponseException(response()->json(['error' => 'Unknown workspace'], 200)));
+        }
 
         $emailService = EmailService::where('workspace_id',$workspace_id)->first();
         if(!$emailService){
@@ -125,6 +128,6 @@ class CaptchaDispatchController extends Controller
             ->setSubject($message->subject)
             ->setTrackingOptions($trackingOptions);
 
-        return $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
+       // return $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
     }
 }

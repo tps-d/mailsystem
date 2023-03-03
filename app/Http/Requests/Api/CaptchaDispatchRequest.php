@@ -10,13 +10,14 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Facades\MailSystem;
 
 
-class MessageDispatchRequest extends FormRequest
+class CaptchaDispatchRequest extends FormRequest
 {
 
     public function rules()
     {
         return [
-          //  'email' => ['required', 'email'],
+            'email' => ['required', 'email'],
+            'type' => ['required', 'in:0,1']
         ];
     }
 
@@ -24,7 +25,9 @@ class MessageDispatchRequest extends FormRequest
     {
         return [
             'email.required' => '邮箱格式不正确',
-            'email.email' => '邮箱格式不正确'
+            'email.email' => '邮箱格式不正确',
+            'type.required' => '缺少参数',
+            'type.in' => '参数不正确',
         ];
     }
 

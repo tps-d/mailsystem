@@ -54,7 +54,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        // return parent::render($request, $exception);
+
         if ($request->ajax() || $request->wantsJson() || $request->expectsJson() || $this->isApiRoute($request)) {
             return response()->json([
                 'error' => $exception->getMessage(),
@@ -73,6 +73,6 @@ class Handler extends ExceptionHandler
      */
     protected function isApiRoute(Request $request): bool
     {
-        return in_array('api', $request->route()->middleware());
+        return $request->route() && in_array('api', $request->route()->middleware());
     }
 }
