@@ -74,19 +74,23 @@
   </div>
 </div>
 
+@include('layouts.partials.summernote')
+
 @push('js')
+<!--
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/xml/xml.min.js"></script>
-
+-->
     <script>
         $(document).ready(function () {
+            /*
             var codeMirror = CodeMirror.fromTextArea(document.getElementById('id-field-content'), {
                 lineNumbers: true,
                 lineWrapping: true,
                 mode: 'xml',
                 theme: 'monokai',
             });
-
+*/
             var workspace_name = "{{auth()->user()->currentWorkspace->name }}";
 
             $('.btn-preview').click(function (e) {
@@ -97,7 +101,10 @@
                 var elButton = $('.btn-preview');
 
                 if (elContent.hasClass('d-none')) {
-                    $('.template-preview iframe').attr('srcdoc', codeMirror.getValue());
+                    //$('.template-preview iframe').attr('srcdoc', codeMirror.getValue());
+
+                    var content = $('#id-field-content').summernote('code');
+                    $('.template-preview iframe').attr('srcdoc', content);
                     elContent.removeClass('d-none');
                     elPreview.addClass('d-none');
                     elButton.text('Show Design');
@@ -118,6 +125,9 @@
 
                     variable = "{"+variable+"}";
 
+                    $('#id-field-content').summernote('editor.insertText', variable);
+
+                    /*
                     var doc = codeMirror.getDoc();
                     var cursor = doc.getCursor();
 
@@ -127,6 +137,7 @@
                     }
 
                     doc.replaceRange(variable, pos);
+                    */
                 });
             });
 
@@ -164,7 +175,8 @@
                 var exp = checkedInput.parents('.list-group-item').find('input[name=exp]').val();
 
                 variable = "{EXCHANGECODE_"+workspace_name+"_"+pid+"_"+day+"_"+exp+"}";
-
+                $('#id-field-content').summernote('editor.insertText', variable);
+                /*
                 var doc = codeMirror.getDoc();
                 var cursor = doc.getCursor();
 
@@ -174,8 +186,9 @@
                 }
 
                 doc.replaceRange(variable, pos);
-
+                */
                 $('#cardViewModel').modal('hide');
+                
             });
         });
     </script>
