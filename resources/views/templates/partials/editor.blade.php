@@ -29,6 +29,9 @@
             <a class="btn btn-sm btn-default" data-toggle="modal" data-target="#cardViewModel">
                 卡密
             </a>
+            <a class="btn btn-sm btn-default" data-toggle="modal" data-target="#discountViewModel">
+                优惠码
+            </a>
             @foreach($variables as $variable)
             <a class="btn btn-md tag btn-default" data-variable="{{ $variable['name'] }}" href="javascript:;">
                 {{ $variable['description'] }}
@@ -74,13 +77,82 @@
   </div>
 </div>
 
+<div class="modal fade" id="discountViewModel" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="discountViewModelLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="discountViewModelLabel">优惠码</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <div class="form-horizontal" id="discountForm">
+                <div class="form-group row form-group-day">
+                    <label for="id-field-day" class="control-label col-sm-3">天</label>
+                    <div class="col-sm-9">
+                        <select name="day" id="id-field-day" class="form-control selectpicker">
+                                <option value="1" >1天</option>
+                                <option value="30" selected>30天</option>
+                                <option value="90">90天</option>
+                                <option value="360">360天</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row form-group-type">
+                    <label for="id-field-type" class="control-label col-sm-3">类型</label>
+                    <div class="col-sm-9">
+                        <select name="type" id="id-field-type" class="form-control selectpicker">
+                                <option value="0" selected>折扣</option>
+                                <option value="1">金额</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row form-group-value">
+                    <label for="id-field-value" class="control-label col-sm-3">值 ( <span id="unit_label">%</span> )</label>
+                    <div class="col-sm-9">
+                        <input type="number" name="value" value="" id="id-field-value" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row form-group-use_type">
+                    <label for="id-field-use_type" class="control-label col-sm-3">使用类型</label>
+                    <div class="col-sm-9">
+                        <select name="use_type" id="id-field-use_type" class="form-control selectpicker" >
+                                <option value="0" selected>全部用户</option>
+                                <option value="1">仅新用户</option>
+                                <option value="2">仅老用户</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row form-group-expire_time">
+                    <label for="id-field-expire_time" class="control-label col-sm-3">到期时间</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="expire_time" value="" id="id-field-expire_time" class="form-control input-field-flatpickr">
+                    </div>
+                </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="insert_discount_code_btn">插入</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 @include('layouts.partials.summernote')
+
+@push('css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+@endpush
 
 @push('js')
 <!--
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/xml/xml.min.js"></script>
 -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         $(document).ready(function () {
             /*
@@ -188,6 +260,65 @@
                 doc.replaceRange(variable, pos);
                 */
                 $('#cardViewModel').modal('hide');
+                
+            });
+
+
+
+
+            $('#discountViewModel').on('show.bs.modal',function(){
+                var model = $(this);
+ 
+                var date = new Date();
+
+                model.find('.input-field-flatpickr').flatpickr({
+                    enableTime: true,
+                    time_24hr: true,
+                    dateFormat: "Y-m-d H:i",
+                      minuteIncrement: 1,
+                      inline: true,
+                      defaultDate: date 
+                });
+
+                $("#discountForm select[name=type]").change(function(){
+
+                    var this_value = $(this).val();
+                    if(this_value == 1){
+                        $('#unit_label').text('¥');
+                    }else{
+                        $('#unit_label').text('%');
+                    }
+                });
+            });
+
+            $('#insert_discount_code_btn').on('click',function(){
+                var day = $("#discountForm select[name=day]").val();
+                var type = $("#discountForm select[name=type]").val();
+                var value = $("#discountForm input[name=value]").val();
+                var use_type = $("#discountForm select[name=use_type]").val();
+                var expire_data = $("#discountForm input[name=expire_time]").val();
+                
+
+                if(! /^\d+$/.test(value)){
+                    alert("值应该是正整数");
+                    $("#discountForm input[name=value]").focus();
+                    return false;
+                }
+
+                var timestamp=new Date().getTime();
+                var expire_time = new Date(expire_data+':00');
+
+                if(timestamp >= expire_time){
+                    alert("过期时间不能小于当前时间");
+                    return false;
+                }
+
+                var time = expire_time / 1000;
+
+                variable = "{DISCOUNTCODE_"+workspace_name+"_"+day+"_"+type+"_"+value+"_"+use_type+"_"+time+"}";
+                $('#id-field-content').summernote('editor.insertText', variable);
+         
+                $('#discountViewModel').modal('hide');
                 
             });
         });

@@ -221,7 +221,25 @@ class MergeContentService
 
                 $variableContent = $res['data']["code"][0];
                 $content = str_ireplace($org[$index], $variableContent ,$content);
+            }else if(Helper::str_starts_with($tag,'DISCOUNTCODE')){
+                $tag_p = explode('_', $tag);
+                if(count($tag_p) != 7){
+                    continue;
+                }
+
+                list($tname,$workspace_name,$day,$type,$value,$use_type,$expire_time) = $tag_p;
+                $remark = "自动发信生成";
+                
+                $res = $this->platformService->setPlatform($workspace_name)->createApiDiscountCard($day,$type,$value,$use_type,$expire_time,$remark,0);
+
+                if(!isset($res['code']) || $res['code'] != 200){
+                    throw new Exception('Failed createApiDiscountCard with '.$message->recipient_email.' for message id= ' . $message->id .': '.json_encode($res));
+                }
+
+                $variableContent = $res['data']["code"];
+                $content = str_ireplace($org[$index], $variableContent ,$content);
             }
+
         }
 
         return $content;

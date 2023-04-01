@@ -131,16 +131,23 @@ class Helper
     {
         $client = new \GuzzleHttp\Client();
 
-        $headers = array_merge([ 'Content-Type' => 'application/x-www-form-urlencoded'],$headers);
         $request = new \GuzzleHttp\Psr7\Request('POST', $url);
-        $response = $client->send($request, [
-            'verify' => false,
-            'allow_redirects' => false,
-            'debug' => false,
-            'headers' => $headers,
-            'form_params' => $data
-        ]);
 
+        $headers = array_merge([ 'Content-Type' => 'application/x-www-form-urlencoded'],$headers);
+        $options = [
+                'verify' => false,
+                'allow_redirects' => false,
+                'debug' => false,
+                'headers' => $headers
+        ];
+
+        if($headers['Content-Type'] == 'application/json'){
+            $options = array_merge($options,['json' => $data]);
+        }else{
+            $options = array_merge($options,['form_params' => $data]);
+        }
+
+        $response = $client->send($request, $options);
         $response_content = $response->getbody()->getContents();
         
         Log::build([

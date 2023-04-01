@@ -144,6 +144,41 @@ curl https://haiou02.kfdd.cc/api/web/crypt_card/info?postage=1 -X GET -H 'Author
         ]);
     }
 
+/*
+#七、查看优惠码信息
+#code: 优惠码
+#token 注册或登录成功后返回的token值
+#curl https://api.fssxsd.com/api/web/discount_code/info?code=${code} -X GET -H 'Authorization: ${token}'
+#response
+
+{
+    "code": 200,
+    "msg": "",
+    "data": {
+        "id": 1,
+        "day": 30, #天数
+        "code": "", #优惠码
+        "type": 0, #0:折扣，1: 金额
+        "value": 900, #折扣和金额已扩大100倍
+        "remark": "", #额外说明
+        "expire_time": 1676813993, #到期时间
+        "created": 1676813993, #创建时间
+    }
+}
+*/
+    public function getApiDiscountCodeInfo($page=1){
+        if(!$this->_this_platform){
+            throw new Exception('Platform value should not be provided in data.');
+        }
+
+        $token = $this->getApiToken();
+        $api_url = $this->_this_platform['admin_url'];
+        return Helper::http_get_fetch_json($api_url.'/api/web/discount_code/info',[
+            'postage' => $page
+        ],[
+            'Authorization' => $token
+        ]);
+    }
 
 /*    
 #3、生成卡密接口
@@ -180,6 +215,59 @@ curl https://haiou02.kfdd.cc/api/web/crypt_card/info -X POST -H 'Authorization: 
             'remark'=>$remark
         ],[
             'Authorization' => $token
+        ]);
+    }
+
+/*
+#4、生成优惠码
+# day: 天数,和套餐天数对应
+# type: 类型 0:折扣. 1:金额
+# value: 值,(需扩大100倍)
+# use_type: 使用类型。 0:全部用户. 1:仅新用户. 2:仅老用户
+# expire_time: 10位时间戳
+# remark: 说明(选填)
+#state: 0:正常. 1:禁用
+
+curl https://haiou02.kfdd.cc/api/web/discount_code/info -X POST -H 'Authorization: ${token}' -d 'day=${day}&type=${type}&value=${value}&use_type=${use_type}&expire_time=${expire_time}&remarl=${remark}&state=${state}' 
+#reponse
+{
+    "code": 200,
+    "msg": "",
+    "data": {
+        "id": 2,
+        "day": 30,
+        "code": "xxxxxxx",
+        "use_type": 0,
+        "type": 1,
+        "value": 2,
+        "remark": "",
+        "expire_time": 1111111111111,
+        "state": 0,
+        "created": 111111111111
+    }
+}直接念。别有自己的想法 直接按字念
+*/
+
+    public function createApiDiscountCard($day,$type,$value,$use_type,$expire_time,$remark,$state=0){
+        if(!$this->_this_platform){
+            throw new Exception('Platform value should not be provided in data.');
+        }
+
+        $value = $value * 1000;
+
+        $token = $this->getApiToken();
+        $api_url = $this->_this_platform['admin_url'];
+        return Helper::http_post_fetch_json($api_url.'/api/web/discount_code/info',[
+            'day'=> (int)$day,
+            'type'=> (int)$type,
+            'value'=> (int) $value,
+            'use_type'=> (int) $use_type,
+            'expire_time'=> (int)$expire_time,
+            'remark'=>$remark,
+            'state'=> (int)$state
+        ],[
+            'Authorization' => $token,
+            'Content-Type' => 'application/json'
         ]);
     }
 }
