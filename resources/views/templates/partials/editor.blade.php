@@ -216,7 +216,7 @@
 
             $('#cardViewModel').on('show.bs.modal',function(){
                 var model = $(this);
-                $('.modal-body').load('/platform/card/list',function(){
+                model.find('.modal-body').load('/platform/card/list',function(){
                     model.find('input[type=radio]').on('click',function () {
 
                         $('#insert_card_code_btn').prop("disabled", false);

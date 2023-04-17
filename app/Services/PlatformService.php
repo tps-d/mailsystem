@@ -124,13 +124,14 @@ curl https://haiou02.kfdd.cc/api/web/login -X POST -d 'username=123&password=123
         return $cache_token;
     }
 
+
 /*    
 #2、获取套餐信息
 # 只需使用id和day字段
 
 curl https://haiou02.kfdd.cc/api/web/crypt_card/info?postage=1 -X GET -H 'Authorization: ${token}'
 */
-    public function getApiCryptCardInfo($page=1){
+    public function getApiPlanList($page=1){
         if(!$this->_this_platform){
             throw new Exception('Platform value should not be provided in data.');
         }
@@ -144,41 +145,6 @@ curl https://haiou02.kfdd.cc/api/web/crypt_card/info?postage=1 -X GET -H 'Author
         ]);
     }
 
-/*
-#七、查看优惠码信息
-#code: 优惠码
-#token 注册或登录成功后返回的token值
-#curl https://api.fssxsd.com/api/web/discount_code/info?code=${code} -X GET -H 'Authorization: ${token}'
-#response
-
-{
-    "code": 200,
-    "msg": "",
-    "data": {
-        "id": 1,
-        "day": 30, #天数
-        "code": "", #优惠码
-        "type": 0, #0:折扣，1: 金额
-        "value": 900, #折扣和金额已扩大100倍
-        "remark": "", #额外说明
-        "expire_time": 1676813993, #到期时间
-        "created": 1676813993, #创建时间
-    }
-}
-*/
-    public function getApiDiscountCodeInfo($page=1){
-        if(!$this->_this_platform){
-            throw new Exception('Platform value should not be provided in data.');
-        }
-
-        $token = $this->getApiToken();
-        $api_url = $this->_this_platform['admin_url'];
-        return Helper::http_get_fetch_json($api_url.'/api/web/discount_code/info',[
-            'postage' => $page
-        ],[
-            'Authorization' => $token
-        ]);
-    }
 
 /*    
 #3、生成卡密接口
@@ -268,6 +234,77 @@ curl https://haiou02.kfdd.cc/api/web/discount_code/info -X POST -H 'Authorizatio
         ],[
             'Authorization' => $token,
             'Content-Type' => 'application/json'
+        ]);
+    }
+
+/*
+#七、查看优惠码信息
+#code: 优惠码
+#token 注册或登录成功后返回的token值
+#curl https://api.fssxsd.com/api/web/discount_code/info?code=${code} -X GET -H 'Authorization: ${token}'
+#response
+
+{
+    "code": 200,
+    "msg": "",
+    "data": {
+        "id": 1,
+        "day": 30, #天数
+        "code": "", #优惠码
+        "type": 0, #0:折扣，1: 金额
+        "value": 900, #折扣和金额已扩大100倍
+        "remark": "", #额外说明
+        "expire_time": 1676813993, #到期时间
+        "created": 1676813993, #创建时间
+    }
+}
+*/
+    public function getApiDiscountCodeInfo($code){
+        if(!$this->_this_platform){
+            throw new Exception('Platform value should not be provided in data.');
+        }
+
+        $token = $this->getApiToken();
+        $api_url = $this->_this_platform['api_url'];
+        return Helper::http_get_fetch_json($api_url.'/api/web/discount_code/info',[
+            'code' => $code
+        ],[
+            'Authorization' => $token
+        ]);
+    }
+
+
+/*
+#五、查看卡密信息
+#key: 卡密
+#token 注册或登录成功后返回的token值
+curl https://api.fssxsd.com/api/web/order/cdkey?key=${key} -X GET -H 'Authorization: ${token}'
+#response
+{
+    "code": 200,
+    "msg": "",
+    "data": {
+        "id": 1,
+        "postage_id": 12, #套餐id
+        "day": 7, #此卡密对应的天数
+        "cdkey": "keykey", #卡密值
+        "expire_time": 1676813993, #卡密到期时间
+        "used": 0, #卡密使用的时间
+        "created": 1676813993, #卡密创建时间
+    }
+}
+*/
+    public function getApiCryptCardInfo($key){
+        if(!$this->_this_platform){
+            throw new Exception('Platform value should not be provided in data.');
+        }
+
+        $token = $this->getApiToken();
+        $api_url = $this->_this_platform['api_url'];
+        return Helper::http_get_fetch_json($api_url.'/api/web/order/cdkey',[
+            'key'=>$key
+        ],[
+            'Authorization' => $token
         ]);
     }
 }

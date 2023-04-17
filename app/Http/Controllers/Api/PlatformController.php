@@ -74,11 +74,12 @@ class PlatformController extends Controller
         }
     }
 
+
     public function card_list(Request $request){
 
         $platform = auth()->user()->currentWorkspace->name;
-        $platform = 'haiou';
-        $res = $this->platformService->setPlatform($platform)->getApiCryptCardInfo();
+        //$platform = 'haiou';
+        $res = $this->platformService->setPlatform($platform)->getApiPlanList();
         if(!isset($res['code']) || $res['code'] != 200){
             echo "无法获取";
             exit;
@@ -102,6 +103,37 @@ class PlatformController extends Controller
         echo $html;
     }
 
+
+
+    public function code_check(Request $request,$platform){
+
+        $code = $request->get('code');
+
+        if($code && strlen($code) == 10){
+            
+            //$platform = 'haiou';
+            $res = $this->platformService->setPlatform($platform)->getApiDiscountCodeInfo($code);
+            if(isset($res['code']) && $res['code'] == 200){
+                return \Response([
+                    'data' => $res['data']
+                ]);
+            }
+        }elseif($code && strlen($code) == 12){
+            //$platform = 'haiou';
+            $res = $this->platformService->setPlatform($platform)->getApiCryptCardInfo($code);
+            if(isset($res['code']) && $res['code'] == 200){
+                return \Response([
+                    'data' => $res['data']
+                ]);
+            }
+
+            return \Response($res);
+        }
+
+        return \Response([
+                    'error' => '无效的优惠码'
+        ]);
+    }
     
 
 }
