@@ -113,6 +113,15 @@ class PlatformController extends Controller
 
         $timenow=time();
 
+        $org_price=[
+            1 => 7,
+            7 => 12,
+            30 => 30,
+            90 => 78.0,
+            180 => 99,
+            360 => 248,
+        ];
+
         if($code && strlen($code) == 10){
             /*
                 "id": 1,
@@ -140,19 +149,31 @@ class PlatformController extends Controller
                     $value = $res['data']['value'] / 100;
 
                     $message = "恭喜您获得 ${day}天套餐优惠码";
+                    $org_price = $org_price[$day] ?? 30;
+
                     if($type){
+                        $txt = "立即节省 ${value} 元";
                         $message .= ", 可以享受 -${value} 元价格减免优惠";
+                        $price = $org_price - $value;
                     }else{
+                        $txt = "立即节省 ${value} %";
                         $message .= ", 可以享受 ${value} %价格折扣优惠";
+
+                        $discount = $org_price * ($$value / 100);
+                        $price = $org_price - $discount;
                     }
 
                     
                     return \Response([
                         'code' => $code,
                         'day' => $day,
+                        'org_price' => $org_price[$day] ?? '30.0',
+                        'price' => $price,
                         'expire' => date('Y-m-d H:m:s',$expire_time),
                         'type' => $type,
                         'value' => $value,
+                        'txt' => $txt,
+                        'ds' => 0,
                         'message' => $message
                     ]);
                 }
@@ -189,11 +210,18 @@ class PlatformController extends Controller
                     $cdkey = $res['data']['cdkey'];
                     $day = $res['data']['day'];
                     $expire_time = $res['data']['expire_time'];
+                    $org_price = $org_price[$day] ?? 30;
+
                     $message = "恭喜您获得 ${day} 天免费体验兑换码";
+
                     return \Response([
                         'code' => $cdkey,
                         'day' => $day,
+                        'org_price' => $org_price,
+                        'price' => $org_price,
                         'expire' => date('Y-m-d H:m:s',$expire_time),
+                        'txt' => "获得 ${day} 天免费体验",
+                        'ds' => 1,
                         'message' => $message
                     ]);
                 }
