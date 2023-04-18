@@ -81,6 +81,39 @@ curl https://api.fssxsd.com/api/web/feedback/info -X POST -d 'username=test@test
 
 /*
 
+#四、登录
+#username: 邮箱或手机号
+#password: 密码
+curl https://api.fssxsd.com/api/web/user/login -X POST -d 'username=test@test.com&password=123123' 
+
+*/
+    public function getApiToken(){
+        if(!$this->_this_platform){
+            throw new Exception('Platform value should not be provided in data.');
+        }
+
+       // $cache_token = Cache::get('platform_api_token_'.$this->_this_name);
+       // if(!$cache_token){
+            $api_url = $this->_this_platform['api_url'];
+            $res = Helper::http_post_fetch_json($api_url.'/api/web/user/login',[
+                'username'=>$this->_this_platform['api_username'],
+                'password'=>$this->_this_platform['api_password']
+            ]);
+
+            if(!$res || !isset($res['code']) || $res['code'] != 200){
+                throw new Exception('get token failed from '.$this->_this_name);
+            }
+
+            $cache_token = $res['data']['token'];
+
+       //     Cache::put('platform_api_token_'.$this->_this_name, $cache_token , now()->addDays(29));
+       // }
+
+        return $cache_token;
+    }
+
+/*
+
 海鸥: https://haiou02.kfdd.cc
 如梭: https://rusuo02.kfdd.cc
 橡树: https://xiangshu02.kfdd.cc
@@ -100,17 +133,17 @@ curl https://haiou02.kfdd.cc/api/web/login -X POST -d 'username=123&password=123
     }
 }
 */
-    public function getApiToken(){
+    public function getAdminToken(){
         if(!$this->_this_platform){
             throw new Exception('Platform value should not be provided in data.');
         }
 
-        $cache_token = Cache::get('platform_token_'.$this->_this_name);
+        $cache_token = Cache::get('platform_admin_token_'.$this->_this_name);
         if(!$cache_token){
             $api_url = $this->_this_platform['admin_url'];
             $res = Helper::http_post_fetch_json($api_url.'/api/web/login',[
-                'username'=>$this->_this_platform['username'],
-                'password'=>$this->_this_platform['password']
+                'username'=>$this->_this_platform['admin_username'],
+                'password'=>$this->_this_platform['admin_password']
             ]);
             if(!$res || !isset($res['code']) || $res['code'] != 200){
                 throw new Exception('get token failed from '.$this->_this_name);
@@ -118,7 +151,7 @@ curl https://haiou02.kfdd.cc/api/web/login -X POST -d 'username=123&password=123
 
             $cache_token = $res['data']['token'];
 
-            Cache::put('platform_token_'.$this->_this_name, $cache_token , now()->addMinutes(1430));
+            Cache::put('platform_admin_token_'.$this->_this_name, $cache_token , now()->addMinutes(1430));
         }
 
         return $cache_token;
@@ -136,7 +169,7 @@ curl https://haiou02.kfdd.cc/api/web/crypt_card/info?postage=1 -X GET -H 'Author
             throw new Exception('Platform value should not be provided in data.');
         }
 
-        $token = $this->getApiToken();
+        $token = $this->getAdminToken();
         $api_url = $this->_this_platform['admin_url'];
         return Helper::http_get_fetch_json($api_url.'/api/web/crypt_card/info',[
             'postage' => $page
@@ -170,7 +203,7 @@ curl https://haiou02.kfdd.cc/api/web/crypt_card/info -X POST -H 'Authorization: 
             throw new Exception('Platform value should not be provided in data.');
         }
 
-        $token = $this->getApiToken();
+        $token = $this->getAdminToken();
         $api_url = $this->_this_platform['admin_url'];
         return Helper::http_post_fetch_json($api_url.'/api/web/crypt_card/info',[
             'postage_id'=>$postage_id,
@@ -221,7 +254,7 @@ curl https://haiou02.kfdd.cc/api/web/discount_code/info -X POST -H 'Authorizatio
 
         $value = $value * 1000;
 
-        $token = $this->getApiToken();
+        $token = $this->getAdminToken();
         $api_url = $this->_this_platform['admin_url'];
         return Helper::http_post_fetch_json($api_url.'/api/web/discount_code/info',[
             'day'=> (int)$day,
@@ -298,8 +331,9 @@ curl https://api.fssxsd.com/api/web/order/cdkey?key=${key} -X GET -H 'Authorizat
         if(!$this->_this_platform){
             throw new Exception('Platform value should not be provided in data.');
         }
-
+//curl https://api.fssxsd.com/api/web/order/cdkey?key=MG2SB8GGMMWQ  -X GET -H 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjIyOTI1OTgsInBhc3N3b3JkIjoiYWFkYmZiZTRlYjA1YzQxMjc2NTQxZDMwMWE3NWJmZmQiLCJleHRlbmQiOiItd2ViIiwiZXhwIjoxNjgxODM3NTEzLCJpc3MiOiJ4eHgifQ.3iCIRp8BzAzHDqYExo-8VIGjKZoVgnlDsYuHbDCvhhU'
         $token = $this->getApiToken();
+ 
         $api_url = $this->_this_platform['api_url'];
         return Helper::http_get_fetch_json($api_url.'/api/web/order/cdkey',[
             'key'=>$key
