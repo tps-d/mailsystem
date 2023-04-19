@@ -107,7 +107,7 @@ class PlatformController extends Controller
 
     public function code_check(Request $request,$platform){
 
-        $code = $request->get('code');
+        $code = $request->get('code','trim');
 
         date_default_timezone_set('Asia/Shanghai');
 
@@ -117,7 +117,7 @@ class PlatformController extends Controller
             1 => 7,
             7 => 12,
             30 => 30,
-            90 => 78.0,
+            90 => 78,
             180 => 99,
             360 => 248,
         ];
@@ -134,6 +134,7 @@ class PlatformController extends Controller
         */
             //$platform = 'haiou';
             $res = $this->platformService->setPlatform($platform)->getApiDiscountCodeInfo($code);
+
             if(isset($res['code']) && $res['code'] == 200){
                 $has_expired = isset($res['data']['expire_time']) && $res['data']['expire_time'] < $timenow;
 
@@ -178,6 +179,10 @@ class PlatformController extends Controller
                     ]);
                 }
                 
+            }else{
+                return \Response([
+                    'error' => '查询失败，请稍后重试'
+                ]);
             }
         }elseif($code && strlen($code) == 12){
 
@@ -225,12 +230,18 @@ class PlatformController extends Controller
                         'message' => $message
                     ]);
                 }
+            }else{
+                return \Response([
+                    'error' => '查询失败，请稍后重试'
+                ]);
             }
+        }else{
+            return \Response([
+                'error' => '您输入的优惠码或兑换码不存在'
+            ]); 
         }
 
-        return \Response([
-            'error' => '您输入的优惠码或兑换码不存在'
-        ]);
+
     }
     
 
