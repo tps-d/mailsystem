@@ -113,7 +113,7 @@ class PlatformController extends Controller
 
         $timenow=time();
 
-        $org_price=[
+        $org_price_map=[
             1 => 7,
             7 => 12,
             30 => 30,
@@ -150,7 +150,7 @@ class PlatformController extends Controller
                     $value = $res['data']['value'] / 100;
 
                     $message = "恭喜您获得 ${day}天套餐优惠码";
-                    $org_price = $org_price[$day] ?? 30;
+                    $org_price = $org_price_map[$day] ?? 30;
 
                     if($type){
                         $txt = "立即节省 ${value} 元";
@@ -160,7 +160,7 @@ class PlatformController extends Controller
                         $txt = "立即节省 ${value} %";
                         $message .= ", 可以享受 ${value} %价格折扣优惠";
 
-                        $discount = $org_price * ($$value / 100);
+                        $discount = $org_price * ($value / 100);
                         $price = $org_price - $discount;
                     }
 

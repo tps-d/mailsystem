@@ -92,8 +92,8 @@ curl https://api.fssxsd.com/api/web/user/login -X POST -d 'username=test@test.co
             throw new Exception('Platform value should not be provided in data.');
         }
 
-        $cache_token = Cache::get('platform_api_token_'.$this->_this_name);
-        if(!$cache_token){
+       // $cache_token = Cache::get('platform_api_token_'.$this->_this_name);
+       // if(!$cache_token){
             $api_url = $this->_this_platform['api_url'];
             $res = Helper::http_post_fetch_json($api_url.'/api/web/user/login',[
                 'username'=>$this->_this_platform['api_username'],
@@ -106,8 +106,8 @@ curl https://api.fssxsd.com/api/web/user/login -X POST -d 'username=test@test.co
 
             $cache_token = $res['data']['token'];
 
-            Cache::put('platform_api_token_'.$this->_this_name, $cache_token , now()->addDays(3));
-        }
+        //    Cache::put('platform_api_token_'.$this->_this_name, $cache_token , now()->addDays(3));
+       // }
 
         return $cache_token;
     }

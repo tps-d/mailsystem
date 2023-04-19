@@ -50,4 +50,4 @@ Route::post('v1/platform/{platform}/captcha/fetch', '\App\Http\Controllers\Api\P
 Route::post('v1/platform/{platform}/card/fetch', '\App\Http\Controllers\Api\PlatformController@card_fetch');
 Route::get('v1/platform/{platform}/test', '\App\Http\Controllers\Api\PlatformController@test');
 
-Route::get('v1/platform/{platform}/code/check', '\App\Http\Controllers\Api\PlatformController@code_check');
+Route::post('v1/platform/{platform}/code/check', '\App\Http\Controllers\Api\PlatformController@code_check');
