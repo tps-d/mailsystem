@@ -172,7 +172,13 @@ class Helper
             'query' => $data
         ]);
 
-        return \GuzzleHttp\json_decode($response->getbody()->getContents(), true);
+        $response_content = $response->getbody()->getContents();
+        Log::build([
+          'driver' => 'single',
+          'path' => storage_path('logs/platform_request.log'),
+        ])->info("GET ".$url.', data: '.json_encode($data) .", response:\n".$response_content);
+
+        return \GuzzleHttp\json_decode($response_content, true);
         
     }
 }
