@@ -121,7 +121,7 @@ class CaptchaDispatchController extends Controller
             $mergedContent = $this->mergeContent->handle($message);
         }catch(\Exception $e){
             if($e->getCode()){
-                throw (new HttpResponseException(response()->json(['error' => $e->getMessage() ."code=".$e->getCode()], 200)));
+                throw (new HttpResponseException(response()->json(['error' => $e->getMessage()], 200)));
             }else{
                 return 0;
             }
