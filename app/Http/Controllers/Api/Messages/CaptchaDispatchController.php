@@ -80,7 +80,7 @@ class CaptchaDispatchController extends Controller
         $userCount = Subscriber::where('workspace_id',$workspace_id)->where('email',$recipient_email )->count();
         if(!$userCount){
             $from = explode('@', $recipient_email);
-            $this->subscribers->store($recipient_email ,[
+            $this->subscribers->store($workspace_id ,[
                 'email' => $recipient_email,
                 'first_name' => $from[0],
                 'last_name' => null,
@@ -121,7 +121,7 @@ class CaptchaDispatchController extends Controller
             $mergedContent = $this->mergeContent->handle($message);
         }catch(\Exception $e){
             if($e->getCode()){
-                throw (new HttpResponseException(response()->json(['error' => $e->getMessage()], 200)));
+                throw (new HttpResponseException(response()->json(['error' => $e->getMessage() ."code=".$e->getCode()], 200)));
             }else{
                 return 0;
             }
