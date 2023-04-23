@@ -26,5 +26,12 @@
 	"Dispatch at a specific time" : "指定发送时间",
 
 	"Queue draft" : "放入草稿队列",
-	"Send automatically" : "自动发送"
+	"Send automatically" : "自动发送",
+
+	"Unsubscribe" : "邮件退订",
+	"Resubscribe" : "邮件订阅",
+	"Add_To_Email_List" : "是否将 :email 加入邮件列表中？",
+ 	"Remove_From_Email_List" : "是否将 :email 从邮件列表中取消？",
+	"Unsubscribe now" : "立即退订",
+	"Resubscribe now" : "重新订阅"
 }

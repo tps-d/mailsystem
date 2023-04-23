@@ -28,7 +28,9 @@ class SubscriptionsController extends Controller
     public function unsubscribe(string $messageHash): View
     {
         $message = Message::with('subscriber')->where('hash', $messageHash)->first();
-
+        if(!$message){
+            abort(404);
+        }
         return view('subscriptions.unsubscribe', compact('message'));
     }
 
@@ -38,7 +40,9 @@ class SubscriptionsController extends Controller
     public function subscribe(string $messageHash): View
     {
         $message = Message::with('subscriber')->where('hash', $messageHash)->first();
-
+        if(!$message){
+            abort(404);
+        }
         return view('subscriptions.subscribe', compact('message'));
     }
 

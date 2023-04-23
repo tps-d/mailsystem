@@ -178,6 +178,10 @@ class CampaignsController extends Controller
 
         unset($input['tags']);
 
+        if($request->get('is_send_mail')){
+            $input['content'] = config('platform.mail_layout');
+        }
+
         $campaign = $this->campaigns->store($workspaceId, $input);
 
         $campaign->tags()->sync($request->get('tags'));
@@ -247,6 +251,10 @@ class CampaignsController extends Controller
         }
 
         unset($input['tags']);
+
+        if($request->get('is_send_mail')){
+            $input['content'] = config('platform.mail_layout');
+        }
 
         $campaign = $this->campaigns->update(
             $workspaceId,

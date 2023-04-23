@@ -91,7 +91,7 @@ class MergeContentService
         }
 
         return $campaign->template
-            ? $this->mergeContent($campaign->content, $campaign->template->content)
+            ? $this->mergeContent($campaign->template->content, $campaign->content)
             : $campaign->content;
     }
 
