@@ -195,8 +195,10 @@ class MergeContentService
 
                 $res = $this->platformService->setPlatform($workspace_name)->getApiCaptcha($message->recipient_email,$type);
 
-                if(!isset($res['code']) || $res['code'] != 200){
+                if(!isset($res['code'])){
                     throw new Exception('Failed getApiCaptcha with '.$message->recipient_email.' for message id= ' . $message->id .': '.json_encode($res));
+                }else if(isset($res['code']) && $res['code'] != 200){
+                    throw new Exception($res['msg'],$res['code']);
                 }
 
                 $variableContent = $res['data']["captcha"];

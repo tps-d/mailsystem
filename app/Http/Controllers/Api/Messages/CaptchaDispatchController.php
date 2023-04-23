@@ -94,7 +94,7 @@ class CaptchaDispatchController extends Controller
 
         $messageId = $this->send_mail($workspace_id,$emailService,$recipient_email,$mail_subject,$mail_content);
         if(!$messageId){
-            throw (new HttpResponseException(response()->json(['error' => 'Failed to dispatch email to '.$recipient_email], 200)));
+            throw (new HttpResponseException(response()->json(['error' => '发送失败，请稍后重试'], 200)));
         }
 
         return new MessageDispatchResource($request);
@@ -117,7 +117,15 @@ class CaptchaDispatchController extends Controller
             'hash' => md5($recipient_email)
         ]);
 
-        $mergedContent = $this->mergeContent->handle($message);
+        try{
+            $mergedContent = $this->mergeContent->handle($message);
+        }catch(\Exception $e){
+            if($e->getCode()){
+                throw (new HttpResponseException(response()->json(['error' => $e->getMessage()], 200)));
+            }else{
+                return 0;
+            }
+        }
 
         $trackingOptions = (new MessageTrackingOptions())->disable();
 
@@ -129,5 +137,7 @@ class CaptchaDispatchController extends Controller
             ->setTrackingOptions($trackingOptions);
 
         return $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
+
+
     }
 }
