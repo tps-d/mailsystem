@@ -252,7 +252,7 @@ curl https://haiou02.kfdd.cc/api/web/discount_code/info -X POST -H 'Authorizatio
             throw new Exception('Platform value should not be provided in data.');
         }
 
-        $value = $value * 1000;
+        $value = $value * 100;
 
         $token = $this->getAdminToken();
         $api_url = $this->_this_platform['admin_url'];
