@@ -75,6 +75,7 @@ class ReceivingController extends Controller
         if(!$to_email_str){
             $to_email_str = $request->get('recipient');
         }
+
         $from_email = $request->get('from');
         $sender_email = $request->get('sender');
         $subject = $request->get('Subject');
@@ -86,12 +87,14 @@ class ReceivingController extends Controller
             return 'ok';
         }
 
-        preg_match_all("/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/", $to_email_str, $matches);
+        preg_match("/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/", $to_email_str, $matches);
+
         $to_email = isset($matches[0]) ? $matches[0] : '';
         if (!filter_var($to_email, FILTER_VALIDATE_EMAIL)) {
             $log->info('Invalid email from string '.$to_email_str);
             return 'ok';
         }
+
 
         $emailService = EmailService::where('from_email',$to_email)->first();
         if(!$emailService){
