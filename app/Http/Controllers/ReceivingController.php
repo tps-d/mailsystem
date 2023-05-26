@@ -79,7 +79,7 @@ class ReceivingController extends Controller
 
         $emailService = EmailService::where('workspace_id',$workspace_id)->where('from_email',$to_email)->first();
         if(!$emailService){
-            $log->info('no know email service for from_email '.$to_email);
+            $log->info('no know email service for from_email '.$to_email .' with workspace_id '.$workspace_id);
             return 'ok';
         }
 
@@ -97,13 +97,13 @@ class ReceivingController extends Controller
 
         $autoTrigger = AutoTrigger::where('workspace_id',$workspace_id)->where('from_type','email')->where('from_id',$emailService->id)->where('status_id',AutoTrigger::STATUS_ACTIVE)->first();
         if(!$autoTrigger){
-            $log->info('no trigger set for from_email '.$to_email);
+            $log->info('no trigger set for from_email '.$to_email .' with workspace_id '.$workspace_id .', from_type email, from_id '.$emailService->id);
             return 'ok';
         }
 
         if($autoTrigger->condition == 'include'){
             if(strpos($autoTrigger->match_content, $body_plain) === false){
-                $log->info('no match to content "'.$autoTrigger->match_content.'" with from_email '.$to_email);
+                $log->info('no match to content "'.$autoTrigger->match_content.'" with from_email '.$to_email .' with workspace_id '.$workspace_id);
                 return 'ok';
             }
         }
@@ -137,7 +137,7 @@ class ReceivingController extends Controller
         $messageId = $this->relayMessage->handle_mail($mergedContent, $messageOptions, $emailService);
 
         if(!$messageId){
-            $log->info('Failed to dispatch email to '.$from_email);
+            $log->info('Failed to dispatch email to '.$from_email .' with workspace_id '.$workspace_id);
         }
 
         return 'ok';

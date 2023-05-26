@@ -11,7 +11,7 @@ use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 
 use Illuminate\Foundation\Application;
-
+use Illuminate\Pagination\Paginator;
 use App\Services\Helper;
 use App\Services\MailSystem;
 use App\Services\ResolverService;
@@ -69,6 +69,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-
+        Paginator::useBootstrap();
     }
 }
