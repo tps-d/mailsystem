@@ -61,7 +61,7 @@ class ReceivingController extends Controller
 
     }
 
-    public function notify(Request $request,$workspace_id)
+    public function notify(Request $request)
     {
 
         $log = Log::build([
@@ -85,19 +85,21 @@ class ReceivingController extends Controller
         if(!$to_email_str){
             return 'ok';
         }
-        
+
         preg_match_all("/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/", $to_email_str, $matches);
         $to_email = isset($matches[0]) ? $matches[0] : '';
         if (!filter_var($to_email, FILTER_VALIDATE_EMAIL)) {
-            $log->info('Invalid email from string '.$to_email_str .' with workspace_id '.$workspace_id);
+            $log->info('Invalid email from string '.$to_email_str);
             return 'ok';
         }
 
-        $emailService = EmailService::where('workspace_id',$workspace_id)->where('from_email',$to_email)->first();
+        $emailService = EmailService::where('from_email',$to_email)->first();
         if(!$emailService){
-            $log->info('no know email service for from_email '.$to_email .' with workspace_id '.$workspace_id);
+            $log->info('no know email service for from_email '.$to_email);
             return 'ok';
         }
+
+        $workspace_id = $emailService->workspace_id;
 
         $userCount = Subscriber::where('workspace_id',$workspace_id)->where('email',$sender_email)->count();
         if(!$userCount){

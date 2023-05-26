@@ -18,7 +18,7 @@ Route::fallback( function () {
     abort( 404 );
 } );
 
-Route::post('/receiving/{workspace}/notify', '\App\Http\Controllers\ReceivingController@notify');
+Route::post('/receiving/notify', '\App\Http\Controllers\ReceivingController@notify');
 Route::post('/tg/{token}/webhook', '\App\Http\Controllers\ReceivingController@telegram_notify');
 
 Auth::routes(
