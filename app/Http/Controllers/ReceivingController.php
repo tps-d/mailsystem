@@ -16,6 +16,7 @@ use App\Models\Template;
 use App\Models\EmailService;
 use App\Models\SocialService;
 use App\Models\SocialUser;
+use App\Models\Subscriber;
 use App\Models\Message;
 use App\Models\Campaign;
 use App\Services\Messages\MessageOptions;
@@ -84,6 +85,7 @@ class ReceivingController extends Controller
         $timestamp = $request->get('timestamp');
 
         if(!$to_email_str){
+            $log->info('no to email found');
             return 'ok';
         }
 
@@ -107,7 +109,7 @@ class ReceivingController extends Controller
         $userCount = Subscriber::where('workspace_id',$workspace_id)->where('email',$sender_email)->count();
         if(!$userCount){
             $from = explode(' ', $from_email);
-            $this->subscriber->store($socialService->workspace_id,[
+            $this->subscriber->store($workspace_id,[
                 'email' => $sender_email,
                 'first_name' => $from[0],
                 'last_name' => null,
@@ -140,7 +142,7 @@ class ReceivingController extends Controller
             'subject' => 'Re:' . $subject,
             'from_name' => $emailService->from_name,
             'from_email' => $emailService->from_email,
-            'hash' => 'abc123',
+            'hash' => md5($sender_email)
         ]);;
 
         $mergedContent = $this->mergeContent->handle($message);
