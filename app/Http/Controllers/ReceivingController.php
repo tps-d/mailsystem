@@ -131,7 +131,7 @@ class ReceivingController extends Controller
 
             $matched = false;
             foreach($arr as $str){
-                if(strpos($str, $body_plain) !== false){
+                if(strpos($body_plain,$str) !== false){
                     $matched = true;
                     break;
                 }
@@ -232,7 +232,7 @@ class ReceivingController extends Controller
 
             $matched = false;
             foreach($arr as $str){
-                if(strpos($str, $text) !== false){
+                if(strpos($text, $str) !== false){
                     $matched = true;
                     break;
                 }
