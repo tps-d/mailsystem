@@ -127,7 +127,7 @@ class ReceivingController extends Controller
         if($autoTrigger->condition == 'include'){
 
             $match_content = str_replace(["，", "｜", "；","|", ";"], ",", $autoTrigger->match_content);
-            $arr = explode($",", $match_content);
+            $arr = explode(",", $match_content);
 
             $matched = false;
             foreach($arr as $str){
@@ -228,7 +228,7 @@ class ReceivingController extends Controller
 
         if($autoTrigger->condition == 'include'){
             $match_content = str_replace(["，", "｜", "；","|", ";"], ",", $autoTrigger->match_content);
-            $arr = explode($",", $match_content);
+            $arr = explode(",", $match_content);
 
             $matched = false;
             foreach($arr as $str){
