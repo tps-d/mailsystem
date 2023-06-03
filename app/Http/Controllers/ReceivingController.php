@@ -125,7 +125,19 @@ class ReceivingController extends Controller
         }
 
         if($autoTrigger->condition == 'include'){
-            if(strpos($autoTrigger->match_content, $body_plain) === false){
+
+            $match_content = str_replace(["，", "｜", "；","|", ";"], ",", $autoTrigger->match_content);
+            $arr = explode($",", $match_content);
+
+            $matched = false;
+            foreach($arr as $str){
+                if(strpos($str, $body_plain) !== false){
+                    $matched = true;
+                    break;
+                }
+            }
+
+            if(!$matched){
                 $log->info('no match to content "'.$autoTrigger->match_content.'" with from_email '.$to_email .' with workspace_id '.$workspace_id);
                 return 'ok';
             }
@@ -215,10 +227,22 @@ class ReceivingController extends Controller
         }
 
         if($autoTrigger->condition == 'include'){
-            if(strpos($autoTrigger->match_content, $text) === false){
+            $match_content = str_replace(["，", "｜", "；","|", ";"], ",", $autoTrigger->match_content);
+            $arr = explode($",", $match_content);
+
+            $matched = false;
+            foreach($arr as $str){
+                if(strpos($str, $text) !== false){
+                    $matched = true;
+                    break;
+                }
+            }
+
+            if(!$matched){
                 $log->info('no match to content "'.$autoTrigger->match_content.'" with bot_id '.$bot_id);
                 return 'ok';
             }
+
         }
 
         $message = new Message([
