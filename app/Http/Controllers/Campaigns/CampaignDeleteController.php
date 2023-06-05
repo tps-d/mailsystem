@@ -62,7 +62,7 @@ class CampaignDeleteController extends Controller
         }
 
         $automation = $this->automations->getBy(MailSystem::currentWorkspaceId(), ['campaign_id' => $campaign->id]);
-        if ($automation) {
+        if (!empty($automation->toArray())) {
             return redirect()->route('campaigns.destroy.confirm',$campaign->id)
                 ->withErrors(__('You cannot delete this campaign that is currently used by a automation task'));
         }
