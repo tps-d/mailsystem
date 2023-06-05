@@ -13,6 +13,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailServiceRequest;
 use App\Repositories\EmailServiceRepository;
 
+use App\Models\CampaignStatus;
+
 use App\Facades\MailSystem;
 
 class EmailServicesController extends Controller
@@ -97,7 +99,9 @@ class EmailServicesController extends Controller
      */
     public function delete(int $emailServiceId): RedirectResponse
     {
-        $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId, ['campaigns']);
+        $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId, [
+            'campaigns' => function($query){$query->where('status_id','!=',CampaignStatus::STATUS_SENT)}
+        ]);
 
         if ($emailService->in_use) {
             return redirect()->back()->withErrors(__("You cannot delete an email service that is currently used by a campaign or automation."));
