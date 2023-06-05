@@ -100,7 +100,7 @@ class EmailServicesController extends Controller
     public function delete(int $emailServiceId): RedirectResponse
     {
         $emailService = $this->emailServices->find(MailSystem::currentWorkspaceId(), $emailServiceId, [
-            'campaigns' => function($query){$query->where('status_id','!=',CampaignStatus::STATUS_SENT)}
+            'campaigns' => function($query){$query->where('status_id','!=',CampaignStatus::STATUS_SENT);}
         ]);
 
         if ($emailService->in_use) {
