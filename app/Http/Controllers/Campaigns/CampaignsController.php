@@ -208,7 +208,7 @@ class CampaignsController extends Controller
         $campaign = $this->campaigns->find($workspaceId, $id);
         $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
             ->map(static function (EmailService $emailService) {
-                $emailService->formatted_name = "{$emailService->name} ({$emailService->type->name})";
+                $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
                 return $emailService;
             });
         $templates = [null => '- None -'] + $this->templates->pluck($workspaceId);
