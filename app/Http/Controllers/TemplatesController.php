@@ -44,7 +44,7 @@ class TemplatesController extends Controller
      */
     public function index(): View
     {
-        $templates = $this->templates->paginate(MailSystem::currentWorkspaceId(), 'name');
+        $templates = $this->templates->orderBy('created_at', 'desc')->paginate(MailSystem::currentWorkspaceId(), 'name');
 
         return view('templates.index', compact('templates'));
     }
