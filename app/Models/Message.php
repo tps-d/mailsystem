@@ -133,6 +133,11 @@ class Message extends BaseModel
     {
         return $this->source_type === AutoTrigger::class;
     }
+
+    public function isAutomation(): bool
+    {
+        return false;
+    }
     
     /**
      * Return the string for the source_type.
