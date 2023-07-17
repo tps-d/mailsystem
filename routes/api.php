@@ -42,6 +42,9 @@ Route::prefix('v1/webhooks')->namespace('\App\Http\Controllers\Api\Webhooks')->g
     Route::post('postal', 'PostalWebhooksController@handle')->name('postal');
 });
 
+Route::post('mail/{platform}/send', '\App\Http\Controllers\Api\Messages\DispatchController@send');
+
+
 Route::get('v1/ping', '\App\Http\Controllers\Api\PingController@index');
 
 
