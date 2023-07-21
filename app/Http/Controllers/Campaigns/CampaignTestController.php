@@ -34,7 +34,13 @@ class CampaignTestController extends Controller
      */
     public function handle_mail(CampaignTestEmailRequest $request, int $campaignId): RedirectResponse
     {
-        $messageId = $this->dispatchTestMessage->handle(0, $campaignId, $request->get('recipient_email'));
+        try{
+            $messageId = $this->dispatchTestMessage->handle(0, $campaignId, $request->get('recipient_email'));
+        }catch(TelegramSDKException $e){
+            return redirect()->route('campaigns.preview', $campaignId)
+                ->withInput()
+                ->with(['error', $e->getMessage()]);
+        }
 
         if (!$messageId) {
             return redirect()->route('campaigns.preview', $campaignId)
