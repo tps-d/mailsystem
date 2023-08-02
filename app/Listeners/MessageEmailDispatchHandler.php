@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use Log;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Events\MessageEmailDispatchEvent;
@@ -27,6 +28,13 @@ class MessageEmailDispatchHandler implements ShouldQueue
      */
     public function handle(MessageEmailDispatchEvent $event): void
     {
-        $this->dispatchMessage->handle($event->message);
+
+          try {
+            $this->dispatchMessage->handle($event->message);
+          } catch (RateLimitException $exception) {
+            $this->release($exception->getRetryAfter());
+          } catch (Exception $exception) {
+            $this->fail($exception->getMessage());
+          }
     }
 }
