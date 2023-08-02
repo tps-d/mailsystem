@@ -7,11 +7,15 @@ namespace App\Listeners;
 use Log;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 use App\Events\MessageEmailDispatchEvent;
 use App\Services\Messages\DispatchMessage;
 
 class MessageEmailDispatchHandler implements ShouldQueue
 {
+
+    use InteractsWithQueue;
+
     /** @var string */
     public $queue = 'message-dispatch';
 
@@ -28,7 +32,6 @@ class MessageEmailDispatchHandler implements ShouldQueue
      */
     public function handle(MessageEmailDispatchEvent $event): void
     {
-
           try {
             $this->dispatchMessage->handle($event->message);
           } catch (RateLimitException $exception) {

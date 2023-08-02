@@ -6,11 +6,14 @@ namespace App\Listeners;
 
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 use App\Events\MessageSocialDispatchEvent;
 use App\Services\Messages\DispatchSocial;
 
 class MessageSocialDispatchHandler implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     /** @var string */
     public $queue = 'social-dispatch';
 
