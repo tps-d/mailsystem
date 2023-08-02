@@ -273,14 +273,17 @@ class CampaignsController extends Controller
      */
     public function preview(int $id)
     {
-        $campaign = $this->campaigns->find(MailSystem::currentWorkspaceId(), $id, ['email_service','social_service']);
-        $subscriberCount = $this->subscribers->countActive(MailSystem::currentWorkspaceId());
+        $workspaceId = MailSystem::currentWorkspaceId();
+        $campaign = $this->campaigns->find($workspaceId, $id, ['email_service','social_service']);
+        $subscriberCount = $this->subscribers->countActive($workspaceId);
 
         //if (!$campaign->draft) {
         //    return redirect()->route('campaigns.status', $id);
         //}
 
-        return view('campaigns.preview', compact('campaign'));
+        $template = $this->templates->find($workspaceId,$campaign->template_id);
+
+        return view('campaigns.preview', compact('campaign','subscriberCount','template'));
     }
 
     /**

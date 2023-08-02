@@ -49,6 +49,14 @@
                             </div>
                         </div>
                       @endif
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">{{ __('Template') }}:</label>
+                            <div class="col-sm-10">
+                                <b>
+                                    <span class="form-control-plaintext"><a href="{{ route('templates.edit', $template->id) }}">{{ $template->name }}</a></span>
+                                </b>
+                            </div>
+                        </div>
                     <div class="pb-2"><b>{{ __('Content') }}</b></div>
                     <div style="border: 1px solid #ddd; height: 200px">
                         <iframe id="js-template-iframe" srcdoc="{{ $campaign->merged_content }}" class="embed-responsive-item" frameborder="0" style="height: 100%; width: 100%"></iframe>
