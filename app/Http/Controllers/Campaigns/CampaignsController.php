@@ -205,7 +205,7 @@ class CampaignsController extends Controller
     public function edit(int $id): ViewContract
     {
         $workspaceId = MailSystem::currentWorkspaceId();
-        $campaign = $this->campaigns->find($workspaceId, $id);
+        $campaign = $this->campaigns->find($workspaceId, $id,['tags']);
         $emailServices = $this->emailServices->all($workspaceId, 'id', ['type'])
             ->map(static function (EmailService $emailService) {
                 $emailService->formatted_name = "{$emailService->from_name} <{$emailService->from_email}> ({$emailService->type->name})";
@@ -215,7 +215,15 @@ class CampaignsController extends Controller
 
         $subscriberCount = $this->subscribers->countActive($workspaceId);
 
+        $campaign_tag_ids = $campaign->tags()->pluck('id');
+
         $tags = $this->tags->all($workspaceId, 'name');
+        $tags->each(function($item, $key) use ($campaign_tag_ids){
+
+            $item->selected = $campaign_tag_ids->search($item->id) !== false ? 1 : 0;
+            return $item;
+        });
+
 
         $socialServices = $this->socialServices->all($workspaceId, 'id', ['type'])
             ->map(static function (SocialService $socialServices) {
@@ -275,7 +283,6 @@ class CampaignsController extends Controller
     {
         $workspaceId = MailSystem::currentWorkspaceId();
         $campaign = $this->campaigns->find($workspaceId, $id, ['email_service','social_service']);
-        $subscriberCount = $this->subscribers->countActive($workspaceId);
 
         //if (!$campaign->draft) {
         //    return redirect()->route('campaigns.status', $id);
@@ -283,7 +290,7 @@ class CampaignsController extends Controller
 
         $template = $this->templates->find($workspaceId,$campaign->template_id);
 
-        return view('campaigns.preview', compact('campaign','subscriberCount','template'));
+        return view('campaigns.preview', compact('campaign','template'));
     }
 
     /**

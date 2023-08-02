@@ -55,7 +55,7 @@
                                 @forelse($tags as $tag)
                                     <div class="checkbox">
                                         <label>
-                                            <input name="tags[]" type="checkbox" value="{{ $tag->id }}">
+                                            <input name="tags[]" type="checkbox" value="{{ $tag->id }}" {{  $tag->selected ? 'checked' : '' }}>
                                             {{ $tag->name }} ({{ $tag->activeSubscribers()->count() }} {{ __('Subscribers') }})
                                         </label>
                                     </div>
