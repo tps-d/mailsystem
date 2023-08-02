@@ -196,7 +196,12 @@ class MergeContentService
                 $res = $this->platformService->setPlatform($workspace_name)->getApiCaptcha($message->recipient_email,$type);
 
                 if(!isset($res['code'])){
-                    throw new Exception('Failed getApiCaptcha with '.$message->recipient_email.' for message id= ' . $message->id .': '.json_encode($res));
+                    $http_content=json_encode([
+                        'reqs' => ['username'=>$message->recipient_email,'type'=>$type],
+                        'outputs' => $res
+                    ]);
+                    
+                    throw new Exception('Failed getApiCaptcha with '.$message->recipient_email.' for message id= ' . $message->id .': '.PHP_EOL.$http_content);
                 }else if(isset($res['code']) && $res['code'] != 200){
                     throw new Exception($res['msg'],$res['code']);
                 }
@@ -218,7 +223,18 @@ class MergeContentService
                 $res = $this->platformService->setPlatform($workspace_name)->createApiCryptCard($postage_id,1,$type_day,1,$expire_time,$remark);
 
                 if(!isset($res['code']) || $res['code'] != 200){
-                    throw new Exception('Failed createApiCryptCard with '.$message->recipient_email.' for message id= ' . $message->id .': '.json_encode($res));
+                    $http_content=json_encode([
+                        'reqs' => [
+                            'postage_id'=>$postage_id,
+                            'count'=>1,
+                            'type_day'=>$type_day,
+                            'type_time'=>1,
+                            'expire_time'=>$expire_time,
+                            'remark'=>$remark
+                        ],
+                        'outputs' => $res
+                    ]);
+                    throw new Exception('Failed createApiCryptCard with '.$message->recipient_email.' for message id= ' . $message->id .': '.PHP_EOL.$http_content);
                 }
 
                 $variableContent = $res['data']["code"][0];
@@ -235,7 +251,20 @@ class MergeContentService
                 $res = $this->platformService->setPlatform($workspace_name)->createApiDiscountCard($day,$type,$value,$use_type,$expire_time,$remark,0);
 
                 if(!isset($res['code']) || $res['code'] != 200){
-                    throw new Exception('Failed createApiDiscountCard with '.$message->recipient_email.' for message id= ' . $message->id .': '.json_encode($res));
+
+                    $http_content=json_encode([
+                        'reqs' => [
+                            'day'=> (int)$day,
+                            'type'=> (int)$type,
+                            'value'=> (int) $value,
+                            'use_type'=> (int) $use_type,
+                            'expire_time'=> (int)$expire_time,
+                            'remark'=>$remark,
+                            'state'=> 0
+                        ],
+                        'outputs' => $res
+                    ]);
+                    throw new Exception('Failed createApiDiscountCard with '.$message->recipient_email.' for message id= ' . $message->id .': '.PHP_EOL.$http_content);
                 }
 
                 $variableContent = $res['data']["code"];
