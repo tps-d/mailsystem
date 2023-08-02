@@ -43,7 +43,6 @@
                         <td>
                             <span >{{ $job->queue }}</span>
                         </td>
-                        <td><span >{{ $job->attempts }}</span></td>
                         <td><p class="text-break">{{ $job->payload }}</p></td>
                         <td><span >{{ $job->exception }}</span></td>
                         <td><span >{{ $job->failed_at->diffForHumans() }}</span></td>
